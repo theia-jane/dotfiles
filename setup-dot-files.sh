@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for dot_file in $(git ls-files | grep '^.'); do
+for dot_file in $(git ls-files | grep '^\.'); do
 
 file_dest="${HOME}/${dot_file}" 
 if [ -f "${file_dest}" ]; then
