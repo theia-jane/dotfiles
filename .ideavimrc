@@ -1,0 +1,16 @@
+set surround
+
+nnoremap ]c :action VcsShowNextChangeMarker<CR>
+nnoremap [c :action VcsShowPrevChangeMarker<CR>
+
+nnoremap ]<Space> mqo<C-c>`q
+nnoremap [<Space> mqO<C-c>`q
+
+nnoremap ]e :action MoveLineDown<CR> 
+nnoremap [e :action MoveLineUp<CR>
+
+nnoremap gcc  :action CommentByLineComment<CR>
+nnoremap gc   :action CommentByLineComment<CR>
+vnoremap gc   :action CommentByLineComment<CR>
+
+
