@@ -1,0 +1,100 @@
+[
+  {
+    "key": "<leader>", 
+    "modes": ["normal"],
+    "submap": [
+      {"key": "<leader>", "modes": ["visual"], "map_to": ":Denite command<CR>"},
+      {
+        "name": "narrow",
+        "key": "n", 
+        "submap": [
+            {"key": "r", "modes": ["visual"], "map_to": ":NR!<CR>"},
+            {"key": "w", "map_to": ":WidenRegion!<CR>"},
+            {"key": "v", "map_to": ":NW!<CR>"},
+            {"key": "h", "map_to": "$?<<<\w?e<CR>\"tywjV/^<C-R>t/-1<CR>:NR!<CR>:set ft=<C-R>t<CR>"}
+        ]
+      },
+      {
+        "key": "a", 
+        "submap": [
+          {
+            "key": "e", 
+            "submap": [
+              {"key": "p", "map_to": ":OpenInPHPStorm<CR>"}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "f", 
+        "modes": ["visual"],
+        "submap": [
+          {"key": "f", "map_to": ":Denite file_rec<CR>"},
+          {"key": "t", "map_to": ":Denite filetype<CR>"},
+          {"key": "s", "map_to": ":write<CR>"},
+          {
+            "key": "e", 
+            "submap": [
+              {"key": "d", "map_to": ":edit $MYVIMRC<CR>"},
+              {"key": "k", "map_to": ":edit ~/.mappings.json<CR>"},
+              {"key": "R", "map_to": ":source $MYVIMRC<CR>"}
+            ]
+          } 
+        ]
+      },
+      {
+        "key": "b", 
+        "submap": [
+          {"key": "b", "map_to": ":Denite buffer<CR>"},
+          {"key": "B", "map_to": ":Denite buffer:!<CR>"},
+          {"key": "d", "map_to": ":bdelete<CR>"},
+          {"key": "n", "map_to": ":bnext<CR>"},
+          {"key": "p", "map_to": ":bprev<CR>"}
+        ]
+      },
+      {
+        "key": "s", 
+        "modes": ["visual"],
+        "submap": [
+          {"key": "s", "map_to": "/"},
+          {"key": "r", "map_to": ":s/"},
+          {"key": "c", "map_to": ":noh <CR>"}
+        ]
+      },
+      {
+        "key": "g", 
+        "modes": ["visual"],
+        "submap": [
+          {"key": "d", "map_to": ":Gdiff<CR>"},
+          {"key": "s", "map_to": ":Gstat<CR>"}
+        ] 
+      },
+      {
+        "key": "v", 
+        "submap": [
+        ]
+      },
+      {
+        "key": "w", 
+        "submap": [
+          {"key": "d", "map_to": ":close<CR>"}, 
+          {"key": "o", "map_to": ":only<CR>"},
+          {"key": "s", "map_to": ":split<CR>"},
+          {"key": "v", "map_to": ":vsplit<CR>"},
+          {"key": "_", "map_to": "<c-w>_"},
+          {"key": "|", "map_to": "<c-w>|"},
+          {"key": "=", "map_to": "<c-w>="}
+        ]
+      },
+      {"key": "h", "map_to": ":Denite help<CR>"},
+      {"key": "q", "map_to": ":q<CR>"} 
+    ]
+  },
+  {
+    "key": "<c-space>",
+    "modes": ["insert"],
+    "submap": [
+      {"key": "<c-space>", "map_to": "<c-o>:Denite command<cr>"}
+    ]
+  }
+]
