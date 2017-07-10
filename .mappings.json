@@ -3,12 +3,12 @@
     "key": "<leader>", 
     "modes": ["normal"],
     "submap": [
-      {"key": "<leader>", "modes": ["visual"], "map_to": ":Denite command<CR>"},
+      {"key": "<leader>", "modes": ["visual", "select"], "map_to": ":Commands<CR>", "map_to_denite": ":Denite command<CR>"},
       {
         "name": "narrow",
         "key": "n", 
         "submap": [
-            {"key": "r", "modes": ["visual"], "map_to": ":NR!<CR>"},
+            {"key": "r", "modes": ["visual", "select"], "map_to": ":NR!<CR>"},
             {"key": "w", "map_to": ":WidenRegion!<CR>"},
             {"key": "v", "map_to": ":NW!<CR>"},
             {"key": "h", "map_to": "$?<<<\w?e<CR>\"tywjV/^<C-R>t/-1<CR>:NR!<CR>:set ft=<C-R>t<CR>"}
@@ -27,10 +27,12 @@
       },
       {
         "key": "f", 
-        "modes": ["visual"],
+        "modes": ["visual", "select"],
         "submap": [
-          {"key": "f", "map_to": ":Denite file_rec<CR>"},
-          {"key": "t", "map_to": ":Denite filetype<CR>"},
+          {"key": "f", "map_to": ":Files<CR>", "map_to_denite": ":Denite file_rec<CR>"},
+          {"key": "r", "map_to": ":History<CR>"},
+          {"key": "t", "map_to": ":Filetypes<CR>", "map_to_denite": ":Denite filetype<CR>"},
+          {"key": "d", "map_to": ":GFiles?<CR>", "map_to_denite": ":Denite file_rec/git-svn<CR>"},
           {"key": "s", "map_to": ":write<CR>"},
           {
             "key": "e", 
@@ -45,8 +47,10 @@
       {
         "key": "b", 
         "submap": [
-          {"key": "b", "map_to": ":Denite buffer<CR>"},
+          {"key": "b", "map_to": ":Buffers<CR>", "map_to_denite": ":Denite buffer<CR>"},
           {"key": "B", "map_to": ":Denite buffer:!<CR>"},
+          {"key": "l", "map_to": ":BLines<CR>", "map_to_denite": ":Denite line<CR>"},
+          {"key": "L", "map_to": ":Lines<CR>"},
           {"key": "d", "map_to": ":bdelete<CR>"},
           {"key": "n", "map_to": ":bnext<CR>"},
           {"key": "p", "map_to": ":bprev<CR>"}
@@ -54,7 +58,7 @@
       },
       {
         "key": "s", 
-        "modes": ["visual"],
+        "modes": ["visual", "select"],
         "submap": [
           {"key": "s", "map_to": "/"},
           {"key": "r", "map_to": ":s/"},
@@ -63,10 +67,12 @@
       },
       {
         "key": "g", 
-        "modes": ["visual"],
+        "modes": ["visual", "select"],
         "submap": [
           {"key": "d", "map_to": ":Gdiff<CR>"},
-          {"key": "s", "map_to": ":Gstat<CR>"}
+          {"key": "s", "map_to": ":Gstat<CR>"},
+          {"key": "l", "map_to": ":BCommits<CR>"},
+          {"key": "L", "map_to": ":Commits<CR>"}
         ] 
       },
       {
@@ -86,7 +92,7 @@
           {"key": "=", "map_to": "<c-w>="}
         ]
       },
-      {"key": "h", "map_to": ":Denite help<CR>"},
+      {"key": "h", "map_to": ":Helptags<CR>", "map_to_denite": ":Denite help<CR>"},
       {"key": "q", "map_to": ":q<CR>"} 
     ]
   },
@@ -94,7 +100,21 @@
     "key": "<c-space>",
     "modes": ["insert"],
     "submap": [
-      {"key": "<c-space>", "map_to": "<c-o>:Denite command<cr>"}
+      {"key": "<space>", "map_to": "<c-o>:Denite command<cr>"}
+    ]
+  },
+  {
+    "key": "i",
+    "modes": ["visual", "operator"],
+    "submap": [
+      {"key": "c", "map_to": "<plug>(signify-motion-inner-pending)"}
+    ]
+  },
+  {
+    "key": "a",
+    "modes": ["visual", "operator"],
+    "submap": [
+      {"key": "c", "map_to": "<plug>(signify-motion-inner-pending)"}
     ]
   }
 ]
