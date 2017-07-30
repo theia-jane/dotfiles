@@ -43,17 +43,15 @@ values."
      osx
      emacs-lisp
      git
-     vimscript
+     shell
      markdown
      javascript
      php
+     slack
      sql
      org
      gtags
      cscope
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
      ;; spell-checking
      syntax-checking
      version-control
@@ -154,7 +152,7 @@ values."
    dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
-   dotspacemacs-emacs-leader-key "M-m"
+   dotspacemacs-emacs-leader-key "C-SPC"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
@@ -231,11 +229,11 @@ values."
    dotspacemacs-fullscreen-at-startup t
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
-   dotspacemacs-fullscreen-use-non-native t 
+   dotspacemacs-fullscreen-use-non-native t
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup nil 
+   dotspacemacs-maximized-at-startup nil
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -311,6 +309,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   ; (javascript :variables tern-command '("node" "~/.nvm/versions/node/v7.10.0/bin/tern"))
 
+  (setq exec-path-from-shell-check-startup-files nil)
   )
 
 (defun dotspacemacs/user-config ()
@@ -320,45 +319,7 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-
-  ;; Org
-  (setq org-confirm-babel-evaluate nil)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)
-     (emacs-lisp . t)
-     (js . t)
-     (php . t)
-     (shell . t)))
-
-  (setq org-todo-keywords
-        '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE" "CANCELED")))
-
-  (setq org-refile-targets '((nil :maxlevel . 7)
-                             (org-agenda-files :maxlevel . 5)))
-  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
-
-  (setq org-agenda-files '("~/Dropbox/life/notes/"))
-  (setq org-directory "~/Dropbox/life/notes/")
-  (setq org-mobile-inbox-for-pull "~/Dropbox/life/notes/flagged.org")
-  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-  ;; (setq org-startup-with-inline-images t)
-
-  ;; osx stuff
-  (setq ns-pop-up-frames nil)
-  (setq ns-use-srgb-colorspace nil)
-  (setq ns-pop-up-frames nil)
-
-  ;; powerline
-  (setq powerline-default-separator 'slant)
-
-  ;; PHP
-  (setq flycheck-phpcs-standard "/Users/tware/Projects/tsheets/repository/web_applications/libs/php/ts-common/trunk/linting/phpcs_ruleset.xml")
-
-  ;; evil
-  (setq evil-overriding-maps nil)
-  (setq evil-intercept-maps nil)
+  (org-babel-load-file "~/Dropbox/life/notes/user-config.org")
   )
 
 
@@ -391,7 +352,8 @@ This function is called at the very end of Spacemacs initialization."
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (sql-indent xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tagedit symon string-inflection spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pug-mode popwin pivotal-tracker phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy password-generator paradox osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file ob-php neotree mwim multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag gruvbox-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode diff-hl company-web company-tern company-statistics company-php column-enforce-mode coffee-mode clean-aindent-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (fireplace slack circe oauth2 websocket emojify ht emoji-cheat-sheet-plus company-emoji undo-tree powerline highlight avy smartparens evil helm helm-core org-plus-contrib async dash alert log4e gntp org-brain markdown-mode skewer-mode json-snatcher json-reformat multiple-cursors js2-mode impatient-mode simple-httpd haml-mode autothemer gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck evil-org magit magit-popup git-commit with-editor web-completion-data dash-functional tern ac-php-core xcscope php-mode company yasnippet auto-complete sql-indent xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org tagedit symon string-inflection spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pug-mode popwin pivotal-tracker phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy password-generator paradox osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file ob-php neotree mwim multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-c-yasnippet helm-ag gruvbox-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode diff-hl company-web company-tern company-statistics company-php column-enforce-mode coffee-mode clean-aindent-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
