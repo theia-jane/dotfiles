@@ -1,0 +1,12 @@
+[alias]
+	st = status
+	co = checkout
+	root = 
+	ci = commit
+	gst = !cd ~ && ls
+	a = add
+[user]
+	name = Tyler Ware
+	email = tyler.ware.777@gmail.com
+[credential]
+	helper = osxkeychain
