@@ -3,6 +3,13 @@
     "key": "<leader>", 
     "modes": ["normal"],
     "submap": [
+      {
+        "key": "r", 
+        "submap": [
+            {"key": "t", "map_to": ":TSRunTest<CR>"},
+            {"key": "r", "map_to": ":TSRerunTest<CR>"}
+        ]
+      },
       {"key": "<leader>", "modes": ["visual", "select"], "map_to": ":Commands<CR>", "map_to_denite": ":Denite command<CR>"},
       {
         "name": "narrow",
