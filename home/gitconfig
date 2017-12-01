@@ -8,5 +8,3 @@
 [user]
 	name = Tyler Ware
 	email = tyler.ware.777@gmail.com
-[credential]
-	helper = osxkeychain
