@@ -8,3 +8,5 @@
 [user]
 	name = Tyler Ware
 	email = tyler.ware.777@gmail.com
+[push]
+	default = simple
