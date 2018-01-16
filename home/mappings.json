@@ -10,6 +10,12 @@
             {"key": "r", "map_to": ":TSRerunTest<CR>"}
         ]
       },
+      {
+        "key": "e", 
+        "submap": [
+            {"key": "p", "map_to": ":silent !pdflatex % > /dev/null<CR>"}
+        ]
+      },
       {"key": "<leader>", "modes": ["visual", "select"], "map_to": ":Commands<CR>", "map_to_denite": ":Denite command<CR>"},
       {
         "name": "narrow",
