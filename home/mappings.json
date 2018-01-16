@@ -85,6 +85,7 @@
         "submap": [
           {"key": "d", "map_to": ":Gdiff<CR>"},
           {"key": "s", "map_to": ":Gstat<CR>"},
+          {"key": "b", "map_to": ":Gblame<CR>"},
           {"key": "l", "map_to": ":BCommits<CR>"},
           {"key": "L", "map_to": ":Commits<CR>"}
         ] 
@@ -107,7 +108,13 @@
         ]
       },
       {"key": "h", "map_to": ":Helptags<CR>", "map_to_denite": ":Denite help<CR>"},
-      {"key": "q", "map_to": ":q<CR>"} 
+      {"key": "q", "map_to": ":q<CR>"},
+      {
+        "key": "p",
+        "submap": [
+          {"key": "s", "map_to": ":TSSyncDev<CR>"}
+        ]
+      }
     ]
   },
   {
