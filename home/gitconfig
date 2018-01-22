@@ -10,3 +10,5 @@
 	email = tyler.ware.777@gmail.com
 [push]
 	default = simple
+[credential]
+	helper = gnome-keyring
