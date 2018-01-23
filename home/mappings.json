@@ -112,7 +112,8 @@
       {
         "key": "p",
         "submap": [
-          {"key": "s", "map_to": ":TSSyncDev<CR>"}
+          {"key": "s", "map_to": ":TSSyncDev<CR>"},
+          {"key": "b", "map_to": ":TSBuild<CR>"}
         ]
       }
     ]
@@ -142,5 +143,13 @@
     "key": "<c-space>",
     "modes": ["command"],
     "map_to": "<C-u>History:<CR>"
+  },
+  {
+    "key": "<c-x>",
+    "modes": ["command"],
+    "submap": [
+      {"key": ",", "map_to": "\<\><Left><Left>"},
+      {"key": "g", "map_to": "\(\)<Left><Left>"}
+    ]
   }
 ]
