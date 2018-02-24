@@ -5,6 +5,7 @@
 	ci = commit
 	gst = !cd ~ && ls
 	a = add
+	apply = apply --ignore-whitespace
 [user]
 	name = Tyler Ware
 	email = tyler.ware.777@gmail.com
