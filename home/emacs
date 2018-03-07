@@ -1,11 +1,5 @@
 ;; OS config tools
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-; (package-initialize)
-
 ; (defun get-system-type () system-type)
 ; (defun is-os (os-name) (eq (get-system-type) os-name))
 ; (defun is-mac () (is-os 'darwin))
@@ -22,23 +16,22 @@
 ;     (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
 ; (load (expand-file-name "init.el" user-emacs-directory))
 
-;; Clean up le GUI
-(setq inhibit-startup-screen t)
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(scroll-bar-mode 0)
 
+(defun is-system (system-name) (eq system-type system-name))
+(defun is-mac () (is-system 'darwin))
+(defun is-linux () (is-system 'gnu/linux))
 
-(set-default-font "Source Code Pro-14")
-
+(defun system-cond ()
+  (cond ((is-mac) mac)
+	((is-linux) linux)))
 
 ;; Package setup (using 'use-package)
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives '(("org" . "http://orgmode.org/elpa/")
-			 ("gnu" . "http:/elpa.gnu.org/packages/")
+			 ("gnu" . "https:/elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")))
+			 ("marmalade" . "https://marmalade-repo.org/packages/")))
 
 (package-initialize)
 
@@ -47,7 +40,6 @@
   (package-install 'use-package))
 
 
-;; Manage Packages
 (use-package general :ensure t)
 
 ;; Only the evilest
@@ -61,9 +53,46 @@
   :config
   (which-key-mode 1))
 
+;; No intial start screen 
+(setq inhibit-startup-screen t)
+
+;; No bars on top
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+
+;; no GUI scroll bars
+(scroll-bar-mode 0)
+
+
+;; Set font niceness
+(set-default-font "Source Code Pro-14")
 (use-package spacegray-theme :ensure t
   :config
   (load-theme 'spacegray t))
+
+(use-package org-bullets :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  )
+
+;; (use-package org-beautify-theme :ensure t)
+
+;; Example of telling when in terminal (need to still figure out emacs client)
+;; https://emacs.stackexchange.com/questions/13050/different-theme-for-nw-terminal
+;; https://emacs.stackexchange.com/questions/2096/different-themes-for-terminal-and-graphical-frames-when-using-emacs-daemon
+
+
+;; Finding / Narrowing / Completing 
+(use-package ivy :ensure t
+  :config
+  ;; clears the intial ^ when using ivy
+  (setq ivy-initial-inputs-alist nil))
+
+(use-package counsel :ensure t
+  :bind*
+  (("M-x" . counsel-M-x)
+   ("C-x f" . counsel-find-file)))
+
 
 ;; Example of loading & parsing some JSON
 ;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
@@ -71,15 +100,6 @@
 ;; (json-read-file "~/.mappings.json")
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (spacegray-theme general use-package))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+
+
