@@ -1,16 +1,85 @@
 ;; OS config tools
-(defun get-system-type () system-type)
-(defun is-os (os-name) (eq (get-system-type) os-name))
-(defun is-mac () (is-os 'darwin))
-(defun is-linux() (is-os 'gnu/linux))
 
-(defun os-switch (mac linux)
-  (cond ((is-mac) mac)
-        ((is-linux) linux)))
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+; (package-initialize)
+
+; (defun get-system-type () system-type)
+; (defun is-os (os-name) (eq (get-system-type) os-name))
+; (defun is-mac () (is-os 'darwin))
+; (defun is-linux() (is-os 'gnu/linux))
+;
+; (defun os-switch (mac linux)
+;   (cond ((is-mac) mac)
+;         ((is-linux) linux)))
+;
+;
+; ;; Swapping
+; (setq use-spacemacs nil)   ; or nil 
+; (when use-spacemacs
+;     (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
+; (load (expand-file-name "init.el" user-emacs-directory))
+
+;; Clean up le GUI
+(setq inhibit-startup-screen t)
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
 
 
-;; Swapping
-(setq use-spacemacs nil)   ; or nil 
-(when use-spacemacs
-    (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
-(load (expand-file-name "init.el" user-emacs-directory))
+(set-default-font "Source Code Pro-14")
+
+
+;; Package setup (using 'use-package)
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org" . "http://orgmode.org/elpa/")
+			 ("gnu" . "http:/elpa.gnu.org/packages/")
+			 ("melpa" . "https://melpa.org/packages/")
+			 ("marmalade" . "http://marmalade-repo.org/packages/")))
+
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+
+;; Manage Packages
+(use-package general :ensure t)
+
+;; Only the evilest
+(use-package evil :ensure t
+	     :config
+	     (evil-mode 1)
+	     )
+
+(use-package evil-org :ensure t)
+(use-package which-key :ensure t
+  :config
+  (which-key-mode 1))
+
+(use-package spacegray-theme :ensure t
+  :config
+  (load-theme 'spacegray t))
+
+;; Example of loading & parsing some JSON
+;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
+;; (require 'json)
+;; (json-read-file "~/.mappings.json")
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (spacegray-theme general use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
