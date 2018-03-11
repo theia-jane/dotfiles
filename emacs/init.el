@@ -142,3 +142,5 @@
 ;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
 ;; (require 'json)
 ;; (json-read-file "~/.mappings.json")
+
+(use-package markdown-mode :ensure t)
