@@ -1,1 +1,1 @@
-(load-file "~/.config/personal/dotfiles/emacs/init.el")
+(org-babel-load-file "~/.config/personal/dotfiles/emacs/index.org")
