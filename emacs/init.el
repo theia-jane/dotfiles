@@ -6,6 +6,10 @@
 ;     (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
 ; (load (expand-file-name "init.el" user-emacs-directory))
 
+(setq
+ my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
+ my-org (expand-file-name "~/org/"))
+
 (defun is-system (system-name) (eq system-type system-name))
 (defun is-mac () (is-system 'darwin))
 (defun is-linux () (is-system 'gnu/linux))
@@ -15,13 +19,14 @@
 
 ;; Package setup (using 'use-package)
 (require 'package)
+(package-initialize)
+
 (setq package-enable-at-startup nil)
-(setq package-archives '(("org" . "http://orgmode.org/elpa/")
+(setq package-archives '(("org" . "https://orgmode.org/elpa/")
 			 ("gnu" . "https://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")
 			 ("marmalade" . "https://marmalade-repo.org/packages/")))
 
-(package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -36,14 +41,15 @@
    :non-normal-prefix "C-SPC"
 
    "SPC"   'counsel-M-x
-   "f d e" '(lambda () (interactive) (find-file "~/.config/personal/dotfiles/emacs/init.el"))
-   "f d f" '(lambda () (interactive) (counsel-find-file "~/.config/personal/dotfiles"))
-   "f o f" '(lambda () (interactive) (counsel-find-file "~/org/"))
+   "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/init.el")))
+   "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
+   "f o f" '(lambda () (interactive) (counsel-find-file my-org))
    "f f" 'counsel-find-file
 
    "b b" 'ivy-switch-buffer
    ))
 
+(use-package atomic-chrome :ensure t)
 ;; Workspaces
 (use-package perspective
   :ensure t
@@ -106,9 +112,9 @@
 ;; Set font niceness
 (set-default-font "Source Code Pro-14")
 
-(use-package darktooth-theme :ensure t
-  :config
-  (load-theme 'darktooth t))
+(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
+
+;(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox t))
 
 ;; Example of telling when in terminal (need to still figure out emacs client)
 ;; https://emacs.stackexchange.com/questions/13050/different-theme-for-nw-terminal
@@ -183,4 +189,12 @@
 ;; (require 'json)
 ;; (json-read-file "~/.mappings.json")
 
+;; API for working w/ files
+(use-package f :ensure t)
+
+;; API for working w/ strings 
+(use-package s :ensure t)
+
 (use-package markdown-mode :ensure t)
+
+(org-babel-load-file (concat my-dotfiles "emacs/index.org"))

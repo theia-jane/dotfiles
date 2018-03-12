@@ -1,0 +1,131 @@
+* Environment
+  #+BEGIN_SRC emacs-lisp
+  (setq exec-path-from-shell-check-startup-files nil)
+  (defun source-file-and-get-envs (filename)
+    (let* ((cmd (concat ". " filename "; env"))
+           (env-str (shell-command-to-string cmd))
+           (env-lines (split-string env-str "\n"))
+           (envs (mapcar (lambda (s) (replace-regexp-in-string "=.*$" "" s)) env-lines)))
+      (delete "" envs)))
+
+  (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile"))
+  #+END_SRC
+* General
+** Improved repeating
+   Extend repeat to be usable in insert mode as well
+   #+BEGIN_SRC emacs-lisp
+    ;;    (define-key evil-insert-state-map (kbd "C-.") "hello")
+   #+END_SRC
+** yasnippets
+   #+BEGIN_SRC emacs-lisp
+   ;;(setq yas-snippet-dirs
+    ;;  '(
+     ;;   "~/.config/personal/snippets"
+      ;;))
+   #+END_SRC
+** File Writing
+   #+BEGIN_SRC emacs-lisp
+     ;;(setq backup-by-copying-when-linked t)
+   #+END_SRC
+** Annoying new lines
+   #+BEGIN_SRC emacs-lisp
+   (setq mode-require-final-newline nil)
+   #+END_SRC
+** List functions
+   #+BEGIN_SRC emacs-lisp
+     ;(defun append-to-list (list-var elements)
+     ;"Append ELEMENTS to the end of LIST-VAR.
+;
+     ;The return value is the new value of LIST-VAR."
+       ;(unless (consp elements)
+         ;(error "ELEMENTS must be a list"))
+       ;(let ((list (symbol-value list-var)))
+         ;(if list
+             ;(setcdr (last list) elements)
+           ;(set list-var elements)))
+       ;(symbol-value list-var))
+   #+END_SRC
+* Slack
+  #+BEGIN_SRC emacs-lisp
+  ;; (slack-register-team
+  ;;  :name ""
+  ;;  :default t
+  ;;  :client-id ""
+  ;;  :client-secret ""
+  ;;  :token ""
+  ;;  )
+  #+END_SRC
+
+* Org
+** General Vars
+   #+BEGIN_SRC emacs-lisp
+       (setq org-log-into-drawer "logbook")
+       (setq org-agenda-files '("~/org/"))
+       (setq org-directory "~/org")
+       (setq org-modules (append org-modules '(org-drill)))
+   #+END_SRC
+** Tasks
+   #+BEGIN_SRC emacs-lisp
+    (setq org-todo-keywords
+          '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED")))
+   #+END_SRC
+** Babel
+   #+BEGIN_SRC emacs-lisp
+    (setq org-confirm-babel-evaluate nil)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((python . t)
+       (emacs-lisp . t)
+       (js . t)
+       (latex . t)
+       ;; (php . t)
+       (dot . t)
+       (shell . t)))
+
+   #+END_SRC
+
+   #+RESULTS:
+
+** Capture
+   #+BEGIN_SRC emacs-lisp
+    (setq org-capture-templates '(
+                                  ("p" "Plain" entry (file "")
+                                   "* %?")
+                                  ("t" "Todo" entry (file "")
+                                   "* TODO %?")
+                                  ))
+   #+END_SRC
+** Mobile
+   #+BEGIN_SRC emacs-lisp
+      (setq org-mobile-inbox-for-pull "~/Nextcloud/org/flagged.org")
+      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+   #+END_SRC
+
+** Refile
+   #+BEGIN_SRC emacs-lisp
+     (setq org-refile-targets '((nil :maxlevel . 7)
+                               (org-agenda-files :maxlevel . 5)))
+     (setq org-refile-allow-creating-parent-nodes t)
+     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+   #+END_SRC
+* OSX
+  #+BEGIN_SRC emacs-lisp
+  ;(setq ns-pop-up-frames nil)
+  ;(setq ns-use-srgb-colorspace nil)
+  ;(setq ns-pop-up-frames nil)
+  #+END_SRC
+* UI
+** Powerline
+   #+BEGIN_SRC emacs-lisp
+    (setq powerline-default-separator 'slant)
+   #+END_SRC
+
+   #+RESULTS:
+   : slant
+
+* EVIL
+  #+BEGIN_SRC emacs-lisp
+  (setq evil-overriding-maps nil)
+  (setq evil-intercept-maps nil)
+  #+END_SRC
