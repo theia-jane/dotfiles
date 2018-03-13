@@ -1,78 +1,162 @@
+* Environment
+** From Shell
+  #+BEGIN_SRC emacs-lisp
+    (use-package exec-path-from-shell 
+      :ensure t
+      :config
+      (setq exec-path-from-shell-check-startup-files nil)
+      (defun source-file-and-get-envs (filename)
+	(let* ((cmd (concat ". " filename "; env"))
+	       (env-str (shell-command-to-string cmd))
+	       (env-lines (split-string env-str "\n"))
+	       (envs (mapcar (lambda (s) (replace-regexp-in-string "=.*$" "" s)) env-lines)))
+	  (delete "" envs)))
+      (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile")))
+  #+END_SRC
+** Emacs
+   #+BEGIN_SRC emacs-lisp
+     (setq
+      my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
+      my-org (expand-file-name "~/org/"))
+   #+END_SRC
+** System Detection
+   #+BEGIN_SRC emacs-lisp
+     (defun is-system (system-name) (eq system-type system-name))
+     (defun is-mac () (is-system 'darwin))
+     (defun is-linux () (is-system 'gnu/linux))
+     (defun system-cond ()
+       (cond ((is-mac) mac)
+	     ((is-linux) linux)))
+   #+END_SRC
+* Utilities
+** Fuzzy finding
+     Fuzzy finding for emacs
+     #+BEGIN_SRC emacs-lisp
+	 (use-package flx :ensure t)
+     #+END_SRC
+** Core libraries 
+   Add functions for dealing with files, strings and associative data. 
+   #+BEGIN_SRC emacs-lisp
+     (use-package f :ensure t)
+     (use-package s :ensure t)
+     (use-package a :ensure t)
+     (use-package @ :ensure t)
+   #+END_SRC
+* Package Setup
+    Use the wonderful =use-package= which makes managing packages
+    wonderfully simple
+    #+BEGIN_SRC emacs-lisp
+	(require 'package)
+	(package-initialize)
+    #+END_SRC
+
+    Add package repositories using https.
+    #+BEGIN_SRC emacs-lisp
+	(setq package-enable-at-startup nil)
+	(setq package-archives '(("org" . "https://orgmode.org/elpa/")
+				("gnu" . "https://elpa.gnu.org/packages/")
+				("melpa" . "https://melpa.org/packages/")
+				("marmalade" . "https://marmalade-repo.org/packages/")))
+    #+END_SRC
+  
+    Make sure =use-package= is installed
+    #+BEGIN_SRC emacs-lisp
+      (unless (package-installed-p 'use-package)
+	(package-refresh-contents)
+	(package-install 'use-package))
+    #+END_SRC
+
+* User Interface
+** Visual
+*** Clean up 
+**** Hide GUI 
+     I don't really like the menu bars or scroll bars. They are ugly
+     and distract from the content.
+     #+BEGIN_SRC emacs-lisp
+	 (menu-bar-mode 0)
+	 (tool-bar-mode 0)
+	 (scroll-bar-mode 0)
+     #+END_SRC
+**** Start screen
+     #+BEGIN_SRC emacs-lisp
+	 (setq inhibit-startup-screen t)
+     #+END_SRC
+**** Noises
+     Shut up the bell
+     #+BEGIN_SRC emacs-lisp 
+	 (defun my-bell-function ())
+	 (setq ring-bell-function 'my-bell-function)
+	 (setq visible-bell nil)
+     #+END_SRC
+*** Font 
+    Set font niceness
+    #+BEGIN_SRC emacs-lisp
+    (set-default-font "Source Code Pro-14")
+    #+END_SRC
+*** Color
+    #+BEGIN_SRC emacs-lisp
+      (use-package darktooth-theme 
+       	:ensure t 
+       	:config 
+       	(load-theme 'darktooth t))
+     #+END_SRC
+**** Terminal + GUI 
+    Example of telling when in terminal (need to still figure out emacs client)
+    https://emacs.stackexchange.com/questions/13050/different-theme-for-nw-terminal
+    https://emacs.stackexchange.com/questions/2096/different-themes-for-terminal-and-graphical-frames-when-using-emacs-daemon
+*** Modeline
+    #+BEGIN_SRC emacs-lisp
+      (use-package powerline :ensure t)
+      (use-package powerline-evil :ensure t
+       	:config
+       	(powerline-evil-center-color-theme)
+       	(setq powerline-default-separator 'slant))
+         
+    #+END_SRC
+** Keybindings
+     #+BEGIN_SRC emacs-lisp
+       (use-package general :ensure t
+         :config
+         (general-define-key
+          :states '(normal visual insert emacs)
+          :prefix "SPC"
+          :non-normal-prefix "C-SPC"
+
+          "SPC"   'counsel-M-x
+          "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
+          "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
+          "f o f" '(lambda () (interactive) (counsel-find-file my-org))
+          "f f" 'counsel-find-file
+
+          "b b" 'ivy-switch-buffer
+          ))
+     #+END_SRC
+* Workspaces
+  #+BEGIN_SRC emacs-lisp
+    (use-package perspective
+	:ensure t
+	:config
+	(persp-mode t))
+  #+END_SRC
+* Usability 
+** =which-key=
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key :ensure t
+    :config
+    (which-key-mode 1))
+  
+  #+END_SRC
+** Basic File Modes
+*** Markdown
+   #+BEGIN_SRC emacs-lisp
+     (use-package markdown-mode :ensure t)
+   #+END_SRC
+*** matlab / octave
+    #+BEGIN_SRC emacs-lisp
+    ;(use-package matlab-mode :ensure t)
+    #+END_SRC
+** Paredit
 #+BEGIN_SRC emacs-lisp
-;; OS config tools
-
-; ;; Swapping
-; (setq use-spacemacs nil)   ; or nil 
-; (when use-spacemacs
-;     (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
-; (load (expand-file-name "init.el" user-emacs-directory))
-
-
-;; Package setup (using 'use-package)
-(require 'package)
-(package-initialize)
-
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org" . "https://orgmode.org/elpa/")
-			 ("gnu" . "https://elpa.gnu.org/packages/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("marmalade" . "https://marmalade-repo.org/packages/")))
-
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(setq
- my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
- my-org (expand-file-name "~/org/"))
-
-(defun is-system (system-name) (eq system-type system-name))
-(defun is-mac () (is-system 'darwin))
-(defun is-linux () (is-system 'gnu/linux))
-(defun system-cond ()
-  (cond ((is-mac) mac)
-	((is-linux) linux)))
-
-(use-package f :ensure t)
-(use-package s :ensure t)
-(use-package a :ensure t)
-(use-package @ :ensure t)
-
-;; Key bindings!
-(use-package general :ensure t
-  :config
-  (general-define-key
-   :states '(normal visual insert emacs)
-   :prefix "SPC"
-   :non-normal-prefix "C-SPC"
-
-   "SPC"   'counsel-M-x
-   "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
-   "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
-   "f o f" '(lambda () (interactive) (counsel-find-file my-org))
-   "f f" 'counsel-find-file
-
-   "b b" 'ivy-switch-buffer
-   ))
-
-(use-package atomic-chrome :ensure t)
-;; Workspaces
-(use-package perspective
-  :ensure t
-  :config
-  (persp-mode t))
-
-(use-package powerline :ensure t)
-(use-package powerline-evil :ensure t
-  :config
-  (powerline-evil-center-color-theme))
-
-;; Shut up the bell
-(defun my-bell-function ())
-(setq ring-bell-function 'my-bell-function)
-(setq visible-bell nil)
-
 (use-package paredit
   :ensure t
   :diminish paredit-mode
@@ -85,49 +169,14 @@
 		   lisp-interaction-mode-hook
 		   scheme-mode-hook))
     (add-hook mode-hook #'enable-paredit-mode)))
-	 
-
-
 
 (use-package evil-paredit :ensure t
   :config
   (add-hook 'emacs-lisp-mode-hook 'evil-paredit-mode))
-(use-package restclient :ensure t)
+#+END_SRC
 
-;; only the evilest
-(use-package evil :ensure t
-	     :config
-	     (evil-mode 1))
-
-;; (use-package evil-org :ensure t)
-
-(use-package which-key :ensure t
-  :config
-  (which-key-mode 1))
-
-;; No intial start screen 
-(setq inhibit-startup-screen t)
-
-;; No bars on top
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-
-;; no GUI scroll bars
-(scroll-bar-mode 0)
-
-
-;; Set font niceness
-(set-default-font "Source Code Pro-14")
-
-(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
-
-;(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox t))
-
-;; Example of telling when in terminal (need to still figure out emacs client)
-;; https://emacs.stackexchange.com/questions/13050/different-theme-for-nw-terminal
-;; https://emacs.stackexchange.com/questions/2096/different-themes-for-terminal-and-graphical-frames-when-using-emacs-daemon
-
-
+** Ivy / Counsel
+  #+BEGIN_SRC emacs-lisp
 ;; Finding / Narrowing / Completing 
 (use-package ivy :ensure t
   :diminish ivy-mode
@@ -152,10 +201,34 @@
   :bind
   (("M-x" . counsel-M-x)
    ("C-x f" . counsel-find-file)))
+  
+  #+END_SRC
+* Applications
+** Restclient
+     #+BEGIN_SRC emacs-lisp
+       (use-package restclient 
+         :ensure t)
+     #+END_SRC
+   
+** Slack
+   #+BEGIN_SRC emacs-lisp
+   ;; (slack-register-team
+   ;;  :name ""
+   ;;  :default t
+   ;;  :client-id ""
+   ;;  :client-secret ""
+   ;;  :token ""
+   ;;  )
+   #+END_SRC
 
-;; Fuzzy finding for emacs
-(use-package flx :ensure t)
-
+** Org
+*** Initial 
+#+BEGIN_SRC emacs-lisp
+;; Org niceness
+(use-package org-bullets :ensure t
+  :init (add-hook 'org-mode-hook 'org-bullets-mode))
+(use-package worf :ensure t
+  :init (add-hook 'org-mode-hook 'worf-mode))
 ;; mapping an associative list
 (defun map-alist (f alist)
     (mapcar (lambda (key-val)
@@ -185,36 +258,96 @@
      ("CANCELED" .  "✘")
      ("DONE" .  "✔"))))
 
-;; Org niceness
-(use-package org-bullets :ensure t
-  :init (add-hook 'org-mode-hook 'org-bullets-mode))
-(use-package worf :ensure t
-  :init (add-hook 'org-mode-hook 'worf-mode))
-;(general )
-;~/.config/personal/dotfiles/emacs/init.el
+#+END_SRC
+*** General Vars
+    #+BEGIN_SRC emacs-lisp
+      (setq
+       org-log-into-drawer "logbook"
+       org-agenda-files (f-entries my-org (lambda (filename) (s-ends-with-p ".org" filename)) t)
+       org-directory "~/org"
+       org-modules (append org-modules '(org-drill)))
 
+    #+END_SRC
+
+    #+RESULTS:
+    | org-w3m | org-bbdb | org-bibtex | org-docview | org-gnus | org-info | org-irc | org-mhe | org-rmail | org-drill | org-drill |
+
+*** Tasks
+    #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keywords
+           '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED")))
+    #+END_SRC
+
+    #+RESULTS:
+    | sequence | TODO | STARTED |   |   | DONE | CANCELED |
+
+*** Babel
+    #+BEGIN_SRC emacs-lisp
+      (setq org-src-fontify-natively t)
+      (setq org-src-tab-acts-natively t)
+      (setq org-confirm-babel-evaluate nil)
+      (org-babel-do-load-languages
+       'org-babel-load-languages
+       '((python . t)
+         (emacs-lisp . t)
+         ;;(org . t)
+         ;;(js . t)
+         ;;(latex . t)
+         ;; (php . t)
+         ;;(dot . t)
+         ;;(shell . t)
+         ))
+    #+END_SRC
+
+*** Capture
+    #+BEGIN_SRC emacs-lisp
+     (setq org-capture-templates '(
+                                   ("p" "Plain" entry (file "")
+                                    "* %?")
+                                   ("t" "Todo" entry (file "")
+                                    "* TODO %?")
+                                   ))
+    #+END_SRC
+
+    #+RESULTS:
+    | p | Plain | entry | (file ) | * %?      |
+    | t | Todo  | entry | (file ) | * TODO %? |
+
+*** Mobile
+   #+BEGIN_SRC emacs-lisp
+;      (setq org-mobile-inbox-for-pull "~/Nextcloud/org/flagged.org")
+;      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+   #+END_SRC
+
+   #+RESULTS:
+
+*** Refile
+    #+BEGIN_SRC emacs-lisp
+      (setq org-refile-targets '((nil :maxlevel . 7)
+			       	(org-agenda-files :maxlevel . 1))
+	    org-refile-allow-creating-parent-nodes t
+	    org-outline-path-complete-in-steps nil    ; Refile in a single go
+	    org-refile-use-outline-path 'file)        ; Show full paths for refiling
+    #+END_SRC
+
+    #+RESULTS:
+    : file
+
+*** Latex
+    #+BEGIN_SRC emacs-lisp
+     (setq org-highlight-latex-and-related '(latex))
+    #+END_SRC
+
+    #+RESULTS:
+    | latex |
+
+* JSON
+#+BEGIN_SRC emacs-lisp
 ;; Example of loading & parsing some JSON
 ;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
 ;; (require 'json)
 ;; (json-read-file "~/.mappings.json")
-
-
-(use-package markdown-mode :ensure t)
 #+END_SRC
-* Environment
-  #+BEGIN_SRC emacs-lisp
-    (use-package exec-path-from-shell 
-      :ensure t
-      :config
-      (setq exec-path-from-shell-check-startup-files nil)
-      (defun source-file-and-get-envs (filename)
-	(let* ((cmd (concat ". " filename "; env"))
-	       (env-str (shell-command-to-string cmd))
-	       (env-lines (split-string env-str "\n"))
-	       (envs (mapcar (lambda (s) (replace-regexp-in-string "=.*$" "" s)) env-lines)))
-	  (delete "" envs)))
-      (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile")))
-  #+END_SRC
 * General
 ** Improved repeating
    Extend repeat to be usable in insert mode as well
@@ -250,123 +383,21 @@
            ;(set list-var elements)))
        ;(symbol-value list-var))
    #+END_SRC
-* Slack
-  #+BEGIN_SRC emacs-lisp
-  ;; (slack-register-team
-  ;;  :name ""
-  ;;  :default t
-  ;;  :client-id ""
-  ;;  :client-secret ""
-  ;;  :token ""
-  ;;  )
-  #+END_SRC
-
-* Org
-** General Vars
-   #+BEGIN_SRC emacs-lisp
-     (setq
-      org-log-into-drawer "logbook"
-      org-agenda-files (f-entries my-org (lambda (filename) (s-ends-with-p ".org" filename)) t)
-      org-directory "~/org"
-      org-modules (append org-modules '(org-drill)))
-
-   #+END_SRC
-
-   #+RESULTS:
-   | org-w3m | org-bbdb | org-bibtex | org-docview | org-gnus | org-info | org-irc | org-mhe | org-rmail | org-drill | org-drill |
-
-** Tasks
-   #+BEGIN_SRC emacs-lisp
-    (setq org-todo-keywords
-          '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED")))
-   #+END_SRC
-
-   #+RESULTS:
-   | sequence | TODO | STARTED |   |   | DONE | CANCELED |
-
-** Babel
-   #+BEGIN_SRC emacs-lisp
-     (setq org-src-fontify-natively t)
-     (setq org-src-tab-acts-natively t)
-     (setq org-confirm-babel-evaluate nil)
-     (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((python . t)
-        (emacs-lisp . t)
-        ;;(org . t)
-        ;;(js . t)
-        ;;(latex . t)
-        ;; (php . t)
-        ;;(dot . t)
-        ;;(shell . t)
-        ))
-   #+END_SRC
-
-** Capture
-   #+BEGIN_SRC emacs-lisp
-    (setq org-capture-templates '(
-                                  ("p" "Plain" entry (file "")
-                                   "* %?")
-                                  ("t" "Todo" entry (file "")
-                                   "* TODO %?")
-                                  ))
-   #+END_SRC
-
-   #+RESULTS:
-   | p | Plain | entry | (file ) | * %?      |
-   | t | Todo  | entry | (file ) | * TODO %? |
-
-** Mobile
-   #+BEGIN_SRC emacs-lisp
-;      (setq org-mobile-inbox-for-pull "~/Nextcloud/org/flagged.org")
-;      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-   #+END_SRC
-
-   #+RESULTS:
-
-** Refile
-   #+BEGIN_SRC emacs-lisp
-     (setq org-refile-targets '((nil :maxlevel . 7)
-			       (org-agenda-files :maxlevel . 1))
-	   org-refile-allow-creating-parent-nodes t
-	   org-outline-path-complete-in-steps nil    ; Refile in a single go
-	   org-refile-use-outline-path 'file)        ; Show full paths for refiling
-   #+END_SRC
-
-   #+RESULTS:
-   : file
-
-** Latex
-   #+BEGIN_SRC emacs-lisp
-    (setq org-highlight-latex-and-related '(latex))
-   #+END_SRC
-
-   #+RESULTS:
-   | latex |
-
-* OSX
-  #+BEGIN_SRC emacs-lisp
-  ;(setq ns-pop-up-frames nil)
-  ;(setq ns-use-srgb-colorspace nil)
-  ;(setq ns-pop-up-frames nil)
-  #+END_SRC
-* UI
-** Powerline
-   #+BEGIN_SRC emacs-lisp
-    (setq powerline-default-separator 'slant)
-   #+END_SRC
 * EVIL
   #+BEGIN_SRC emacs-lisp
-  (setq 
-    evil-overriding-maps nil
-    evil-intercept-maps nil)
+    (use-package evil :ensure t
+      :config
+      (evil-mode 1)
+      (setq 
+       evil-overriding-maps nil
+       evil-intercept-maps nil))
   #+END_SRC
-* matlab / octave
-  #+BEGIN_SRC emacs-lisp
-  (use-package matlab-mode :ensure t)
-  #+END_SRC
+** Evil Surround
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-surround
+       :ensure t
+       :config
+	(global-evil-surround-mode 1))
+   #+END_SRC
 
-  #+RESULTS:
-  : t
 
-  
