@@ -1,27 +1,15 @@
 
-;; OS config tools
-
-; ;; Swapping
-; (setq use-spacemacs nil)   ; or nil 
-; (when use-spacemacs
-;     (setq user-emacs-directory "~/.spacemacs.d/"))   ; defaults to ~/.emacs.d/
-; (load (expand-file-name "init.el" user-emacs-directory))
-
-
-;; Package setup (using 'use-package)
-(require 'package)
-(package-initialize)
-
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org" . "https://orgmode.org/elpa/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")))
-
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(use-package exec-path-from-shell 
+  :ensure t
+  :config
+  (setq exec-path-from-shell-check-startup-files nil)
+  (defun source-file-and-get-envs (filename)
+    (let* ((cmd (concat ". " filename "; env"))
+           (env-str (shell-command-to-string cmd))
+           (env-lines (split-string env-str "\n"))
+           (envs (mapcar (lambda (s) (replace-regexp-in-string "=.*$" "" s)) env-lines)))
+      (delete "" envs)))
+  (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile")))
 
 (setq
  my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
@@ -34,12 +22,49 @@
   (cond ((is-mac) mac)
         ((is-linux) linux)))
 
+(use-package flx :ensure t)
+
 (use-package f :ensure t)
 (use-package s :ensure t)
 (use-package a :ensure t)
 (use-package @ :ensure t)
 
-;; Key bindings!
+(require 'package)
+(package-initialize)
+
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org" . "https://orgmode.org/elpa/")
+                        ("gnu" . "https://elpa.gnu.org/packages/")
+                        ("melpa" . "https://melpa.org/packages/")
+                        ("marmalade" . "https://marmalade-repo.org/packages/")))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
+
+(setq inhibit-startup-screen t)
+
+(defun my-bell-function ())
+(setq ring-bell-function 'my-bell-function)
+(setq visible-bell nil)
+
+(set-default-font "Source Code Pro-14")
+
+(use-package darktooth-theme 
+  :ensure t 
+  :config 
+  (load-theme 'darktooth t))
+
+(use-package powerline :ensure t)
+(use-package powerline-evil :ensure t
+  :config
+  (powerline-evil-center-color-theme)
+  (setq powerline-default-separator 'slant))
+
 (use-package general :ensure t
   :config
   (general-define-key
@@ -56,22 +81,29 @@
    "b b" 'ivy-switch-buffer
    ))
 
-(use-package atomic-chrome :ensure t)
-;; Workspaces
 (use-package perspective
-  :ensure t
-  :config
-  (persp-mode t))
+    :ensure t
+    :config
+    (persp-mode t))
 
-(use-package powerline :ensure t)
-(use-package powerline-evil :ensure t
-  :config
-  (powerline-evil-center-color-theme))
+(recentf-mode)
 
-;; Shut up the bell
-(defun my-bell-function ())
-(setq ring-bell-function 'my-bell-function)
-(setq visible-bell nil)
+(use-package which-key :ensure t
+:config
+(which-key-mode 1))
+
+(use-package markdown-mode :ensure t)
+
+(use-package haskell-mode :ensure t)
+
+(use-package web-mode :ensure t
+  :config
+  (add-to-list 'auto-mode-alist (cons ".*\\.html" 'web-mode ))
+  (add-to-list 'auto-mode-alist (cons ".*\\.php$" 'web-mode )))
+
+;(use-package matlab-mode :ensure t)
+
+(show-paren-mode t)
 
 (use-package paredit
   :ensure t
@@ -85,48 +117,10 @@
                    lisp-interaction-mode-hook
                    scheme-mode-hook))
     (add-hook mode-hook #'enable-paredit-mode)))
-         
-
-
 
 (use-package evil-paredit :ensure t
   :config
   (add-hook 'emacs-lisp-mode-hook 'evil-paredit-mode))
-(use-package restclient :ensure t)
-
-;; only the evilest
-(use-package evil :ensure t
-             :config
-             (evil-mode 1))
-
-;; (use-package evil-org :ensure t)
-
-(use-package which-key :ensure t
-  :config
-  (which-key-mode 1))
-
-;; No intial start screen 
-(setq inhibit-startup-screen t)
-
-;; No bars on top
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-
-;; no GUI scroll bars
-(scroll-bar-mode 0)
-
-
-;; Set font niceness
-(set-default-font "Source Code Pro-14")
-
-(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
-
-;(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox t))
-
-;; Example of telling when in terminal (need to still figure out emacs client)
-;; https://emacs.stackexchange.com/questions/13050/different-theme-for-nw-terminal
-;; https://emacs.stackexchange.com/questions/2096/different-themes-for-terminal-and-graphical-frames-when-using-emacs-daemon
-
 
 ;; Finding / Narrowing / Completing 
 (use-package ivy :ensure t
@@ -153,9 +147,22 @@
   (("M-x" . counsel-M-x)
    ("C-x f" . counsel-find-file)))
 
-;; Fuzzy finding for emacs
-(use-package flx :ensure t)
+(use-package restclient 
+  :ensure t)
 
+;; (slack-register-team
+;;  :name ""
+;;  :default t
+;;  :client-id ""
+;;  :client-secret ""
+;;  :token ""
+;;  )
+
+;; Org niceness
+(use-package org-bullets :ensure t
+  :init (add-hook 'org-mode-hook 'org-bullets-mode))
+(use-package worf :ensure t
+  :init (add-hook 'org-mode-hook 'worf-mode))
 ;; mapping an associative list
 (defun map-alist (f alist)
     (mapcar (lambda (key-val)
@@ -184,65 +191,6 @@
      ("DOING" .  "⚐")
      ("CANCELED" .  "✘")
      ("DONE" .  "✔"))))
-
-;; Org niceness
-(use-package org-bullets :ensure t
-  :init (add-hook 'org-mode-hook 'org-bullets-mode))
-(use-package worf :ensure t
-  :init (add-hook 'org-mode-hook 'worf-mode))
-;(general )
-;~/.config/personal/dotfiles/emacs/init.el
-
-;; Example of loading & parsing some JSON
-;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
-;; (require 'json)
-;; (json-read-file "~/.mappings.json")
-
-
-(use-package markdown-mode :ensure t)
-
-(use-package exec-path-from-shell 
-  :ensure t
-  :config
-  (setq exec-path-from-shell-check-startup-files nil)
-  (defun source-file-and-get-envs (filename)
-    (let* ((cmd (concat ". " filename "; env"))
-           (env-str (shell-command-to-string cmd))
-           (env-lines (split-string env-str "\n"))
-           (envs (mapcar (lambda (s) (replace-regexp-in-string "=.*$" "" s)) env-lines)))
-      (delete "" envs)))
-  (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile")))
-
-;;    (define-key evil-insert-state-map (kbd "C-.") "hello")
-
-;;(setq yas-snippet-dirs
- ;;  '(
-  ;;   "~/.config/personal/snippets"
-   ;;))
-
-(setq backup-by-copying-when-linked t)
-
-(setq mode-require-final-newline nil)
-
-;(defun append-to-list (list-var elements)
-     ;"Append ELEMENTS to the end of LIST-VAR.
-;
-     ;The return value is the new value of LIST-VAR."
-       ;(unless (consp elements)
-         ;(error "ELEMENTS must be a list"))
-       ;(let ((list (symbol-value list-var)))
-         ;(if list
-             ;(setcdr (last list) elements)
-           ;(set list-var elements)))
-       ;(symbol-value list-var))
-
-;; (slack-register-team
-;;  :name ""
-;;  :default t
-;;  :client-id ""
-;;  :client-secret ""
-;;  :token ""
-;;  )
 
 (setq
  org-log-into-drawer "logbook"
@@ -286,14 +234,35 @@
 
 (setq org-highlight-latex-and-related '(latex))
 
-;(setq ns-pop-up-frames nil)
-;(setq ns-use-srgb-colorspace nil)
-;(setq ns-pop-up-frames nil)
+(setq org-M-RET-may-split-line '((default . nil)))
 
-(setq powerline-default-separator 'slant)
+;; Example of loading & parsing some JSON
+;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
+;; (require 'json)
+;; (json-read-file "~/.mappings.json")
 
-(setq 
-  evil-overriding-maps nil
-  evil-intercept-maps nil)
+;;    (define-key evil-insert-state-map (kbd "C-.") "hello")
 
-(use-package matlab-mode :ensure t)
+;;(setq yas-snippet-dirs
+ ;;  '(
+  ;;   "~/.config/personal/snippets"
+   ;;))
+
+(setq backup-by-copying-when-linked t)
+
+(setq mode-require-final-newline nil)
+
+(use-package evil :ensure t
+  :config
+  (evil-mode 1)
+  (setq 
+   evil-overriding-maps nil
+   evil-intercept-maps nil))
+
+(use-package evil-surround
+  :ensure t
+  :config
+   (global-evil-surround-mode 1))
+
+(if  (file-exists-p  "~/.emacs.local.org")
+    (org-babel-load-file "~/.emacs.local.org"))
