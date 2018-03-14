@@ -147,6 +147,8 @@
   (("M-x" . counsel-M-x)
    ("C-x f" . counsel-find-file)))
 
+(use-package magit :ensure t)
+
 (use-package restclient 
   :ensure t)
 
