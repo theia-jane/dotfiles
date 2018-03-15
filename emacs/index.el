@@ -1,4 +1,17 @@
 
+(require 'package)
+(package-initialize)
+
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org" . "https://orgmode.org/elpa/")
+                        ("gnu" . "https://elpa.gnu.org/packages/")
+                        ("melpa" . "https://melpa.org/packages/")
+                        ("marmalade" . "https://marmalade-repo.org/packages/")))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
 (use-package exec-path-from-shell 
   :ensure t
   :config
@@ -29,19 +42,6 @@
 (use-package a :ensure t)
 (use-package @ :ensure t)
 
-(require 'package)
-(package-initialize)
-
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org" . "https://orgmode.org/elpa/")
-                        ("gnu" . "https://elpa.gnu.org/packages/")
-                        ("melpa" . "https://melpa.org/packages/")
-                        ("marmalade" . "https://marmalade-repo.org/packages/")))
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
@@ -54,16 +54,23 @@
 
 (set-default-font "Source Code Pro-14")
 
-(use-package darktooth-theme 
-  :ensure t 
-  :config 
-  (load-theme 'darktooth t))
+(defvar keyword-lambda
+  '(("(\\(lambda\\)\\>"
+     (0 (prog1 () (compose-region
+                   (match-beginning 1)
+                   (match-end 1) ?λ))))))
+(font-lock-add-keywords 'emacs-lisp-mode keyword-lambda)
 
-(use-package powerline :ensure t)
-(use-package powerline-evil :ensure t
+;(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
+;(use-package leuven-theme :ensure t :config (load-theme 'leuven))
+(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox))
+
+(use-package spaceline 
+  :ensure t
   :config
-  (powerline-evil-center-color-theme)
-  (setq powerline-default-separator 'slant))
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  )
 
 (use-package general :ensure t
   :config
@@ -124,7 +131,7 @@
 
 ;; Finding / Narrowing / Completing 
 (use-package ivy :ensure t
-  :diminish ivy-mode
+  :diminish 'ivy-mode
   :config
   (ivy-mode 1)
   ;; clears the intial ^ when using ivy
@@ -160,27 +167,55 @@
 ;;  :token ""
 ;;  )
 
-;; Org niceness
-(use-package org-bullets :ensure t
-  :init (add-hook 'org-mode-hook 'org-bullets-mode))
-(use-package worf :ensure t
-  :init (add-hook 'org-mode-hook 'worf-mode))
+(setq
+ org-log-into-drawer "logbook"
+ org-agenda-files (f-entries my-org (lambda (filename) (s-ends-with-p ".org" filename)) t)
+ org-directory "~/org"
+ org-modules (append org-modules '(org-drill))
+ org-src-fontify-natively t
+ org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
+ org-capture-templates 
+ '(("p" "Plain" entry (file "") "* %?")
+   ("t" "Todo" entry (file "") "* TODO %?"))
+ org-refile-targets '((nil :maxlevel . 7)
+                      (org-agenda-files :maxlevel . 1))
+ org-refile-allow-creating-parent-nodes t
+ org-outline-path-complete-in-steps nil    ; Refile in a single go
+ org-refile-use-outline-path 'file         ; Show full paths for refiling
+ org-highlight-latex-and-related '(latex) 
+ org-M-RET-may-split-line '((default . nil)) ; don't split headings...
+ org-src-tab-acts-natively t
+ org-confirm-babel-evaluate nil
+ )
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (emacs-lisp . t)
+   ;;(org . t)
+   ;;(js . t)
+   ;;(latex . t)
+   ;; (php . t)
+   ;;(dot . t)
+   ;;(shell . t)
+   ))
+
 ;; mapping an associative list
 (defun map-alist (f alist)
-    (mapcar (lambda (key-val)
+  (mapcar (lambda (key-val)
             (setq key (car key-val)
-                    val (cdr key-val))
+                  val (cdr key-val))
             (funcall f key val))
-            alist))
+          alist))
 
 ;; Map keywords (TODO) to a nicer icon 
 (defun org-mode-todo-symbols (todo-alist)
   (setq org-todo-font-lock-replace
         (map-alist (lambda (keyword symbol)
-                 `(,(concat "^\\*+ \\(" keyword "\\) ") 
-                   (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
-               todo-alist))
-
+                     `(,(concat "^\\*+ \\(" keyword "\\) ") 
+                       (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
+                   todo-alist))
+  
   (font-lock-add-keywords            
    'org-mode org-todo-font-lock-replace))
 
@@ -194,49 +229,13 @@
      ("CANCELED" .  "✘")
      ("DONE" .  "✔"))))
 
-(setq
- org-log-into-drawer "logbook"
- org-agenda-files (f-entries my-org (lambda (filename) (s-ends-with-p ".org" filename)) t)
- org-directory "~/org"
- org-modules (append org-modules '(org-drill)))
+; (use-package worf :ensure t
+;   :init (add-hook 'org-mode-hook 'worf-mode))
 
-(setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED")))
+;;(use-package org-beautify-theme :ensure t)
 
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
-(setq org-confirm-babel-evaluate nil)
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (emacs-lisp . t)
-   ;;(org . t)
-   ;;(js . t)
-   ;;(latex . t)
-   ;; (php . t)
-   ;;(dot . t)
-   ;;(shell . t)
-   ))
-
-(setq org-capture-templates '(
-                              ("p" "Plain" entry (file "")
-                               "* %?")
-                              ("t" "Todo" entry (file "")
-                               "* TODO %?")
-                              ))
-
-;      (setq org-mobile-inbox-for-pull "~/Nextcloud/org/flagged.org")
-;      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-
-(setq org-refile-targets '((nil :maxlevel . 7)
-                          (org-agenda-files :maxlevel . 1))
-      org-refile-allow-creating-parent-nodes t
-      org-outline-path-complete-in-steps nil    ; Refile in a single go
-      org-refile-use-outline-path 'file)        ; Show full paths for refiling
-
-(setq org-highlight-latex-and-related '(latex))
-
-(setq org-M-RET-may-split-line '((default . nil)))
+(use-package org-bullets :ensure t
+  :init (add-hook 'org-mode-hook 'org-bullets-mode))
 
 ;; Example of loading & parsing some JSON
 ;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
@@ -266,5 +265,13 @@
   :config
    (global-evil-surround-mode 1))
 
+(use-package evil-commentary
+  :ensure t
+  :diminish 'evil-commentary-mode
+  :config
+  (evil-commentary-mode))
+
 (if  (file-exists-p  "~/.emacs.local.org")
     (org-babel-load-file "~/.emacs.local.org"))
+
+(use-package httpd :ensure t)

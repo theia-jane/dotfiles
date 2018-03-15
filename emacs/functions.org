@@ -1,0 +1,13 @@
+#+Title: Functions.
+#+Description: 
+
+
+
+* Source code 
+  #+BEGIN_SRC emacs-lisp
+    ;; Maybe optional dest?
+    (defun clone-repo-from-url (repo-url) 
+      (let* ((repo-name (car (last (s-split "/" repo-url))))
+	     (directory-dest (expand-file-name (concat "$p/" repo-name))))
+	     (magit-clone repo-url directory-dest)))
+  #+END_SRC
