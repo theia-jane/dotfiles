@@ -12,6 +12,8 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(use-package try :ensure t)
+
 (use-package exec-path-from-shell 
   :ensure t
   :config
@@ -25,6 +27,7 @@
   (exec-path-from-shell-copy-envs (source-file-and-get-envs "~/.profile")))
 
 (setq
+ my-config (expand-file-name "~/.config/personal/")
  my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
  my-org (expand-file-name "~/org/"))
 
@@ -41,52 +44,6 @@
 (use-package s :ensure t)
 (use-package a :ensure t)
 (use-package @ :ensure t)
-
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(scroll-bar-mode 0)
-
-(setq inhibit-startup-screen t)
-
-(defun my-bell-function ())
-(setq ring-bell-function 'my-bell-function)
-(setq visible-bell nil)
-
-(set-default-font "Source Code Pro-14")
-
-(defvar keyword-lambda
-  '(("(\\(lambda\\)\\>"
-     (0 (prog1 () (compose-region
-                   (match-beginning 1)
-                   (match-end 1) ?λ))))))
-(font-lock-add-keywords 'emacs-lisp-mode keyword-lambda)
-
-;(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
-;(use-package leuven-theme :ensure t :config (load-theme 'leuven))
-(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox))
-
-(use-package spaceline 
-  :ensure t
-  :config
-  (require 'spaceline-config)
-  (spaceline-spacemacs-theme)
-  )
-
-(use-package general :ensure t
-  :config
-  (general-define-key
-   :states '(normal visual insert emacs)
-   :prefix "SPC"
-   :non-normal-prefix "C-SPC"
-
-   "SPC"   'counsel-M-x
-   "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
-   "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
-   "f o f" '(lambda () (interactive) (counsel-find-file my-org))
-   "f f" 'counsel-find-file
-
-   "b b" 'ivy-switch-buffer
-   ))
 
 (use-package perspective
     :ensure t
@@ -108,6 +65,8 @@
   (add-to-list 'auto-mode-alist (cons ".*\\.html" 'web-mode ))
   (add-to-list 'auto-mode-alist (cons ".*\\.php$" 'web-mode )))
 
+(use-package python-mode :ensure t)
+
 ;(use-package matlab-mode :ensure t)
 
 (show-paren-mode t)
@@ -125,7 +84,9 @@
                    scheme-mode-hook))
     (add-hook mode-hook #'enable-paredit-mode)))
 
-(use-package evil-paredit :ensure t
+(use-package evil-paredit 
+  :ensure t
+  :after evil
   :config
   (add-hook 'emacs-lisp-mode-hook 'evil-paredit-mode))
 
@@ -154,7 +115,22 @@
   (("M-x" . counsel-M-x)
    ("C-x f" . counsel-find-file)))
 
-(use-package magit :ensure t)
+(use-package magit 
+  :after evil
+  :ensure t)
+
+(use-package evil-magit
+  :after magit
+  :ensure t)
+
+(use-package magithub
+  :demand t
+  :after magit
+  :init
+  ;; fixme this is a temporary hack; see https://github.com/vermiculus/magithub/issues/299
+  (define-error 'ghub-404 "Not Found" 'ghub-http-error)
+  :config
+  (magithub-feature-autoinject t))
 
 (use-package restclient 
   :ensure t)
@@ -188,16 +164,21 @@
  org-confirm-babel-evaluate nil
  )
 
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
    (emacs-lisp . t)
-   ;;(org . t)
-   ;;(js . t)
-   ;;(latex . t)
+   (org . t)
+   (js . t)
+   (C . t)
+   ; (rust . t)
+   (calc . t)
+   (sqlite . t)
+   (latex . t)
    ;; (php . t)
-   ;;(dot . t)
-   ;;(shell . t)
+   (dot . t)
+   (sh . t)
    ))
 
 ;; mapping an associative list
@@ -244,16 +225,13 @@
 
 ;;    (define-key evil-insert-state-map (kbd "C-.") "hello")
 
-;;(setq yas-snippet-dirs
- ;;  '(
-  ;;   "~/.config/personal/snippets"
-   ;;))
-
 (setq backup-by-copying-when-linked t)
 
 (setq mode-require-final-newline nil)
 
-(use-package evil :ensure t
+(use-package evil 
+  :ensure t
+  :init (setq evil-want-integration nil)
   :config
   (evil-mode 1)
   (setq 
@@ -262,16 +240,126 @@
 
 (use-package evil-surround
   :ensure t
+  :after evil
   :config
    (global-evil-surround-mode 1))
 
 (use-package evil-commentary
   :ensure t
+  :after evil
   :diminish 'evil-commentary-mode
   :config
   (evil-commentary-mode))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
 
 (if  (file-exists-p  "~/.emacs.local.org")
     (org-babel-load-file "~/.emacs.local.org"))
 
 (use-package httpd :ensure t)
+
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
+
+(setq inhibit-startup-screen t)
+
+(defun my-bell-function ())
+(setq ring-bell-function 'my-bell-function)
+(setq visible-bell nil)
+
+(blink-cursor-mode -1)
+
+(set-default-font "Source Code Pro-14")
+
+(defvar keyword-lambda
+  '(("(\\(lambda\\)\\>"
+     (0 (prog1 () (compose-region
+                   (match-beginning 1)
+                   (match-end 1) ?λ))))))
+(font-lock-add-keywords 'emacs-lisp-mode keyword-lambda)
+
+;(use-package darktooth-theme :ensure t :config (load-theme 'darktooth t))
+;(use-package leuven-theme :ensure t :config (load-theme 'leuven))
+(use-package gruvbox-theme :ensure t :config (load-theme 'gruvbox t))
+
+(use-package spaceline 
+  :ensure t
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme))
+
+(use-package diminish
+  :ensure t
+  :config
+  (dolist (package '(undo-tree-mode
+                     which-key-mode
+                     evil-commentary-mode
+                     ivy-mode
+                     auto-revert-mode)) 
+    (diminish package)))
+
+(use-package general :ensure t
+  :config
+  (general-define-key
+   :states '(normal visual insert emacs)
+   :prefix "SPC"
+   :non-normal-prefix "C-SPC"
+
+   "SPC"   'counsel-M-x
+   "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
+   "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
+   "f o f" '(lambda () (interactive) (counsel-find-file my-org))
+   "f f" 'counsel-find-file
+
+   "g s" 'magit-status
+   "g p" 'magit-pull
+
+   "b b" 'ivy-switch-buffer
+   "b n" 'next-buffer
+   "b p" 'previous-buffer
+   ))
+
+(defun stop-using-minibuffer ()
+  "kill the minibuffer"
+  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+    (abort-recursive-edit)))
+
+(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+
+;; make backup to a designated dir, mirroring the full path
+
+(defun my-backup-file-name (fpath)
+  "Return a new file path of a given file path.
+If the new path's directories does not exist, create them."
+  (let* ((backupRootDir "~/.emacs.d/emacs-backup/")
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path, for example, “C:”
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") ))
+         )
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath
+    )
+  )
+
+(setq make-backup-file-name-function 'my-backup-file-name)
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (setq yas-snippet-dirs
+   `(,(concat my-dotfiles "yasnippets")))
+  (yas-global-mode 1))
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
+
+(use-package auto-yasnippet :ensure t)
+
+(use-package company :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
