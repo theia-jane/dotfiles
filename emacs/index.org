@@ -268,6 +268,8 @@
         (latex . t)
         ;; (php . t)
         (dot . t)
+        (plantuml . t)
+        (sagemath . t)
         (sh . t)
         ))
    #+END_SRC
@@ -321,6 +323,10 @@
    #+BEGIN_SRC emacs-lisp
    (use-package org-bullets :ensure t
      :init (add-hook 'org-mode-hook 'org-bullets-mode))
+   #+END_SRC
+** UML
+   #+BEGIN_SRC emacs-lisp
+     (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
    #+END_SRC
 * JSON
   #+BEGIN_SRC emacs-lisp
@@ -467,9 +473,11 @@
                             which-key-mode
                             evil-commentary-mode
                             ivy-mode
-                            auto-revert-mode)) 
+                            auto-revert-mode
+                            company-mode
+                            yas-minor-mode
+                            isearch-mode)) 
            (diminish package)))
-
      #+END_SRC
 ** Keybindings
    #+BEGIN_SRC emacs-lisp
@@ -539,9 +547,6 @@
 
   #+END_SRC
 
-  #+RESULTS:
-  : t
-
 ** bundled snippets
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet-snippets
@@ -550,8 +555,25 @@
              
    #+END_SRC
 ** auto yasnippet 
+   On the fly snippets.
    #+BEGIN_SRC emacs-lisp
-     (use-package auto-yasnippet :ensure t)
+     (use-package auto-yasnippet 
+        :ensure t
+        :config 
+        (general-define-key
+         :states '(normal visual insert emacs)
+         :prefix "SPC"
+         :non-normal-prefix "C-SPC"
+
+         ;; Create snippet
+         "c s" 'aya-create
+
+         ;; Insert snippet
+         "i s" 'aya-expand
+
+         ;; Maybe a key binding for persisting snippets?
+         ;; aya-persist-snippet
+         ))
    #+END_SRC
 
 * Company
@@ -563,4 +585,24 @@
 
   #+END_SRC
 
+* Dired
+Start dired with details hidden
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+#+END_SRC
+* Sagemath
+  #+BEGIN_SRC emacs-lisp
+    (use-package sage-shell-mode :ensure t)
+  #+END_SRC
+  
+  #+BEGIN_SRC emacs-lisp
+    (use-package ob-sagemath :ensure t) 
+  #+END_SRC
 
+
+  
+* Algorithms
+  #+BEGIN_SRC emacs-lisp
+  (defun tw-algorithms () (interactive)
+    (counsel-find-file "~/Nextcloud/Documents/algorithms"))
+  #+END_SRC
