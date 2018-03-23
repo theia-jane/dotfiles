@@ -159,31 +159,32 @@
    #+END_SRC
 * Ivy / Counsel
   #+BEGIN_SRC emacs-lisp
-;; Finding / Narrowing / Completing 
-(use-package ivy :ensure t
-  :diminish 'ivy-mode
-  :config
-  (ivy-mode 1)
-  ;; clears the intial ^ when using ivy
-  (setq ivy-initial-inputs-alist nil
-	ivy-re-builders-alist
-	 '((ivy-switch-buffer . ivy--regex-plus)
-	   (t . ivy--regex-fuzzy)))
-  :bind*
-  (("C-x b" . ivy-switch-buffer)
-   ("C-x C-b" . ivy-switch-buffer))
-  :bind (:map ivy-minibuffer-map
-	      ("C-n" . ivy-next-history-element)
-	      ("C-p" . ivy-previous-history-element)
-	      ("C-k" . ivy-previous-line)
-	      ("C-j" . ivy-next-line)
-	      ))
+    ;; Finding / Narrowing / Completing 
+    (use-package ivy :ensure t
+      :diminish 'ivy-mode
+      :config
+      (ivy-mode 1)
+      ;; clears the intial ^ when using ivy
+      (setq ivy-initial-inputs-alist nil
+            ivy-re-builders-alist
+             '((ivy-switch-buffer . ivy--regex-plus)
+               (t . ivy--regex-fuzzy)))
+      :bind*
+      (("C-x b" . ivy-switch-buffer)
+       ("C-x C-b" . ivy-switch-buffer))
+      :bind (:map ivy-minibuffer-map
+                  ("C-n" . ivy-next-history-element)
+                  ("C-p" . ivy-previous-history-element)
+                  ("C-k" . ivy-previous-line)
+                  ("C-j" . ivy-next-line)
+                  ))
 
-(use-package counsel :ensure t
-  :bind
-  (("M-x" . counsel-M-x)
-   ("C-x f" . counsel-find-file)))
-  
+    (use-package counsel :ensure t
+      :bind
+      (("M-x" . counsel-M-x)
+       ("C-x f" . counsel-find-file)))
+
+    (use-package swiper :ensure t)
   #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
@@ -204,7 +205,7 @@
    Needs some work to hook this up to enterprise github, see [[https://www.reddit.com/r/emacs/comments/6b6xu0/magithub_is_now_hubindependent_important/][link]]
    #+BEGIN_SRC emacs-lisp
      (use-package magithub
-       :demand t
+       :ensure t
        :after magit
        :init
        ;; fixme this is a temporary hack; see https://github.com/vermiculus/magithub/issues/299
@@ -273,7 +274,9 @@
         (sh . t)
         ))
    #+END_SRC
-
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-sagemath :ensure t)
+#+END_SRC
    #+RESULTS:
 
 ** Initial
@@ -483,6 +486,17 @@
    #+BEGIN_SRC emacs-lisp
      (use-package general :ensure t
        :config
+       (setq leader-modemap-list
+             '(dired-mode-map))
+; [[https://emacs.stackexchange.com/questions/38319/unable-to-bind-spc-as-a-prefix-in-general-evil-mode]]
+       (general-def
+         :states '(normal motion operator visual)
+	 :keymaps leader-modemap-list 
+         "SPC" nil)
+       (general-def
+         :states '(insert normal motion operator visual emacs)
+	 :keymaps leader-modemap-list 
+         "C-SPC" nil)
        (general-define-key
         :states '(normal visual insert emacs)
         :prefix "SPC"
@@ -493,15 +507,25 @@
         "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
         "f o f" '(lambda () (interactive) (counsel-find-file my-org))
         "f f" 'counsel-find-file
+        "f s" 'save-buffer
 
-        "g s" 'magit-status
-        "g p" 'magit-pull
+        "p v s" 'magit-status
+        "p v p" 'magit-pull
+        "p f" 'counsel-git
 
         "b b" 'ivy-switch-buffer
         "b n" 'next-buffer
         "b p" 'previous-buffer
+
+        "s b" 'swiper
+        "s p" 'counsel-ag
         ))
+
    #+END_SRC
+
+   #+RESULTS:
+   : t
+
 ** Mini-buffer annoyance
    #+BEGIN_SRC emacs-lisp
      (defun stop-using-minibuffer ()
@@ -540,6 +564,7 @@
   #+BEGIN_SRC emacs-lisp
     (use-package yasnippet
       :ensure t
+      :diminish yas-minor-mode
       :config
       (setq yas-snippet-dirs
        `(,(concat my-dotfiles "yasnippets")))
@@ -599,10 +624,12 @@ Start dired with details hidden
     (use-package ob-sagemath :ensure t) 
   #+END_SRC
 
-
-  
 * Algorithms
   #+BEGIN_SRC emacs-lisp
   (defun tw-algorithms () (interactive)
     (counsel-find-file "~/Nextcloud/Documents/algorithms"))
+  #+END_SRC
+* Projectile
+  #+BEGIN_SRC emacs-lisp
+    (use-package projectile :ensure t)
   #+END_SRC
