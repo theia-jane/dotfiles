@@ -33,7 +33,8 @@
   #+END_SRC
 ** Try
    #+BEGIN_SRC emacs-lisp
-   (use-package try :ensure t)
+     (use-package try 
+       :ensure t)
    #+END_SRC
 * Environment
 ** From Shell
@@ -338,7 +339,7 @@
 ;; (require 'json)
 ;; (json-read-file "~/.mappings.json")
   #+END_SRC
-* General
+* general key
 ** Improved repeating
    Extend repeat to be usable in insert mode as well
    #+BEGIN_SRC emacs-lisp
@@ -353,7 +354,7 @@
    (setq mode-require-final-newline nil)
    #+END_SRC
    
-* EVIL
+* evil
   #+BEGIN_SRC emacs-lisp
     (use-package evil 
       :ensure t
@@ -392,12 +393,16 @@
         
    #+END_SRC
 * Local Hook
+  Sometimes I want to have a set of machine specific configuration. 
+  For example, on a work machine. I don't want work specific settings or
+  functions to be here. One, it is for purity (this repo is for what /I/ like).
+  Two, work things are of a confidential nature and aren't open for the public 
+  to see. 
+
   #+BEGIN_SRC emacs-lisp
     (if  (file-exists-p  "~/.emacs.local.org")
 	(org-babel-load-file "~/.emacs.local.org"))
   #+END_SRC
-  
-  #+RESULTS:
 * httpd
   #+BEGIN_SRC emacs-lisp
   (use-package httpd :ensure t)
@@ -516,11 +521,11 @@
         "b b" 'ivy-switch-buffer
         "b n" 'next-buffer
         "b p" 'previous-buffer
+        "b d" 'kill-this-buffer
 
         "s b" 'swiper
         "s p" 'counsel-ag
         ))
-
    #+END_SRC
 
    #+RESULTS:
@@ -559,7 +564,12 @@
 
    #+RESULTS:
    : my-backup-file-name
-
+** Simpler confirmation
+   I don't like dealing with the 'yes' or 'no' dialogs. Too much typing.
+   #+BEGIN_SRC emacs-lisp
+     (fset 'yes-or-no-p 'y-or-n-p)
+   #+END_SRC
+   Ah, 'y' or 'n'. I save myself 1.5 keys on average!
 * yasnippet
   #+BEGIN_SRC emacs-lisp
     (use-package yasnippet
@@ -633,3 +643,4 @@ Start dired with details hidden
   #+BEGIN_SRC emacs-lisp
     (use-package projectile :ensure t)
   #+END_SRC
+  
