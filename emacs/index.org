@@ -641,6 +641,10 @@ Start dired with details hidden
   #+END_SRC
 * Projectile
   #+BEGIN_SRC emacs-lisp
-    (use-package projectile :ensure t)
+    (use-package projectile 
+      :ensure t
+      :config
+      (projectile-global-mode)
+      (setq projectile-completion-system 'ivy))
   #+END_SRC
   
