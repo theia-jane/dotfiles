@@ -13,3 +13,5 @@
 	default = simple
 [credential]
 	helper = gnome-keyring
+[github]
+	user = waretyler

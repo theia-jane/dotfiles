@@ -1,0 +1,49 @@
+#+TITLE: Bootstrap
+
+This helps support switching between different configurations.
+There are some very interesting configuration distributions or
+even just other's dotfiles that I'd like to try or 
+get some inspiration from.
+
+* Config variants
+  #+BEGIN_SRC emacs-lisp
+    (setq config-init-alist
+          '((personal . init-personal)
+            (spacemacs . init-spacemacs)
+            (doom . init-doom)))
+  #+END_SRC
+** Personal 
+    #+BEGIN_SRC emacs-lisp
+    (defun init-personal ()
+	(org-babel-load-file "~/.config/personal/dotfiles/emacs/index.org"))
+    #+END_SRC
+
+* Config name 
+  Set =config-name= to whatever is in our =config-flag-file=
+  if there is nothing there, then just use personal.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq config-flag-file "/tmp/use-emacs-config"
+          config-name (if (file-exists-p config-flag-file)
+                          (with-temp-buffer
+                             (insert-file-contents config-flag-file)
+                             (buffer-string))
+                        (progn
+                          (message "No config-flag-file found. Continuing with personal")
+                          'personal)))
+
+
+  #+END_SRC
+
+* Init 
+  Attempts to get the function for our =config-name=. If an init
+  function exists, call it. Otherwise, we call =#'init-personal=
+  #+BEGIN_SRC emacs-lisp
+    (setq config-init-func (alist-get config-name config-init-alist))
+
+    (if config-init-func 
+        (funcall config-init-func)
+        (progn 
+            (message "No config-init-func found. Using init-personal")
+            (init-personal)))
+  #+END_SRC

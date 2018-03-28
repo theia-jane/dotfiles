@@ -1,3 +1,0 @@
-edit mode sync
-edit home .
-edit editor 'nvim > /dev/tty 2>&1 < /dev/tty %s'

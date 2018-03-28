@@ -125,6 +125,7 @@
 ** matlab / octave
    #+BEGIN_SRC emacs-lisp
    ;(use-package matlab-mode :ensure t)
+;   (use-package ob-
    #+END_SRC
 * Parenthesis 
 ** See matching parenthesis 
@@ -266,6 +267,7 @@
         (C . t)
         ; (rust . t)
         (calc . t)
+        (octave . t)
         (sqlite . t)
         (latex . t)
         ;; (php . t)
@@ -519,6 +521,7 @@
         "p f" 'counsel-git
 
         "b b" 'ivy-switch-buffer
+        "b d" 'kill-this-buffer
         "b n" 'next-buffer
         "b p" 'previous-buffer
         "b d" 'kill-this-buffer
