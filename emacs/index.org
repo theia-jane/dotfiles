@@ -490,48 +490,50 @@
      #+END_SRC
 ** Keybindings
    #+BEGIN_SRC emacs-lisp
-     (use-package general :ensure t
-       :config
-       (setq leader-modemap-list
-             '(dired-mode-map))
-; [[https://emacs.stackexchange.com/questions/38319/unable-to-bind-spc-as-a-prefix-in-general-evil-mode]]
-       (general-def
-         :states '(normal motion operator visual)
-	 :keymaps leader-modemap-list 
-         "SPC" nil)
-       (general-def
-         :states '(insert normal motion operator visual emacs)
-	 :keymaps leader-modemap-list 
-         "C-SPC" nil)
-       (general-define-key
-        :states '(normal visual insert emacs)
-        :prefix "SPC"
-        :non-normal-prefix "C-SPC"
+          (use-package general :ensure t
+            :config
+            (setq leader-modemap-list
+                  '(dired-mode-map))
+     ; [[https://emacs.stackexchange.com/questions/38319/unable-to-bind-spc-as-a-prefix-in-general-evil-mode]]
+            (general-def
+              :states '(normal motion operator visual)
+              :keymaps leader-modemap-list 
+              "SPC" nil)
+            (general-def
+              :states '(insert normal motion operator visual emacs)
+              :keymaps leader-modemap-list 
+              "C-SPC" nil)
+            (general-define-key
+             :states '(normal visual insert emacs)
+             :prefix "SPC"
+             :non-normal-prefix "C-SPC"
 
-        "SPC"   'counsel-M-x
-        "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
-        "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
-        "f o f" '(lambda () (interactive) (counsel-find-file my-org))
-        "f f" 'counsel-find-file
-        "f s" 'save-buffer
+             "SPC"   'counsel-M-x
+             "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
+             "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
+             "f o f" '(lambda () (interactive) (counsel-find-file my-org))
+             "f f" 'counsel-find-file
+             "f s" 'save-buffer
 
-        "p v s" 'magit-status
-        "p v p" 'magit-pull
-        "p f" 'counsel-git
+             "p v s" 'magit-status
+             "p v p" 'magit-pull
+             "p f" 'counsel-git
 
-        "b b" 'ivy-switch-buffer
-        "b d" 'kill-this-buffer
-        "b n" 'next-buffer
-        "b p" 'previous-buffer
-        "b d" 'kill-this-buffer
+             "b b" 'ivy-switch-buffer
+             "b d" 'kill-this-buffer
+             "b n" 'next-buffer
+             "b p" 'previous-buffer
+             "b d" 'kill-this-buffer
 
-        "s b" 'swiper
-        "s p" 'counsel-ag
-        ))
+             "s s" 'swiper
+             "s p" 'counsel-ag
+
+             "h f" 'describe-function
+             "h k" 'which-key-show-top-level
+             "h K" 'describe-key
+             "h v" 'describe-variable
+             ))
    #+END_SRC
-
-   #+RESULTS:
-   : t
 
 ** Mini-buffer annoyance
    #+BEGIN_SRC emacs-lisp
