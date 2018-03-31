@@ -39,7 +39,7 @@
 * Environment
 ** From Shell
    #+BEGIN_SRC emacs-lisp
-    (use-package exec-path-from-shell 
+    (use-package exec-path-from-shell
       :ensure t
       :config
       (setq exec-path-from-shell-check-startup-files nil)
@@ -67,7 +67,6 @@
        (cond ((is-mac) mac)
 	     ((is-linux) linux)))
    #+END_SRC
-   
 * Utilities
 ** Fuzzy finding
    Fuzzy finding for emacs
@@ -233,6 +232,13 @@
   ;;  )
   #+END_SRC
   
+* JSON
+  #+BEGIN_SRC emacs-lisp
+;; Example of loading & parsing some JSON
+;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
+;; (require 'json)
+;; (json-read-file "~/.mappings.json")
+  #+END_SRC
 * Org
 ** General Vars
    #+BEGIN_SRC emacs-lisp
@@ -243,7 +249,7 @@
       org-modules (append org-modules '(org-drill))
       org-src-fontify-natively t
       org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
-      org-capture-templates 
+      org-capture-templates
       '(("p" "Plain" entry (file "") "* %?")
         ("t" "Todo" entry (file "") "* TODO %?"))
       org-refile-targets '((nil :maxlevel . 7)
@@ -251,7 +257,7 @@
       org-refile-allow-creating-parent-nodes t
       org-outline-path-complete-in-steps nil    ; Refile in a single go
       org-refile-use-outline-path 'file         ; Show full paths for refiling
-      org-highlight-latex-and-related '(latex) 
+      org-highlight-latex-and-related '(latex)
       org-M-RET-may-split-line '((default . nil)) ; don't split headings...
       org-src-tab-acts-natively t
       org-confirm-babel-evaluate nil
@@ -273,12 +279,12 @@
         ;; (php . t)
         (dot . t)
         (plantuml . t)
-        (sagemath . t)
+        ;(sagemath . t)
         (sh . t)
         ))
    #+END_SRC
 #+BEGIN_SRC emacs-lisp
-  (use-package ob-sagemath :ensure t)
+  ;(use-package ob-sagemath :ensure t)
 #+END_SRC
    #+RESULTS:
 
@@ -292,15 +298,15 @@
 		 (funcall f key val))
 	       alist))
 
-     ;; Map keywords (TODO) to a nicer icon 
+     ;; Map keywords (TODO) to a nicer icon
      (defun org-mode-todo-symbols (todo-alist)
        (setq org-todo-font-lock-replace
 	     (map-alist (lambda (keyword symbol)
-			  `(,(concat "^\\*+ \\(" keyword "\\) ") 
+			  `(,(concat "^\\*+ \\(" keyword "\\) ")
 			    (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
 			todo-alist))
-       
-       (font-lock-add-keywords            
+
+       (font-lock-add-keywords
 	'org-mode org-todo-font-lock-replace))
 
 
@@ -314,7 +320,7 @@
 	  ("DONE" .  "✔"))))
 
    #+END_SRC
-   
+
 ** Worf
    #+BEGIN_SRC emacs-lisp
     ; (use-package worf :ensure t
@@ -322,7 +328,7 @@
    #+END_SRC
 ** Nicer title
    #+BEGIN_SRC emacs-lisp
-    ;;(use-package org-beautify-theme :ensure t) 
+    ;;(use-package org-beautify-theme :ensure t)
    #+END_SRC
 ** Bullets
    Pretty Bullets
@@ -334,13 +340,6 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
    #+END_SRC
-* JSON
-  #+BEGIN_SRC emacs-lisp
-;; Example of loading & parsing some JSON
-;; https://emacs.stackexchange.com/questions/27407/accessing-json-data-in-elisp
-;; (require 'json)
-;; (json-read-file "~/.mappings.json")
-  #+END_SRC
 * general key
 ** Improved repeating
    Extend repeat to be usable in insert mode as well
