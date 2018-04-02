@@ -13,7 +13,6 @@
   wonderfully simple
   #+BEGIN_SRC emacs-lisp
 	(require 'package)
-	(package-initialize)
   #+END_SRC
   
   Add package repositories using https.
@@ -24,6 +23,10 @@
 				("melpa" . "https://melpa.org/packages/")
 				("marmalade" . "https://marmalade-repo.org/packages/")))
   #+END_SRC
+  
+#+BEGIN_SRC emacs-lisp
+	(package-initialize)
+#+END_SRC
   
   Make sure =use-package= is installed
   #+BEGIN_SRC emacs-lisp
@@ -36,6 +39,16 @@
      (use-package try 
        :ensure t)
    #+END_SRC
+** QUELPA
+#+BEGIN_SRC emacs-lisp
+  (use-package quelpa
+    :ensure t)
+
+  (use-package quelpa-use-package
+    :ensure t
+    :after quelpa)
+#+END_SRC
+
 * Environment
 ** From Shell
    #+BEGIN_SRC emacs-lisp
@@ -97,7 +110,8 @@
    (use-package which-key :ensure t
    :config
    (which-key-mode 1))
-  #+END_SRC
+   #+END_SRC
+** TODO Which key search 
 * Basic File Modes
 ** Markdown
    #+BEGIN_SRC emacs-lisp
@@ -215,6 +229,9 @@
        (magithub-feature-autoinject t))
    #+END_SRC
 
+   #+RESULTS:
+   : t
+
 * Restclient
   #+BEGIN_SRC emacs-lisp
       (use-package restclient 
@@ -293,32 +310,31 @@
      ;; mapping an associative list
      (defun map-alist (f alist)
        (mapcar (lambda (key-val)
-		 (setq key (car key-val)
-		       val (cdr key-val))
-		 (funcall f key val))
-	       alist))
+                 (setq key (car key-val)
+                       val (cdr key-val))
+                 (funcall f key val))
+               alist))
 
      ;; Map keywords (TODO) to a nicer icon
      (defun org-mode-todo-symbols (todo-alist)
        (setq org-todo-font-lock-replace
-	     (map-alist (lambda (keyword symbol)
-			  `(,(concat "^\\*+ \\(" keyword "\\) ")
-			    (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
-			todo-alist))
+             (map-alist (lambda (keyword symbol)
+                          `(,(concat "^\\*+ \\(" keyword "\\) ")
+                            (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
+                        todo-alist))
 
        (font-lock-add-keywords
-	'org-mode org-todo-font-lock-replace))
+        'org-mode org-todo-font-lock-replace))
 
 
      (use-package org
-       :ensure t
+       :ensure t 
        :config
        (org-mode-todo-symbols
-	'(("TODO" . "⚑")
-	  ("DOING" .  "⚐")
-	  ("CANCELED" .  "✘")
-	  ("DONE" .  "✔"))))
-
+        '(("TODO" . "⚑")
+          ("STARTED" .  "⚐")
+          ("CANCELED" .  "✘")
+          ("DONE" .  "✔"))))
    #+END_SRC
 
 ** Worf
@@ -334,12 +350,28 @@
    Pretty Bullets
    #+BEGIN_SRC emacs-lisp
    (use-package org-bullets :ensure t
-     :init (add-hook 'org-mode-hook 'org-bullets-mode))
+     :init 
+       (add-hook 'org-mode-hook 'org-bullets-mode)
+    )
    #+END_SRC
 ** UML
    #+BEGIN_SRC emacs-lisp
      (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
    #+END_SRC
+** Archive done 
+   #+BEGIN_SRC emacs-lisp
+     (defun org-archive-done ()
+       (interactive)
+       (org-map-entries 'org-archive-subtree "/DONE" 'file))
+   #+END_SRC
+** Org Wiki
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package org-wiki
+  ;;   :quelpa (org-wiki :fetcher github :repo "caiorss/org-wiki")
+  ;;   :after org
+  ;;   ;:init (define-error 'org-define-error "Org define error")
+  ;;   )
+#+END_SRC
 * general key
 ** Improved repeating
    Extend repeat to be usable in insert mode as well
@@ -652,3 +684,8 @@ Start dired with details hidden
       (setq projectile-completion-system 'ivy))
   #+END_SRC
   
+* Blog
+#+BEGIN_SRC emacs-lisp
+  (use-package easy-hugo
+    :ensure t)
+#+END_SRC
