@@ -39,16 +39,6 @@
      (use-package try 
        :ensure t)
    #+END_SRC
-** QUELPA
-#+BEGIN_SRC emacs-lisp
-  (use-package quelpa
-    :ensure t)
-
-  (use-package quelpa-use-package
-    :ensure t
-    :after quelpa)
-#+END_SRC
-
 * Environment
 ** From Shell
    #+BEGIN_SRC emacs-lisp
@@ -96,10 +86,10 @@
    #+END_SRC
 * Workspaces
   #+BEGIN_SRC emacs-lisp
-    (use-package perspective
-	:ensure t
-	:config
-	(persp-mode t))
+    ;; (use-package perspective
+    ;;     :ensure t
+    ;;     :config
+    ;;     (persp-mode t))
   #+END_SRC
 * Recent Files
   #+BEGIN_SRC emacs-lisp
@@ -297,7 +287,7 @@
         (dot . t)
         (plantuml . t)
         ;(sagemath . t)
-        (sh . t)
+        ;(sh . t)
         ))
    #+END_SRC
 #+BEGIN_SRC emacs-lisp
@@ -364,14 +354,6 @@
        (interactive)
        (org-map-entries 'org-archive-subtree "/DONE" 'file))
    #+END_SRC
-** Org Wiki
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package org-wiki
-  ;;   :quelpa (org-wiki :fetcher github :repo "caiorss/org-wiki")
-  ;;   :after org
-  ;;   ;:init (define-error 'org-define-error "Org define error")
-  ;;   )
-#+END_SRC
 * general key
 ** Improved repeating
    Extend repeat to be usable in insert mode as well
@@ -689,3 +671,25 @@ Start dired with details hidden
   (use-package easy-hugo
     :ensure t)
 #+END_SRC
+
+* org-wiki ( and helm :/ )
+  #+BEGIN_SRC emacs-lisp
+    (defun init-org-wiki ()
+      (unless (package-installed-p 'org-wiki)
+	(let* ((package-base (expand-file-name "~/.emacs.d/packages"))
+	      (org-wiki-path (concat package-base "/org-wiki")))
+	  (make-directory package-base t)
+	  (shell-command
+	   (concat
+	    "git clone https://github.com/caiorss/org-wiki "
+	    org-wiki-path))
+	  (package-install-file (concat org-wiki-path "/org-wiki.el"))
+	  (make-directory (expand-file-name "~/org/wiki") t)))
+      (require 'org-wiki))
+  #+END_SRC
+  
+  #+BEGIN_SRC emacs-lisp
+    (use-package helm :ensure t
+      :config
+      (init-org-wiki))
+  #+END_SRC
