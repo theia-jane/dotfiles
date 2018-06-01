@@ -59,7 +59,8 @@
      (setq
       my-config (expand-file-name "~/.config/personal/")
       my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
-      my-org (expand-file-name "~/org/"))
+      org-root (expand-file-name "~/org/")
+      my-org (expand-file-name  "~/org/"))
    #+END_SRC
 ** System Detection
    #+BEGIN_SRC emacs-lisp
@@ -227,6 +228,10 @@
       (use-package restclient 
 	:ensure t)
   #+END_SRC
+** org-mode integration
+   #+BEGIN_SRC emacs-lisp
+     (use-package ob-restclient :ensure t)
+   #+END_SRC
   
 * Slack
   #+BEGIN_SRC emacs-lisp
@@ -258,9 +263,9 @@
       org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
       org-capture-templates
       '(("p" "Plain" entry (file "") "* %?")
-        ("t" "Todo" entry (file "") "* TODO %?"))
+	("t" "Todo" entry (file "") "* TODO %?"))
       org-refile-targets '((nil :maxlevel . 7)
-                           (org-agenda-files :maxlevel . 1))
+			   (org-agenda-files :maxlevel . 1))
       org-refile-allow-creating-parent-nodes t
       org-outline-path-complete-in-steps nil    ; Refile in a single go
       org-refile-use-outline-path 'file         ; Show full paths for refiling
@@ -274,21 +279,22 @@
      (org-babel-do-load-languages
       'org-babel-load-languages
       '((python . t)
-        (emacs-lisp . t)
-        (org . t)
-        (js . t)
-        (C . t)
-        ; (rust . t)
-        (calc . t)
-        (octave . t)
-        (sqlite . t)
-        (latex . t)
-        ;; (php . t)
-        (dot . t)
-        (plantuml . t)
-        ;(sagemath . t)
-        ;(sh . t)
-        ))
+	(emacs-lisp . t)
+	(org . t)
+	(js . t)
+	(C . t)
+	; (rust . t)
+	(calc . t)
+	(octave . t)
+	(sqlite . t)
+	(latex . t)
+	;(php . t)
+	(dot . t)
+	(plantuml . t)
+	(restclient . t)
+	;(sagemath . t)
+	;(sh . t)
+	))
    #+END_SRC
 #+BEGIN_SRC emacs-lisp
   ;(use-package ob-sagemath :ensure t)
@@ -352,7 +358,26 @@
    #+BEGIN_SRC emacs-lisp
      (defun org-archive-done ()
        (interactive)
-       (org-map-entries 'org-archive-subtree "/DONE" 'file))
+	(org-map-entries (lambda () 
+			    (org-archive-subtree) 
+			    (setq org-map-continue-from (outline-previous-heading))
+			    (if (org-before-first-heading-p) (setq org-map-continue-from (outline-next-heading))))
+	    "/DONE" 'file))
+   #+END_SRC
+** Checklist 
+   #+BEGIN_SRC emacs-lisp
+     (defun org-uncheck-all ()
+       (interactive)
+       (save-excursion
+	 (goto-line 1)
+	; TODO: Might be a more formal way to do this?
+	; https://emacs.stackexchange.com/questions/12135/replace-string-in-buffer-programatically
+	 (while (re-search-forward "\\\[X\\\]" nil t)
+	   (replace-match "[ ]" nil t))))
+   #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     ;; usuable interface
+     (setq org-html-checkbox-type 'html)
    #+END_SRC
 * general key
 ** Improved repeating
@@ -479,11 +504,17 @@
 **** Spaceline
      #+BEGIN_SRC emacs-lisp
        (use-package spaceline 
-         :ensure t
-         :config
-         (require 'spaceline-config)
-         (spaceline-spacemacs-theme))         
+	 :ensure t
+	 :init
+	 (setq powerline-default-separator 'wave)
+	 :config
+	 (require 'spaceline-config)
+	 (spaceline-spacemacs-theme)
+	 (spaceline-toggle-minor-modes-off))         
      #+END_SRC
+
+     #+RESULTS:
+
 **** Hide minor modes 
      I don't like seeing all the minor modes. It doesn't add
      much for me. There might be some that I like to have, but
@@ -525,7 +556,7 @@
              "SPC"   'counsel-M-x
              "f d e" '(lambda () (interactive) (find-file (concat my-dotfiles "emacs/index.org")))
              "f d f" '(lambda () (interactive) (counsel-find-file my-dotfiles))
-             "f o f" '(lambda () (interactive) (counsel-find-file my-org))
+             "f o f" '(lambda () (interactive) (counsel-find-file org-root))
              "f f" 'counsel-find-file
              "f s" 'save-buffer
 
@@ -692,4 +723,22 @@ Start dired with details hidden
     (use-package helm :ensure t
       :config
       (init-org-wiki))
+  #+END_SRC
+* Cold folding
+#+BEGIN_SRC emacs-lisp
+  (use-package origami :ensure t
+  :config
+  (global-origami-mode 1))
+
+#+END_SRC
+
+* Checklists
+  #+BEGIN_SRC emacs-lisp
+    (defun my-morning-checklist () (interactive)
+	   (find-file (expand-file-name (concat my-org "/checklist/morning.org")))
+	   (org-uncheck-all)) 
+
+    (defun my-evening-checklist () (interactive)
+	   (find-file (expand-file-name (concat my-org "/checklist/evening.org")))
+	   (org-uncheck-all)) 
   #+END_SRC
