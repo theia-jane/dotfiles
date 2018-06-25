@@ -381,23 +381,23 @@
    #+END_SRC
 ** Hline
    #+BEGIN_SRC emacs-lisp
-    (defun tw-org-new-hline ()
-      (interactive)
-      (setq
-       total-length 50
-       title (format "* ^ For %s" (read-string "Event: "))
-       title-length (length title)
-       padded-title (if (> title-length total-length)
-			title
-		      (concat title (make-string (- total-length title-length) ?-))
-			))
-      (save-excursion
-	(move-end-of-line 1)
-	(end-of-line)
-	(newline t)
-	(insert padded-title))
-      )
-   
+     (defun tw-org-new-hline ()
+       (interactive)
+       (setq
+	total-length 50
+	title (format "* ^ For %s " (read-string "Event: "))
+	title-length (length title)
+	padded-title (if (> title-length total-length)
+			 title
+		       (concat title (make-string (- total-length title-length) ?-))
+			 ))
+       (save-excursion
+	 (move-end-of-line 1)
+	 (end-of-line)
+	 (newline t)
+	 (insert padded-title))
+       )
+
    #+END_SRC
 * general key
 ** Improved repeating
