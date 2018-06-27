@@ -1,2 +1,3 @@
 emacs/index.el
 /emacs/bootstrap.el
+node_tools/node_modules
