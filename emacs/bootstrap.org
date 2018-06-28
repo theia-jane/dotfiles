@@ -95,7 +95,7 @@ it up.
   We need to setup a new emacs.d
   #+BEGIN_SRC emacs-lisp
     (defun config-setup (config-name config-dir)
-      (make-directory config-dir)
+      (make-directory config-dir t)
       ;; If we have a repo path, then pull down the repo
       (setq repo-path (alist-get (intern config-name) config-repo-alist))
       (if repo-path 
@@ -112,7 +112,7 @@ it up.
 * Switch emacs.d 
   #+BEGIN_SRC emacs-lisp
     (defun get-config-dir (config-name)
-      (concat "/home/tware/.config/personal/emacsds/" config-name)) 
+      (concat "~/tware/.config/personal/emacsds/" config-name)) 
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
