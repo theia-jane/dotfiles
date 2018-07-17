@@ -112,7 +112,7 @@ it up.
 * Switch emacs.d 
   #+BEGIN_SRC emacs-lisp
     (defun get-config-dir (config-name)
-      (concat "~/tware/.config/personal/emacsds/" config-name)) 
+      (concat (expand-file-name "~/.config/personal/emacsds/") config-name)) 
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
