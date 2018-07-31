@@ -26,12 +26,13 @@
   
 #+BEGIN_SRC emacs-lisp
 	(package-initialize)
+	(unless package-archive-contents
+	 (package-refresh-contents))
 #+END_SRC
   
   Make sure =use-package= is installed
   #+BEGIN_SRC emacs-lisp
       (unless (package-installed-p 'use-package)
-	(package-refresh-contents)
 	(package-install 'use-package))
   #+END_SRC
 ** Try
