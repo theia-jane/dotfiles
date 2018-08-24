@@ -6,6 +6,7 @@
 	gst = !cd ~ && ls
 	a = add
 	apply = apply --ignore-whitespace
+	stp = !git stash list | grep -ohE '^[^:]*' | fzf --preview 'git show --color {}' --preview-window=right:80% | xargs -r git stash pop
 [user]
 	name = Tyler Ware
 	email = tyler.ware.777@gmail.com
