@@ -73,7 +73,7 @@ it up.
             (buffer-string))
         (progn
           (message "No config-flag-file found. Continuing with personal")
-          "personal")))
+          "spacemacs")))
   #+END_SRC
 
 * Valid config
