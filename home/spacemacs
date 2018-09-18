@@ -318,8 +318,18 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (org-babel-load-file "~/Nextcloud/org/user-config.org")
-  )
+
+  (setq
+   my-config (expand-file-name "~/.config/personal/")
+   my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
+   org-root (expand-file-name "~/org")
+   my-org (expand-file-name  "~/org"))
+
+  (spacemacs/declare-prefix "o" "own-menu")
+  (spacemacs/set-leader-keys "oof" '(lambda () (interactive) (counsel-find-file org-root)))
+  (spacemacs/set-leader-keys "odf" '(lambda () (interactive) (counsel-find-file my-dotfiles)))
+
+   )
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
