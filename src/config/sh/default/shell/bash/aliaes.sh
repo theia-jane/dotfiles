@@ -1,0 +1,1 @@
+alias .so=". ~/.bashrc"

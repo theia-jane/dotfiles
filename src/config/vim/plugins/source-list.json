@@ -1,0 +1,20 @@
+{
+  "vim": [
+    "fzf.vim",
+    "gtags.vim",
+    "lightline.vim",
+    "limelight.vim",
+    "nrrw.vim",
+    "signify.vim",
+    "ultisnips.vim",
+    "ale.vim",
+    "phpcd.vim",
+    "editorconfig.vim",
+    "lsp.vim"
+  ],
+  "nvim": [
+    "denite.vim",
+    "deoplete.vim"
+  ]
+}
+
