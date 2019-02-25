@@ -3,8 +3,6 @@
 #
 # Should you change your keyboard layout some time, delete
 # this file and re-run i3-config-wizard(1).
-#
-
 # i3 config file (v4)
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
@@ -175,18 +173,6 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
         status_command i3status
-}
-
-
-bindsym $mod+e mode "edit"
-mode "edit" {
-	bindsym c mode "edit_config" 
-}
-
-mode "edit_config" {
-	bindsym i exec firefox 
-
-	bindsym Escape mode "default"
 }
 
 

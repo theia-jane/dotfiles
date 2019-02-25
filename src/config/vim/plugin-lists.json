@@ -20,7 +20,6 @@
     "rust-lang/rust.vim",
     "scrooloose/nerdtree",
     "Shougo/neco-vim",
-    "SirVer/ultisnips",
     "sjl/vitality.vim",
     "tkhren/vim-fake",
     "lvht/phpcd.vim",
@@ -32,8 +31,6 @@
     "tpope/vim-speeddating",
     "tpope/vim-surround",
     "tpope/vim-unimpaired",
-    "vim-scripts/taglist.vim",
-    "whatot/gtags-cscope.vim",
     "wincent/terminus",
     "w0rp/ale",
     "mhinz/vim-signify",
@@ -51,5 +48,10 @@
     "chemzqm/denite-git",
     "Shougo/dein.vim",
     "Shougo/denite.nvim"
+  ],
+  "ignored": [
+    "vim-scripts/taglist.vim",
+    "whatot/gtags-cscope.vim",
+    "SirVer/ultisnips"
   ]
 }
