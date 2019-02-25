@@ -1,6 +1,6 @@
 export SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
 export OS="$(uname | tr "[A-Z]" "[a-z]")"
-export cfg="${HOME}/.config/personal"
+export cfg="${HOME}/.config"
 export cfg_sh="${cfg}/sh"
 
 # files each
