@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nvim `v`
+v | e.stdin | c

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fd -e rej -e orig | xargs -r rm
