@@ -1,0 +1,6 @@
+#!/bin/bash
+
+fd \
+  | fzf -m --preview 'cat {}' \
+  && dest="$((echo -en '..\n.'; fd -t d) | fzf)" \
+  | xargs -r -I{} mv {} ${dest:-.}

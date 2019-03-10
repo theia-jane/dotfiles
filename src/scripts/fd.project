@@ -1,0 +1,21 @@
+#!/bin/bash
+
+project_pattern="$(pattern.project --regex)"
+
+while true; do
+  case "$1" in
+    --git | -g)
+      project_pattern="(\.git)$"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+fd -HIL -d 10 -t d -E $(pattern.build) "(${project_pattern})$" \
+  | sed 's%/[^/]*$%%' \
+  | sed "s!$(echo "${project_pattern}"|  sed 's/\([()|]\)/\\\1/g')!.!" \
+  | sort \
+  | uniq

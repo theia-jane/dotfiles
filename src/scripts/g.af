@@ -1,0 +1,3 @@
+#!/bin/bash
+
+g.f | xargs -r git add

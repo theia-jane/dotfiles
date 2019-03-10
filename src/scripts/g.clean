@@ -1,0 +1,8 @@
+#!/bin/bash
+root="$(root.project --git)"
+
+if [ -d "$root" ]; then
+  cd "$root"
+  g.ls | xargs -r rm -rf
+  git checkout -- .
+fi

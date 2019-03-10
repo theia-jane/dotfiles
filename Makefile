@@ -1,13 +1,16 @@
-install: setup_home setup_config setup_sh setup_vim
+install: config home scripts sh vim 
 
-setup_home: 
-	./scripts/setup_home.sh
+config: 
+	./setup/config.sh
 
-setup_config: 
-	./scripts/setup_config.sh
+home: 
+	./setup/home.sh
 
-setup_sh:
-	cd ./src/config/sh && make
+scripts:
+	./setup/scripts.sh
 
-setup_vim:
-	./scripts/setup_vim.sh	
+sh:
+	./setup/sh.sh
+
+vim:
+	./setup/vim.sh	

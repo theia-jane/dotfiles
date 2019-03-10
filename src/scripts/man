@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/usr/bin/man $@ || (help $@ 2> /dev/null && help $@ | less)

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+project_markers=".git,.svn,.idea"
+cli.arg_format --pieces "$project_markers" $@

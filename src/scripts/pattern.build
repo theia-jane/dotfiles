@@ -1,0 +1,4 @@
+#!/bin/bash
+
+build_pattern="node_modules"
+cli.arg_format --pieces "$build_pattern" $@
