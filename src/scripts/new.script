@@ -1,0 +1,42 @@
+#!/bin/bash
+
+cd ${scripts}
+
+script_type="bash"
+script_header=""
+script_footer=""
+
+while true; do
+  case "$1" in
+    --type | -t)
+      script_type="$2"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+case "${script_type}" in
+    bash | *)
+      script_header="#!/bin/bash" 
+      script_footer="# vim: set ft=bash" 
+    ;;
+esac
+
+
+script_contents="\
+${script_header}
+
+
+
+${script_footer}";
+
+script_name="$1"
+if [ -z "${script_name}" ]; then
+  e -c '3' - <<<"${script_contents}"
+else
+  echo -n "${script_contents}" > "${script_name}" 
+  e "${script_name}"
+fi

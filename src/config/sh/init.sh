@@ -1,6 +1,12 @@
-add_path() {
+append_path() {
   if [ -d "$1" ]; then
     append_to_var PATH $1
+  fi
+}
+
+prepend_path() {
+  if [ -d "$1" ]; then
+    prepend_to_var PATH $1
   fi
 }
 
@@ -9,6 +15,14 @@ append_to_var() {
   local val=$2
   [ ! -z "$(eval echo "\$$var")" ] && eval $var="$(eval echo "\$$var"):"
   eval $var="$(eval echo "\$$var")${val}"
+}
+
+prepend_to_var() {
+  local var=$1
+  local var_val="$(eval echo "\$$var")"
+  local val=$2
+  [ ! -z "$var_val" ] && var_val=":$var_val"
+  eval $var="${val}${var_val}"
 }
 
 source_file() {
@@ -34,44 +48,39 @@ get_script_dir() {
 export SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
 export OS="$(uname | tr "[A-Z]" "[a-z]")"
 export cfg="${HOME}/.config"
-export cfg_sh="${cfg}/sh"
-export docs="${HOME}/Documents"
-export dbox="${HOME}/Nextcloud"
-export org="${HOME}/org"
-export p="${HOME}/Projects"
-export dot="$p/dotfiles"
-export scripts="$p/scripts"
-export s=$scripts
-export CLICOLOR=1
 
-if [ "$(which nvim)" ]; then
-  export EDITOR=nvim
-  export MANPAGER="nvim -c 'set ft=man' -"
+
+ENV_DIR="$cfg/env"
+if [ -d "${ENV_DIR}" ]; then
+  for env_file in $(ls "${ENV_DIR}"); do
+		source "${ENV_DIR}/${env_file}"
+	done
 fi
 
 PATH=""
-add_path "/usr/local/bin"
-add_path "/usr/bin"
-add_path "/bin"
-add_path "/usr/sbin"
-add_path "/sbin"
-add_path "${HOME}/miniconda3/bin"
-add_path "${HOME}/bin"
-add_path "${scripts}/utils"
-add_path "${HOME}/go/bin"
-add_path "${HOME}/node_tools/node_modules/.bin" 
-add_path "${HOME}/.cargo/bin" 
+
+append_path "/usr/local/bin"
+append_path "/usr/bin"
+append_path "/bin"
+append_path "/usr/sbin"
+append_path "/sbin"
+append_path "${HOME}/miniconda3/bin"
+append_path "${HOME}/bin"
+append_path "${scripts}/utils"
+append_path "${HOME}/go/bin"
+append_path "${HOME}/node_tools/node_modules/.bin" 
+append_path "${HOME}/.cargo/bin" 
 
 export GOBIN="${HOME}/go/bin"
-add_path "${GOBIN}"
+append_path "${GOBIN}"
 
 export N_PREFIX="$HOME/n"; 
-add_path "$N_PREFIX/bin"
+append_path "$N_PREFIX/bin"
 
 PATH_DIR="$cfg/path"
 if [ -d "${PATH_DIR}" ]; then
   for dir in "$(ls "${PATH_DIR}")"; do
-		add_path "${PATH_DIR}/${dir}"
+		prepend_path "${PATH_DIR}/${dir}"
 	done
 fi
 
@@ -194,4 +203,11 @@ if [ "$SHELL_NAME" = "bash" -o "$SHELL_NAME" = "zsh" ] ; then
   for source_file in $(ls "$cfg_sh/$SHELL_NAME"); do
     source "$cfg_sh/$SHELL_NAME/$source_file" 
   done
+fi
+
+LOCAL_DIR="${cfg_sh}/local"
+if [ -d "${LOCAL_DIR}" ]; then
+  for extra_config in "$(ls "${LOCAL_DIR}")"; do
+		source "${LOCAL_DIR}/${extra_config}"
+	done
 fi
