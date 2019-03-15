@@ -192,4 +192,4 @@ new_window pixel 0
 
 hide_edge_borders both
 
-exec --no-startup-id feh --bg-scale ~/Downloads/roman-bozhko-251398-unsplash.jpg
+exec --no-startup-id feh --bg-scale ~/.wallpaper
