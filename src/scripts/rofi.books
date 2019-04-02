@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd $HOME/Documents/books
+
+fd -e epub \
+  | rofi -dmenu \
+  | xargs zathura
+
+
+# vim: set ft=bash
