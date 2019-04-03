@@ -70,6 +70,7 @@ append_path "${scripts}/utils"
 append_path "${HOME}/go/bin"
 append_path "${HOME}/node_tools/node_modules/.bin" 
 append_path "${HOME}/.cargo/bin" 
+append_path "/usr/bin/vendor_perl"
 
 export GOBIN="${HOME}/go/bin"
 append_path "${GOBIN}"
