@@ -40,3 +40,6 @@ else
   echo -n "${script_contents}" > "${script_name}" 
   e "${script_name}"
 fi
+
+chmod +x *
+
