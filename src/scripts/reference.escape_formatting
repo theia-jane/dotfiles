@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for n in $(seq 0 10; seq 30 37; seq 40 47; seq 90 97; seq 100 107); do 
+  echo -e "\e[${n}m Escape Sequence (\\\e[${n}m) $n\e[0m"; 
+done
+
+# vim: set ft=bash
