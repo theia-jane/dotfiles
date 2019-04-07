@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "Must provide a file to watch"
+fi
+
+if [ ! -e "$1" ]; then
+  echo "Filename ($1) provided does not exist."
+fi
+
+zathura "$1.pdf" &
+echo "$1" | entr -r dot -O -Tpdf "$1"
+
+# vim: set ft=bash
