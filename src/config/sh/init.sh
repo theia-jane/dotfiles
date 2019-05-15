@@ -12,9 +12,10 @@ prepend_path() {
 
 append_to_var() {
   local var=$1
+  local var_val="$(eval echo "\$$var")"
   local val=$2
-  [ ! -z "$(eval echo "\$$var")" ] && eval $var="$(eval echo "\$$var"):"
-  eval $var="$(eval echo "\$$var")${val}"
+  [ ! -z "$var_val" ] && var_val=":$var_val"
+  eval $var="${val}${var_val}"
 }
 
 prepend_to_var() {
@@ -80,7 +81,7 @@ append_path "$N_PREFIX/bin"
 
 PATH_DIR="$cfg/path"
 if [ -d "${PATH_DIR}" ]; then
-  for dir in "$(ls "${PATH_DIR}")"; do
+  for dir in $(ls "${PATH_DIR}"); do
 		prepend_path "${PATH_DIR}/${dir}"
 	done
 fi
@@ -208,7 +209,7 @@ fi
 
 LOCAL_DIR="${cfg_sh}/local"
 if [ -d "${LOCAL_DIR}" ]; then
-  for extra_config in "$(ls "${LOCAL_DIR}")"; do
+  for extra_config in $(ls "${LOCAL_DIR}"); do
 		source "${LOCAL_DIR}/${extra_config}"
 	done
 fi
