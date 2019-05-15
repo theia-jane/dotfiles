@@ -10,12 +10,19 @@ set $exit mode "default"
 # Cycle through workspaces by scrolling
 bindsym --whole-window $mod+button5 workspace next_on_output
 bindsym --whole-window $mod+button4 workspace prev_on_output 
+bindsym $mod+n workspace next_on_output
+bindsym $mod+p workspace prev_on_output 
 
 # Cycle through windows in each direction 
 bindsym --whole-window $mod+Shift+button4 focus left 
 bindsym --whole-window $mod+Shift+button5 focus right 
 bindsym --whole-window $mod+Ctrl+button4 focus up 
 bindsym --whole-window $mod+Ctrl+button5 focus down 
+
+bindsym --whole-window $mod+Shift+p focus left 
+bindsym --whole-window $mod+Shift+n focus right 
+bindsym --whole-window $mod+Ctrl+p focus up 
+bindsym --whole-window $mod+Ctrl+n focus down 
 
 # TODO: Scroll cycling seems a little quick. Debouncing would be good.
 
