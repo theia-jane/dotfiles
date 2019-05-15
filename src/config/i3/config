@@ -8,8 +8,8 @@ bindsym $mod+space mode "root"
 set $exit mode "default"
 
 # Cycle through workspaces by scrolling
-bindsym --whole-window $mod+button4 workspace next_on_output
-bindsym --whole-window $mod+button5 workspace prev_on_output 
+bindsym --whole-window $mod+button5 workspace next_on_output
+bindsym --whole-window $mod+button4 workspace prev_on_output 
 
 # Cycle through windows in each direction 
 bindsym --whole-window $mod+Shift+button4 focus left 
@@ -158,7 +158,8 @@ mode "resize" {
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3status
+  position top
+  status_command i3status
 }
 
 
