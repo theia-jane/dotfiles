@@ -3,6 +3,7 @@ root="$(root.project --git)"
 
 if [ -d "$root" ]; then
   cd "$root"
+  git reset HEAD .
   g.ls | xargs -r rm -rf
   git checkout -- .
 fi
