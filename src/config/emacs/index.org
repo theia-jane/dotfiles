@@ -58,10 +58,9 @@
 ** Emacs
    #+BEGIN_SRC emacs-lisp
      (setq
-      my-config (expand-file-name "~/.config/personal/")
-      my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
-      org-root (expand-file-name "~/org/")
-      my-org (expand-file-name  "~/org/"))
+      my-config (expand-file-name "~/.config/")
+      my-dotfiles (expand-file-name "~/.config/")
+      org-root (expand-file-name "~/org/") my-org (expand-file-name  "~/org/"))
    #+END_SRC
 ** System Detection
    #+BEGIN_SRC emacs-lisp

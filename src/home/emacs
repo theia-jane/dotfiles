@@ -1,1 +1,1 @@
-(org-babel-load-file "~/.config/personal/dotfiles/emacs/bootstrap.org")
+(org-babel-load-file "~/.config/emacs/bootstrap.org")

@@ -16,8 +16,8 @@ you should place your code here."
 
   ;; Env vars:
   (setq
-    my-config (expand-file-name "~/.config/personal/")
-    my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
+    my-config (expand-file-name "~/.config/")
+    my-dotfiles (expand-file-name "~/.config/dotfiles/")
     org-root (expand-file-name "~/org/")
     my-org (expand-file-name  "~/org/"))
 

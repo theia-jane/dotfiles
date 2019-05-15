@@ -44,7 +44,7 @@ it up.
 ** Personal 
     #+BEGIN_SRC emacs-lisp
     (defun init-personal ()
-	(org-babel-load-file "~/.config/personal/dotfiles/emacs/index.org"))
+	(org-babel-load-file "~/.config/emacs/index.org"))
     #+END_SRC
 ** Spacemacs
    #+BEGIN_SRC emacs-lisp
@@ -112,7 +112,7 @@ it up.
 * Switch emacs.d 
   #+BEGIN_SRC emacs-lisp
     (defun get-config-dir (config-name)
-      (expand-file-name (concat "~/.config/personal/emacsds/" config-name)))
+      (expand-file-name (concat "~/.config/emacsds/" config-name)))
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
@@ -165,8 +165,8 @@ it up.
 ** Emacs
    #+BEGIN_SRC emacs-lisp
      (setq
-      my-config (expand-file-name "~/.config/personal/")
-      my-dotfiles (expand-file-name "~/.config/personal/dotfiles/")
+      my-config (expand-file-name "~/.config/")
+      my-dotfiles (expand-file-name "~/.config/dotfiles/")
       my-org (expand-file-name "~/org/"))
    #+END_SRC
 ** System Detection

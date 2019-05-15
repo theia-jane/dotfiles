@@ -3,7 +3,7 @@
 ;; It must be stored in your home directory.
 
 (dolist (spacemacs-file '(layers init user-init user-config))
-  (load-file (expand-file-name (format "~/.config/personal/dotfiles/emacs/spacemacs/%s.el" spacemacs-file))))
+  (load-file (expand-file-name (format "~/.config/emacs/spacemacs/%s.el" spacemacs-file))))
 
 
 (custom-set-variables
