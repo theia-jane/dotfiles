@@ -7,4 +7,4 @@ fd -e epub \
   | xargs zathura
 
 
-# vim: set ft=bash
+# vim: ft=sh

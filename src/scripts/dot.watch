@@ -11,4 +11,4 @@ fi
 zathura "$1.pdf" &
 echo "$1" | entr -r dot -O -Tpdf "$1"
 
-# vim: set ft=bash
+# vim: ft=sh

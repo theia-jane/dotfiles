@@ -6,4 +6,4 @@ if [ ! -z "$session_num" ]; then
   tmux attach-session -t $session_num
 fi
 
-# vim: set ft=bash
+# vim: ft=sh

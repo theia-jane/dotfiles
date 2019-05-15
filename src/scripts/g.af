@@ -1,3 +1,5 @@
 #!/bin/bash
 
 g.f | xargs -r git add
+
+# vim: ft=sh

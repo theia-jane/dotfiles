@@ -2,4 +2,4 @@
 
 java -jar ~/java/plantuml/plantuml.jar $@
 
-# vim: set ft=bash
+# vim: ft=sh

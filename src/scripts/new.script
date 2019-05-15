@@ -21,7 +21,7 @@ done
 case "${script_type}" in
     bash | *)
       script_header="#!/bin/bash" 
-      script_footer="# vim: set ft=bash" 
+      script_footer="# vim: ft=sh" 
     ;;
 esac
 

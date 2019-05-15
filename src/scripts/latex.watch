@@ -13,4 +13,4 @@ fi
 zathura "$(echo $1 | sed -r 's/\.[^.]+$//').pdf" &
 echo "$1" | entr -r pdflatex "$1"
 
-# vim: set ft=bash
+# vim: ft=sh

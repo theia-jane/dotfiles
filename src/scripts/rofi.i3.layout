@@ -4,4 +4,4 @@ echo -e "tabbed\nstacking\nsplit\ndefault" \
   | rofi -dmenu -p "Layout:" \
   | xargs -I{} -r i3-msg layout {}
 
-# vim: set ft=bash
+# vim: ft=sh
