@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $dot
+g.ci
+
+# vim: set ft=sh
