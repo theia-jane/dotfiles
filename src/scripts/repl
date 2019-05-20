@@ -1,0 +1,68 @@
+#!/bin/bash
+
+language_repl_map="\
+[php] [psysh]
+[js] [node]
+[guile] [guile]
+[racket] [racket]
+[ruby] [irb]
+[haskell] [ghci]
+[lua] [lua]
+[python] [python -q]
+[common-lisp] [clisp -q]
+[julia] [julia --banner no]"
+
+function usage() {
+echo "usage: repl [options] | [language]
+  language:           Language to launch a repl for 
+  options:
+    -h, --help        Show usage info
+    -l, --list        Lists the supported languages. 
+"
+}
+
+function get_field() {
+  awk 'BEGIN{FS="\\] [\\[]*"} {gsub(/^\[|\]$/, "", $0); print $'$1'}'
+}
+
+function list_languages() {
+  echo -n "$language_repl_map" \
+    | get_field 1 
+}
+
+function get_repl() {
+  echo -n "$language_repl_map" \
+    | grep -E "^\[$1\]" \
+    | get_field 2 
+}
+
+while true; do
+  case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -l | --list)
+      list_languages 
+      exit 0
+      ;;
+    *) 
+      break
+      ;;
+  esac
+done
+
+if [[ -z "$1" ]]; then
+  >&2 echo "No language provided" 
+  exit 1
+fi
+
+repl="$(get_repl $1)"
+if [[ -z "$repl" ]]; then
+  >&2 echo "$1 is not a valid language. See repl --list for valid entries." 
+  exit 1
+fi
+
+$repl
+
+# vim: ft=sh

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+selected_language="$(repl --list | rofi -dmenu -p "Language")"
+i3.dd "repl $selected_language"
+
+# vim: ft=sh
