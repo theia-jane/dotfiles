@@ -8,6 +8,8 @@ language_repl_map="\
 [ruby] [irb]
 [haskell] [ghci]
 [lua] [lua]
+[clojure] [clojure -r]
+[sbcl] [sbcl]
 [python] [python -q]
 [common-lisp] [clisp -q]
 [julia] [julia --banner no]"
