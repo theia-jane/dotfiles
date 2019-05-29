@@ -1,4 +1,4 @@
-font pango:Source Code Pro 10 
+font pango:Source Code Pro 16
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -28,6 +28,7 @@ for_window [instance="dropdown_*"] floating enable
 for_window [instance="dropdown_*"] move scratchpad
 for_window [instance="dropdown_*"] sticky enable
 for_window [instance="dropdown_*"] scratchpad show
+for_window [instance="dropdown_*"] $float_border
 # for_window [instance="dropdown_tmuxdd"] resize set 625 450
 # for_window [instance="dropdown_dropdowncalc"] resize set 800 300
 # for_window [instance="dropdown_tmuxdd"] border pixel 3
@@ -38,123 +39,145 @@ for_window [instance="dropdown_*"] move position center
 floating_modifier $mod
 
 set $mod Mod4
-bindsym $mod+space mode "root"	
+$b $mod+space mode "root"	
 set $exit mode "default"
+set $b bindsym
+
+$b $mod+Shift+s scratchpad show
 
 # TODO: Scroll cycling seems a little quick. Debouncing would be good.
 # Cycle through workspaces by scrolling
-bindsym --whole-window $mod+button5 workspace next_on_output
-bindsym --whole-window $mod+button4 workspace prev_on_output 
-bindsym $mod+n workspace next_on_output
-bindsym $mod+p workspace prev_on_output 
+$b --whole-window $mod+button5 workspace next_on_output
+$b --whole-window $mod+button4 workspace prev_on_output 
+$b $mod+n workspace next_on_output
+$b $mod+p workspace prev_on_output 
 
 # Cycle through windows in each direction 
-bindsym --whole-window $mod+Shift+button4 focus left 
-bindsym --whole-window $mod+Shift+button5 focus right 
-bindsym --whole-window $mod+Ctrl+button4 focus up 
-bindsym --whole-window $mod+Ctrl+button5 focus down 
+$b --whole-window $mod+Shift+button4 focus left 
+$b --whole-window $mod+Shift+button5 focus right 
+$b --whole-window $mod+Ctrl+button4 focus up 
+$b --whole-window $mod+Ctrl+button5 focus down 
 
-bindsym --whole-window $mod+Shift+p focus left 
-bindsym --whole-window $mod+Shift+n focus right 
-bindsym --whole-window $mod+Ctrl+p focus up 
-bindsym --whole-window $mod+Ctrl+n focus down 
+$b --whole-window $mod+Shift+p focus left 
+$b --whole-window $mod+Shift+n focus right 
+$b --whole-window $mod+Ctrl+p focus up 
+$b --whole-window $mod+Ctrl+n focus down 
 
-bindsym $mod+q kill 
-bindsym $mod+t floating toggle; $no_border; $float_border 
+$b $mod+q kill 
+$b $mod+t floating toggle; $no_border; $float_border 
 
 mode "root" {
   # Modes ---------------------------------------------------
-	bindsym w mode "window"	
-  bindsym $mod+r mode "resize"
-  bindsym d mode "dropdown"
-  bindsym e mode "edit"
-	bindsym Escape mode "default" 
+	$b a mode "application"	
+	$b w mode "window"	
+  $b $mod+r mode "resize"
+  $b d mode "dropdown"
+  $b e mode "edit"
+	$b Escape $exit 
 
   # Leaves --------------------------------------------------
-	bindsym space exec rofi -show run -modi run; mode "default" 
-	bindsym s exec scrot; mode "default"
-  bindsym Return exec tilix; mode "default"
+	$b space exec rofi -show run -modi run; $exit 
+	$b s exec scrot; $exit
+  $b Return exec tilix; $exit
+}
+
+mode "application" {
+  # Modes ---------------------------------------------------
+	$b Escape $exit 
+
+  # Leaves --------------------------------------------------
+	$b f exec firefox; $exit
+	$b e exec emacsclient -c; $exit
+	$b c exec chromium; $exit
+	$b h exec tilix -e htop; $exit
+	$b p exec phpstorm; $exit
+	$b c exec code; $exit
+	$b i exec inkscape; $exit
+	$b k exec keepassxc; $exit
+	$b t exec tilix; $exit
 }
 
 mode "dropdown" {
   # Modes ---------------------------------------------------
-	bindsym Escape mode "default" 
+	$b Escape $exit 
 
   # Leaves --------------------------------------------------
-  bindsym Return exec i3.dd tmux.scratch; mode "default"
-  bindsym r exec rofi.i3.repl; mode "default"
+  $b Return exec i3.dd tmux.scratch; $exit
+  $b r exec rofi.i3.repl; $exit
+	$b n exec i3.dd.notef; $exit
 }
 
 mode "edit" {
   # Modes ---------------------------------------------------
-	bindsym n mode "edit_new" 
-	bindsym Escape mode "default" 
+	$b n mode "edit_new" 
+	$b Escape $exit 
 
   # Leaves --------------------------------------------------
-  bindsym d exec i3.dd e.dot; mode "default"
-  bindsym s exec i3.dd e.script; mode "default"
+  $b d exec i3.dd e.dot; $exit
+  $b s exec i3.dd e.script; $exit
 }
 
 mode "edit_new" {
   # Modes ---------------------------------------------------
-	bindsym Escape mode "default" 
+	$b Escape $exit 
 
   # Leaves --------------------------------------------------
-  bindsym s exec i3.dd new.script; mode "default"
+  $b s exec i3.dd new.script; $exit
+	$b n exec i3.dd.note; $exit
 }
 
 mode "window" {
   # Modes ---------------------------------------------------
-	bindsym s mode "window-split"
-	bindsym Escape mode "default"
+	$b s mode "window-split"
+	$b Escape $exit
 
   # Leaves --------------------------------------------------
 	# change focus
-	bindsym h focus left; mode "default"
-	bindsym j focus down; mode "default"
-	bindsym k focus up; mode "default"
-	bindsym l focus right; mode "default"
-  bindsym q kill; mode "default"
+	$b h focus left; $exit
+	$b j focus down; $exit
+	$b k focus up; $exit
+	$b l focus right; $exit
+  $b q kill; $exit
 
 	# move focused window
-	bindsym Shift+h move left; mode "default"
-	bindsym Shift+j move down; mode "default"
-	bindsym Shift+k move up; mode "default"
-	bindsym Shift+l move right; mode "default"
+	$b Shift+h move left; $exit
+	$b Shift+j move down; $exit
+	$b Shift+k move up; $exit
+	$b Shift+l move right; $exit
 
   # enter fullscreen mode for the focused container
-  bindsym f fullscreen toggle
+  $b f fullscreen toggle
 
 }
 
 mode "window-split" {
-	bindsym Escape mode "default"
+	$b Escape $exit
 
   # Leaves --------------------------------------------------
 	# split in horizontal orientation
-	bindsym h split h;  mode "default"
+	$b h split h;  $exit
 
 	# split in vertical orientation
-	bindsym v split v;  mode "default"
+	$b v split v;  $exit
 
 }
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+$b $mod+s layout stacking
+$b $mod+w layout tabbed
+$b $mod+e layout toggle split
 
 # toggle tiling / floating
-# bindsym $mod+Shift+space floating toggle
+# $b $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-# bindsym $mod+space focus mode_toggle
+# $b $mod+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+$b $mod+a focus parent
 
 # focus the child container
-#bindsym $mod+d focus child
+#$b $mod+d focus child
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
@@ -170,35 +193,35 @@ set $ws9 "9"
 set $ws10 "10"
 
 # switch to workspace
-bindsym $mod+1 workspace $ws1
-bindsym $mod+2 workspace $ws2
-bindsym $mod+3 workspace $ws3
-bindsym $mod+4 workspace $ws4
-bindsym $mod+5 workspace $ws5
-bindsym $mod+6 workspace $ws6
-bindsym $mod+7 workspace $ws7
-bindsym $mod+8 workspace $ws8
-bindsym $mod+9 workspace $ws9
-bindsym $mod+0 workspace $ws10
+$b $mod+1 workspace $ws1
+$b $mod+2 workspace $ws2
+$b $mod+3 workspace $ws3
+$b $mod+4 workspace $ws4
+$b $mod+5 workspace $ws5
+$b $mod+6 workspace $ws6
+$b $mod+7 workspace $ws7
+$b $mod+8 workspace $ws8
+$b $mod+9 workspace $ws9
+$b $mod+0 workspace $ws10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $ws1
-bindsym $mod+Shift+2 move container to workspace $ws2
-bindsym $mod+Shift+3 move container to workspace $ws3
-bindsym $mod+Shift+4 move container to workspace $ws4
-bindsym $mod+Shift+5 move container to workspace $ws5
-bindsym $mod+Shift+6 move container to workspace $ws6
-bindsym $mod+Shift+7 move container to workspace $ws7
-bindsym $mod+Shift+8 move container to workspace $ws8
-bindsym $mod+Shift+9 move container to workspace $ws9
-bindsym $mod+Shift+0 move container to workspace $ws10
+$b $mod+Shift+1 move container to workspace $ws1
+$b $mod+Shift+2 move container to workspace $ws2
+$b $mod+Shift+3 move container to workspace $ws3
+$b $mod+Shift+4 move container to workspace $ws4
+$b $mod+Shift+5 move container to workspace $ws5
+$b $mod+Shift+6 move container to workspace $ws6
+$b $mod+Shift+7 move container to workspace $ws7
+$b $mod+Shift+8 move container to workspace $ws8
+$b $mod+Shift+9 move container to workspace $ws9
+$b $mod+Shift+0 move container to workspace $ws10
 
 # reload the configuration file
-bindsym $mod+Shift+c reload
+$b $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-bindsym $mod+Shift+r restart
+$b $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+$b $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -208,22 +231,21 @@ mode "resize" {
   # Pressing right will grow the window’s width.
   # Pressing up will shrink the window’s height.
   # Pressing down will grow the window’s height.
-  bindsym j resize shrink width 10 px or 10 ppt
-  bindsym k resize grow height 10 px or 10 ppt
-  bindsym l resize shrink height 10 px or 10 ppt
-  bindsym semicolon resize grow width 10 px or 10 ppt
+  $b j resize shrink width 10 px or 10 ppt
+  $b k resize grow height 10 px or 10 ppt
+  $b l resize shrink height 10 px or 10 ppt
+  $b semicolon resize grow width 10 px or 10 ppt
 
   # same bindings, but for the arrow keys
-  bindsym Left resize shrink width 10 px or 10 ppt
-  bindsym Down resize grow height 10 px or 10 ppt
-  bindsym Up resize shrink height 10 px or 10 ppt
-  bindsym Right resize grow width 10 px or 10 ppt
+  $b Left resize shrink width 10 px or 10 ppt
+  $b Down resize grow height 10 px or 10 ppt
+  $b Up resize shrink height 10 px or 10 ppt
+  $b Right resize grow width 10 px or 10 ppt
 
   # back to normal: Enter or Escape or $mod+r
-  bindsym Return mode "default"
-  bindsym Escape mode "default"
-  bindsym $mod+r mode "default"
+  $b Return $exit
+  $b Escape $exit
+  $b $mod+r $exit
 }
-
 
 exec --no-startup-id feh --bg-scale ~/.wallpaper
