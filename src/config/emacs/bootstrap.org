@@ -166,7 +166,8 @@ it up.
    #+BEGIN_SRC emacs-lisp
      (setq
       my-config (expand-file-name "~/.config/")
-      my-dotfiles (expand-file-name "~/.config/dotfiles/")
+      my-emacs-config (expand-file-name "~/.config/emacs/")
+      my-dotfiles (expand-file-name "~/Projects/dotfiles/")
       my-org (expand-file-name "~/org/"))
    #+END_SRC
 ** System Detection

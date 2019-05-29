@@ -1,0 +1,2 @@
+;;; Funcs -*- lexical-binding: t -*-
+

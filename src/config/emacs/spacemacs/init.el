@@ -55,16 +55,12 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(jazz)
+   dotspacemacs-themes '(doom-nord)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 26
-                               :weight normal
-                               :width normal
-                               :powerline-scale 1.1)
+   dotspacemacs-default-font '("Source Code Pro" :size 26 :weight normal :width normal)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -170,6 +166,7 @@ values."
    dotspacemacs-show-transient-state-color-guide t
    ;; If non nil unicode symbols are displayed in the mode line. (default t)
    dotspacemacs-mode-line-unicode-symbols t
+   dotspacemacs-mode-line-theme 'all-the-icons
    ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
@@ -221,3 +218,86 @@ values."
    ;; (default nil)
    dotspacemacs-whitespace-cleanup 'changed
    ))
+
+
+(defun dotspacemacs/layers ()
+  "Configuration Layers declaration.
+You should not put any user code in this function besides modifying the variable
+values."
+  (setq-default
+   dotspacemacs-distribution 'spacemacs
+   dotspacemacs-enable-lazy-installation 'unused
+   dotspacemacs-ask-for-lazy-installation t
+   dotspacemacs-configuration-layer-path '("~/.config/emacs/layers/")
+   dotspacemacs-configuration-layers '(
+                                       ;; General
+                                       better-defaults
+                                       ivy
+                                       auto-completion
+
+                                       ;; Project related
+                                       git
+                                       gtags
+                                       cscope
+                                       syntax-checking
+                                       version-control
+
+                                       ;; Languages
+                                       emacs-lisp
+                                       common-lisp
+                                       html
+                                       shell
+                                       markdown
+                                       javascript
+                                       sql
+                                       latex
+                                       php
+                                       slack
+
+                                       ;; Local layers
+                                       (tw-org :location local))
+   dotspacemacs-additional-packages '(doom-themes
+                                      all-the-icons
+                                      alert)
+   dotspacemacs-frozen-packages '()
+   dotspacemacs-excluded-packages '()
+   dotspacemacs-install-packages 'used-only))
+
+
+(defun dotspacemacs/user-init ()
+  "Initialization function for user code.
+It is called immediately after `dotspacemacs/init', before layer configuration
+executes.
+ This function is mostly useful for variables that need to be set
+before packages are loaded. If you are unsure, you should try in setting them in
+`dotspacemacs/user-config' first."
+
+  (setq exec-path-from-shell-check-startup-files nil)
+  )
+
+(defun dotspacemacs/user-config ()
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place your code here."
+
+  ;; Env vars:
+  (setq
+    my-config (expand-file-name "~/.config/")
+    my-dotfiles (expand-file-name "~/.config/dotfiles/")
+    org-root (expand-file-name "~/org/")
+    my-org (expand-file-name  "~/org/"))
+
+
+  (spacemacs/declare-prefix "o" "own-menu")
+  (spacemacs/set-leader-keys "oof" '(lambda () (interactive) (counsel-find-file org-root)))
+  (spacemacs/set-leader-keys "odf" '(lambda () (interactive) (counsel-find-file my-dotfiles)))
+
+  (setq doom-themes-enable-bold t
+        doom-themese-enable-italic t)
+
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config)
+  )
