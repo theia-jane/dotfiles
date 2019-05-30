@@ -7,6 +7,7 @@ export dot="$p/dotfiles"
 export scripts="$dot/src/scripts"
 export s=$scripts
 export CLICOLOR=1
+export GTAGSLABEL="pygments"
 
 
 if [ "$(which nvim)" ]; then
