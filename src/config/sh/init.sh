@@ -79,6 +79,8 @@ append_path "${GOBIN}"
 export N_PREFIX="$HOME/n"; 
 append_path "$N_PREFIX/bin"
 
+[ ! -z "$(which yarn)" ] && append_path "$(yarn global bin)"
+
 PATH_DIR="$cfg/path"
 if [ -d "${PATH_DIR}" ]; then
   for dir in $(ls "${PATH_DIR}"); do
