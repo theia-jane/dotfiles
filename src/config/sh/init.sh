@@ -50,14 +50,6 @@ export SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
 export OS="$(uname | tr "[A-Z]" "[a-z]")"
 export cfg="${HOME}/.config"
 
-
-ENV_DIR="$cfg/env"
-if [ -d "${ENV_DIR}" ]; then
-  for env_file in $(ls "${ENV_DIR}"); do
-		source "${ENV_DIR}/${env_file}"
-	done
-fi
-
 PATH=""
 
 append_path "/usr/local/bin"
@@ -90,6 +82,13 @@ fi
 
 export PATH
 
+ENV_DIR="$cfg/env"
+if [ -d "${ENV_DIR}" ]; then
+  for env_file in $(ls "${ENV_DIR}"); do
+		source "${ENV_DIR}/${env_file}"
+	done
+fi
+
 
 if [ -d "${HOME}/perl5" ]; then
   PATH="${HOME}/perl5/bin${PATH:+:${PATH}}"; export PATH;
@@ -113,6 +112,9 @@ fi
   && ~/.fzf/install
 
 source ${HOME}/.fzf.${SHELL_NAME}
+
+export NVM_DIR="${HOME}/.nvm"
+[ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
 
 if [ ! -z "$(which ag)" ]; then
   export FZF_DEFAULT_COMMAND='(ag --hidden --ignore node_modules --ignore .git --ignore .idea --ignore .DS_Store -f -g "") 2> /dev/null'
