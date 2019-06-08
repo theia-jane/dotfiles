@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "Must provide a file to watch"
+  exit 1
+fi
+
+if [ ! -e "$1" ]; then
+  echo "Filename ($1) provided does not exist."
+  exit 1
+fi
+
+cd "$(dirname $1)"
+zathura "$(echo $1 | sed -r 's/\.[^.]+$//').pdf" &
+echo "$1" | entr -r org.pdf "$1"
+
+# vim: ft=sh
