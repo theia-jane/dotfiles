@@ -1,4 +1,5 @@
 #!/bin/bash
 
-git stash list \
-| fzf --preview "git diff \$(echo {} | awk -F ':' '{print $1}')"
+g stash list \
+  | awk -F ':' '{print $1}' \
+  | fzf --preview "g show --color=always {}" --preview-window=80%
