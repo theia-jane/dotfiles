@@ -39,7 +39,6 @@ for_window [instance="dropdown_*"] move position center
 floating_modifier $mod
 
 set $mod Mod4
-$b $mod+space mode "root"	
 set $exit mode "default"
 set $b bindsym
 
@@ -63,115 +62,10 @@ $b --whole-window $mod+Shift+n focus right
 $b --whole-window $mod+Ctrl+p focus up 
 $b --whole-window $mod+Ctrl+n focus down 
 
-$b $mod+q kill 
+# $b $mod+q kill 
 $b $mod+t floating toggle; $no_border; $float_border 
 
-mode "root" {
-  # Modes ---------------------------------------------------
-	$b a mode "application"	
-	$b w mode "window"	
-  $b $mod+r mode "resize"
-  $b d mode "dropdown"
-  $b e mode "edit"
-	$b Escape $exit 
 
-  # Leaves --------------------------------------------------
-	$b space exec rofi -show run -modi run; $exit 
-	$b s exec scrot; $exit
-  $b Return exec tilix; $exit
-}
-
-mode "application" {
-  # Modes ---------------------------------------------------
-	$b Escape $exit 
-
-  # Leaves --------------------------------------------------
-	$b f exec firefox; $exit
-	$b e exec emacsclient -c; $exit
-	$b c exec chromium; $exit
-	$b h exec tilix -e htop; $exit
-	$b p exec phpstorm; $exit
-	$b c exec code; $exit
-	$b i exec inkscape; $exit
-	$b k exec keepassxc; $exit
-	$b t exec tilix; $exit
-}
-
-mode "dropdown" {
-  # Modes ---------------------------------------------------
-	$b Escape $exit 
-
-  # Leaves --------------------------------------------------
-  $b Return exec i3.dd tmux.scratch; $exit
-  $b r exec rofi.i3.repl; $exit
-	$b n exec i3.dd.notef; $exit
-}
-
-mode "edit" {
-  # Modes ---------------------------------------------------
-	$b n mode "edit_new" 
-	$b Escape $exit 
-
-  # Leaves --------------------------------------------------
-  $b d exec i3.dd e.dot; $exit
-  $b s exec i3.dd e.script; $exit
-}
-
-mode "edit_new" {
-  # Modes ---------------------------------------------------
-	$b Escape $exit 
-
-  # Leaves --------------------------------------------------
-  $b s exec i3.dd new.script; $exit
-	$b n exec i3.dd.note; $exit
-}
-
-mode "window" {
-  # Modes ---------------------------------------------------
-	$b s mode "window-split"
-	$b Escape $exit
-
-  # Leaves --------------------------------------------------
-	# change focus
-	$b h focus left; $exit
-	$b j focus down; $exit
-	$b k focus up; $exit
-	$b l focus right; $exit
-  $b q kill; $exit
-
-	# move focused window
-	$b Shift+h move left; $exit
-	$b Shift+j move down; $exit
-	$b Shift+k move up; $exit
-	$b Shift+l move right; $exit
-
-  # enter fullscreen mode for the focused container
-  $b f fullscreen toggle
-
-}
-
-mode "window-split" {
-	$b Escape $exit
-
-  # Leaves --------------------------------------------------
-	# split in horizontal orientation
-	$b h split h;  $exit
-
-	# split in vertical orientation
-	$b v split v;  $exit
-
-}
-
-# change container layout (stacked, tabbed, toggle split)
-$b $mod+s layout stacking
-$b $mod+w layout tabbed
-$b $mod+e layout toggle split
-
-# toggle tiling / floating
-# $b $mod+Shift+space floating toggle
-
-# change focus between tiling / floating windows
-# $b $mod+space focus mode_toggle
 
 # focus the parent container
 $b $mod+a focus parent
@@ -249,3 +143,4 @@ mode "resize" {
 }
 
 exec --no-startup-id feh --bg-scale ~/.wallpaper
+exec --no-startup-id kree &
