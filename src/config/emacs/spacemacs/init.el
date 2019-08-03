@@ -60,7 +60,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro" :size 26 :weight normal :width normal)
+   dotspacemacs-default-font '("Source Code Pro" :size 26 :weight normal :width normal :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -234,6 +234,7 @@ values."
                                        better-defaults
                                        ivy
                                        auto-completion
+                                       lsp ;; Language Server Protocol
 
                                        ;; Project related
                                        git
@@ -243,19 +244,36 @@ values."
                                        version-control
 
                                        ;; Languages
-                                       emacs-lisp
+                                       clojure
                                        common-lisp
+                                       csv
+                                       emacs-lisp
+                                       go
+                                       haskell
                                        html
-                                       shell
-                                       markdown
+                                       java
                                        javascript
-                                       sql
                                        latex
+                                       lua
+                                       markdown
+                                       ocaml
+                                       org
                                        php
+                                       plantuml
+                                       python
+                                       restclient
+                                       ruby
+                                       rust
+                                       scheme
+                                       shell
                                        slack
+                                       systemd
+                                       sql
+                                       yaml
 
                                        ;; Local layers
-                                       (tw-org :location local))
+                                       (tw-org :location local)
+                                       )
    dotspacemacs-additional-packages '(doom-themes
                                       all-the-icons
                                       alert)
@@ -288,7 +306,8 @@ you should place your code here."
     my-config (expand-file-name "~/.config/")
     my-dotfiles (expand-file-name "~/.config/dotfiles/")
     org-root (expand-file-name "~/org/")
-    my-org (expand-file-name  "~/org/"))
+    my-org (expand-file-name  "~/org/")
+    auto-completion-private-snippets-directory (expand-file-name "~/.config/snippets/"))
 
 
   (spacemacs/declare-prefix "o" "own-menu")
@@ -299,5 +318,4 @@ you should place your code here."
         doom-themese-enable-italic t)
 
   (doom-themes-visual-bell-config)
-  (doom-themes-org-config)
-  )
+  (doom-themes-org-config))
