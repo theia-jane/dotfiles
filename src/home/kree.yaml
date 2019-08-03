@@ -1,0 +1,60 @@
+global:
+  Super+q: i3-msg kill
+  Super+Space:
+    Space: rofi -show run -modi run
+    Enter: tilix
+    # Applications
+    a:
+      e: emacsclient -c
+      h: tilix -e htop
+      f: firefox.light
+      c: chromium
+      p: phpstorm
+      k: keepassxc
+      t: tilix
+      i: inkscape
+      z: zeal
+    n:
+      n: e.note --today
+      Shift+n: e.note
+      f: e.notef
+    # Edit
+    e: 
+      d: i3.dd e.dot
+      s: i3.dd e.script
+      k: e.keymap
+      n: 
+        s: i3.dd new.script
+    # Dropdown / quick actions
+    d:
+      Enter: i3.dd tmux.scratch
+      r: rofi.i3.repl
+    # Screenshot
+    s: scrot
+    # Window
+    w: 
+      h: i3-msg focus left
+      j: i3-msg focus down 
+      k: i3-msg focus up 
+      l: i3-msg focus right
+      Shift+h: i3-msg move left
+      Shift+j: i3-msg move down 
+      Shift+k: i3-msg move up 
+      Shift+l: i3-msg move right
+      w: i3-msg kill
+      f: i3-msg fullscreen toggle
+      # Split
+      s: 
+        h: i3-msg split h
+        v: i3-msg split v
+    # layout
+    l: 
+      s: i3-msg layout stacking
+      t: i3-msg layout tabbed
+      Shift+s: i3-msg layout toggle split
+  # Safety... kill kree if it's broken
+  Cmd+Shift+q:
+    Cmd+Shift+q: 
+      Cmd+Shift+q: pkill kree
+
+
