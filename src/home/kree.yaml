@@ -18,6 +18,7 @@ global:
       n: e.note --today
       Shift+n: e.note
       f: e.notef
+      m: e.emacs ~/notes/personal/mood.org
     # Edit
     e: 
       d: i3.dd e.dot
