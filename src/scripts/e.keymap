@@ -1,5 +1,5 @@
 #!/bin/bash
 
-e.emacs ~/Projects/kree/kree.yaml
+e.emacs ~/.kree.yaml
 
 # vim: ft=sh
