@@ -14,13 +14,20 @@ global:
       t: tilix
       i: inkscape
       z: zeal
+    o:
+      b: rofi.books
     n:
       n: e.note --today
       Shift+n: e.note
       f: e.notef
       m: e.emacs ~/notes/personal/mood.org
     # Edit
-    e: 
+    e:
+      # TODO: Need to add a generic 'clipboard editting script'
+      # c: clipboard.edit
+      Shift+c:
+        # Using my hacked version of gimp
+        g: clipboard.edit.image
       d: i3.dd e.dot
       s: i3.dd e.script
       k: e.keymap
@@ -57,5 +64,9 @@ global:
   Cmd+Shift+q:
     Cmd+Shift+q: 
       Cmd+Shift+q: pkill kree
+  Cmd+Shift+k: kree.restart
 
-
+conditional:
+  - trigger: { class: 'firefox' }
+    map:
+      Alt+x: firefox https://ddg.gg
