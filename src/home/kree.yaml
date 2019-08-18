@@ -55,11 +55,11 @@ global:
       s: 
         h: i3-msg split h
         v: i3-msg split v
-    # layout
-    l: 
-      s: i3-msg layout stacking
-      t: i3-msg layout tabbed
-      Shift+s: i3-msg layout toggle split
+  # layout
+  Cmd+Shift+l:
+    s: i3-msg layout stacking
+    t: i3-msg layout tabbed
+    Shift+s: i3-msg layout toggle split
   # Safety... kill kree if it's broken
   Cmd+Shift+q:
     Cmd+Shift+q: 
