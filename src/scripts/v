@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$OS" = "linux" ]; then
-	xclip -selection clipboard -o
+	xclip -selection clipboard -o $@
 elif [ "$OS" = "darwin" ]; then
 	pbcopy
 fi
