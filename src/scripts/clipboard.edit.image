@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Using my hacked version of gimp to open the clipboard
+gimp-2.99 -b '(gimp-display-new (car (gimp-edit-clipboard-as-new-image)))'
+
+# vim: ft=sh
