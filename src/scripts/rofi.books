@@ -2,9 +2,9 @@
 
 cd $HOME/Documents/books
 
-fd -e epub \
+fd -e "${1:-epub}" \
   | rofi -dmenu \
-  | xargs zathura
+  | xargs -r zathura
 
 
 # vim: ft=sh
