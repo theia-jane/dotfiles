@@ -1,6 +1,6 @@
 #!/bin/bash
 
-default_note_name="$(date -Idate)"
+default_note_name="daily/$(date -Idate)"
 
 if [[ "$1" = "--today" ]]; then
   note_name="${default_note_name}"
