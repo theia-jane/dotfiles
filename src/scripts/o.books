@@ -3,7 +3,7 @@
 cd $HOME/Documents/books
 
 fd -e "${1:-epub}" \
-  | rofi -dmenu \
+  | $(fuzzy-ui-provider) \
   | xargs -r zathura
 
 
