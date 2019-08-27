@@ -1,5 +1,7 @@
 global:
+  Super+x: rofi -show run -modi run
   Super+q: i3-msg kill
+  Super+Enter: i3.dd tmux.scratch
   Super+Space:
     Space: rofi -show run -modi run
     Enter: tilix
@@ -16,11 +18,20 @@ global:
       z: zeal
     o:
       b: rofi.books
+      # TODO: Need to get kree to support this style of command. I think the space in "rofi -dmenu" is throwing it
+      # p: e.project --select-ui "rofi -dmenu"
+      p: rofi.e.project
+      l: firefox http://lfs
+      s: firefox https://learning.oreilly.com/playlists/6744cab9-674c-46e7-9c77-35b380229c9e/
     n:
       n: e.note --today
       Shift+n: e.note
       f: e.notef
+      d: e.emacs ~/notes/personal/dotfiles.org
+      c: e.emacs ~/notes/personal/dotfiles.org
       m: e.emacs ~/notes/personal/mood.org
+      Shift+s: e.emacs ~/notes/new-software.org
+      s: e.emacs ~/notes/skills.org
     # Edit
     e:
       # TODO: Need to add a generic 'clipboard editting script'
@@ -32,7 +43,7 @@ global:
       s: i3.dd e.script
       k: e.keymap
       n: 
-        s: i3.dd new.script
+        s: new.script
     # Dropdown / quick actions
     d:
       Enter: i3.dd tmux.scratch
@@ -57,14 +68,18 @@ global:
         v: i3-msg split v
   # layout
   Cmd+Shift+l:
-    s: i3-msg layout stacking
     t: i3-msg layout tabbed
-    Shift+s: i3-msg layout toggle split
+    s: i3-msg layout toggle split
+    Shift+s: i3-msg layout stacking
   # Safety... kill kree if it's broken
   Cmd+Shift+q:
     Cmd+Shift+q: 
       Cmd+Shift+q: pkill kree
   Cmd+Shift+k: kree.restart
+  Cmd+Ctrl+h: i3-msg focus left
+  Cmd+Ctrl+j: i3-msg focus down
+  Cmd+Ctrl+k: i3-msg focus up
+  Cmd+Ctrl+l: i3-msg focus right
 
 conditional:
   - trigger: { class: 'firefox' }
