@@ -2,6 +2,6 @@
 
 pkill "^kree$"
 
-kree
+kree > /dev/null 2>&1 &
 
 # vim: ft=sh
