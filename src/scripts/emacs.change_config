@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+# Where I store my emacs configs
+EMACS_CONFIGS="${HOME}/.config/emacsds"
+
+# Default directory for emacs config directory
+EMACS_CONFIG_DIR="${HOME}/.emacs.d"
+
+# Choose a config to use
+SELECTED_EMACS_CONFIG="$(cd ${EMACS_CONFIGS} && fd -t d -d 1 | fzf)"
+if [ ! -z "${SELECTED_EMACS_CONFIG}" ]; then
+
+    # Stop all emacs instances before messing with the config directory
+    userctl stop emacs
+    pkill "^emacs$"
+
+    # Clear out previous link
+    if [ -h "${EMACS_CONFIG_DIR}" ]; then
+        unlink "${EMACS_CONFIG_DIR}"
+    fi
+
+    # Bail out if emacs config dir still exists
+    if [ -d "${EMACS_CONFIG_DIR}" ]; then
+        echo "Warning: Cannot setup new link to config. Make sure there is no file / directory at '~/.emacs.d'.
+
+If you want to keep the config, then you need to"
+        exit 1
+    fi
+
+
+    # Link up the new config
+    ln -s "${EMACS_CONFIGS}/${SELECTED_EMACS_CONFIG}" "${EMACS_CONFIG_DIR}"
+
+    # Start emacs daemon again
+    userctl start emacs
+fi
+
+
+# vim: ft=sh
