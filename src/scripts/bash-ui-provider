@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+if [ "$(test.in_terminal)" = "true" ]; then
+  COMMAND="bash"
+else
+  COMMAND="i3.dd" 
+fi
+
+echo "${COMMAND}"
