@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 IS_DROPDOWN=false
 
@@ -15,11 +15,11 @@ while true; do
 done
 
 if [ "$(test.in_terminal)" = "true" ]; then
-  COMMAND="bash"
+  COMMAND=""
 elif $IS_DROPDOWN; then
   COMMAND="i3.dd" 
 else
   COMMAND="gui-terminal-eval"
 fi
 
-$COMMAND $@ 
+$COMMAND $@
