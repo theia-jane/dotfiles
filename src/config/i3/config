@@ -145,4 +145,5 @@ mode "resize" {
 }
 
 exec --no-startup-id feh --bg-scale ~/.wallpaper
-exec --no-startup-id kree &
+exec --no-startup-id kree.start &
+exec --no-startup-id emacsd.start &
