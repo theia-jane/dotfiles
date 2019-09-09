@@ -1,9 +1,0 @@
-#!/bin/bash
-
-session_num="$(tmux ls | fzf | grep -Eo '^[0-9]+')" 
-
-if [ ! -z "$session_num" ]; then
-  tmux attach-session -t $session_num
-fi
-
-# vim: ft=sh
