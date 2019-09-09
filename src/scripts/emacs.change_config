@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Where I store my emacs configs
 EMACS_CONFIGS="${HOME}/.config/emacsds"
 
@@ -8,12 +7,11 @@ EMACS_CONFIGS="${HOME}/.config/emacsds"
 EMACS_CONFIG_DIR="${HOME}/.emacs.d"
 
 # Choose a config to use
-SELECTED_EMACS_CONFIG="$(cd ${EMACS_CONFIGS} && fd -t d -d 1 | fzf)"
+SELECTED_EMACS_CONFIG="$(cd ${EMACS_CONFIGS} && fd -t d -d 1 | $(fuzzy-ui-provider))"
 if [ ! -z "${SELECTED_EMACS_CONFIG}" ]; then
 
     # Stop all emacs instances before messing with the config directory
-    userctl stop emacs
-    pkill "^emacs$"
+    emacsd.stop
 
     # Clear out previous link
     if [ -h "${EMACS_CONFIG_DIR}" ]; then
@@ -33,7 +31,7 @@ If you want to keep the config, then you need to"
     ln -s "${EMACS_CONFIGS}/${SELECTED_EMACS_CONFIG}" "${EMACS_CONFIG_DIR}"
 
     # Start emacs daemon again
-    userctl start emacs
+    emacsd.start
 fi
 
 
