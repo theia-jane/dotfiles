@@ -1,4 +1,4 @@
-#!/usr/bin/env bash-ui-eval 
+#!/bin/bash
 
 cd $dot 
-e.f
+e.emacs .
