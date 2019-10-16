@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $s
+chmod +x *
+
+# vim: ft=sh
