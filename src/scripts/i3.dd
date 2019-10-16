@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Toggle floating dropdown terminal in i3, or start if non-existing.
 # $1 is	the script run in the terminal.
@@ -31,7 +31,7 @@ then
 	i3-msg "[instance=\"dropdown_$NAME\"] scratchpad show; [instance=\"dropdown_$NAME\"] move position center"
 else
 	echo "Window not detected... spawning."
-	tilix --new-process --name dropdown_$NAME -e "$@"
+	tilix --new-process --name "dropdown_$NAME" -e "$@"
 fi
 
 # vim: ft=sh
