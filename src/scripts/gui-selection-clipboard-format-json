@@ -1,0 +1,5 @@
+#!/bin/bash
+
+xdotool key Ctrl+c
+clipboard-format-json
+xdotool key Ctrl+v
