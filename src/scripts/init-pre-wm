@@ -1,5 +1,5 @@
 #!/bin/bash
-feh --bg-scale ~/.wallpaper &
+wm-set-background
 kree.start &
 emacsd.start &
 run.background deadd-notification-center &

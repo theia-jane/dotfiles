@@ -1,0 +1,4 @@
+#!/bin/bash
+
+image="${1:-"${HOME}/.wallpaper"}"
+run.background feh --bg-scale "$image"
