@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd ~/catalogs
+
+contents="\
+listings:
+  - name:
+    description: 
+    value: 
+";
+
+name="${1:-"*untitled-catalog*"}"
+emacs.run '
+(let ((buf (generate-new-buffer "'"${name}"'")))
+  (switch-to-buffer buf)
+  (insert "'"${contents}"'")
+  (yaml-mode)
+  (goto-line 4)
+  (end-of-line)
+  )'
+

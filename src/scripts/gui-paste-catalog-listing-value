@@ -1,0 +1,6 @@
+#!/bin/bash
+
+COPIED_LISTING_VALUE="$(catalog-copy-listing-value $@)"
+if [ ! -z "${COPIED_LISTING_VALUE}" ]; then
+  gui-paste
+fi

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+TARGET_FILE="${1:-$(catalog-select)}"
+
+if [ -z "$TARGET_FILE" ]; then
+    echo 'Need to provide a file to add to.'
+    exit 0
+fi
+
+TMP=$(mktemp --suffix=".yaml");
+ENTRY="\
+  - name: 
+    description: 
+    value: "
+echo "${ENTRY}" > $TMP
+
+TMP_VIMSCRIPT=$(mktemp);
+echo -n 'G A' > $TMP_VIMSCRIPT
+i3.dd nvim -s "$TMP_VIMSCRIPT" $TMP
+rm $TMP_VIMSCRIPT
+
+FILE_CONTENTS="$(cat $TMP)"
+rm $TMP
+
+STRIPPED_CONTENTS="$(echo $FILE_CONTENTS | strip.all_whitespace)"
+if [[ -z "$STRIPPED_CONTENTS" ]] || [[ "$STRIPPED_CONTENTS" = "$(echo $ENTRY | strip.all_whitespace)" ]]; then
+    echo 'No entry captured.'
+    exit 0
+fi
+
+echo "$FILE_CONTENTS" >> `resolve.home $TARGET_FILE` 
+
+# vim: ft=sh

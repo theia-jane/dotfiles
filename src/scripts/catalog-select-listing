@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CATALOG="$1"
+
+if [ ! -z "$1" ]; then
+  yq -r '.listing[] | .name' "${CATALOG}" \
+  | $(fuzzy-ui-provider)
+fi
+
+# vim: ft=sh
