@@ -10,13 +10,10 @@ TMP=$(mktemp --suffix=".org");
 ORG_ENTRY="* "
 echo "${ORG_ENTRY}" > $TMP
 
-# Hahah.. so hacky..
-TMP_SCRIPT=$(mktemp --suffix=".sh");
-echo "#!/bin/bash
-nvim -s <(echo -n 'A') $TMP" > $TMP_SCRIPT
-chmod +x $TMP_SCRIPT
-gui-terminal-eval $TMP_SCRIPT 
-rm $TMP_SCRIPT
+TMP_VIMSCRIPT=$(mktemp);
+echo -n 'G A' > $TMP_VIMSCRIPT
+i3.dd nvim -s "$TMP_VIMSCRIPT" $TMP
+rm $TMP_VIMSCRIPT
 
 FILE_CONTENTS="$(cat $TMP)"
 rm $TMP
@@ -28,5 +25,6 @@ if [[ -z "$STRIPPED_CONTENTS" ]] || [[ "$STRIPPED_CONTENTS" = "$(echo $ORG_ENTRY
 fi
 
 echo "$FILE_CONTENTS" >> `resolve.home $1` 
+
 
 # vim: ft=sh
