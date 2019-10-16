@@ -1,19 +1,14 @@
-font pango:Source Code Pro 10
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-  position top
-  status_command i3status
-}
 
 set $float_border [floating] border pixel 10
 set $no_border border pixel 0 
 
 # Gaps
 # smart_gaps on
-gaps inner 15 
-gaps outer 0
+# gaps inner 15 
+# gaps outer 0
 
 new_window pixel 0
 
@@ -42,7 +37,6 @@ set $mod Mod4
 set $exit mode "default"
 set $b bindsym
 
-$b $mod+Shift+s scratchpad show
 
 # TODO: Scroll cycling seems a little quick. Debouncing would be good.
 # Cycle through workspaces by scrolling
@@ -123,20 +117,11 @@ $b $mod+Mod1+Shift+k exec "kree.restart"
 mode "resize" {
   # These bindings trigger as soon as you enter the resize mode
 
-  # Pressing left will shrink the window’s width.
-  # Pressing right will grow the window’s width.
-  # Pressing up will shrink the window’s height.
-  # Pressing down will grow the window’s height.
-  $b j resize shrink width 10 px or 10 ppt
-  $b k resize grow height 10 px or 10 ppt
-  $b l resize shrink height 10 px or 10 ppt
-  $b semicolon resize grow width 10 px or 10 ppt
+  $b s resize shrink width 10 px or 10 ppt
+  $b g resize grow width 10 px or 10 ppt
 
-  # same bindings, but for the arrow keys
-  $b Left resize shrink width 10 px or 10 ppt
-  $b Down resize grow height 10 px or 10 ppt
-  $b Up resize shrink height 10 px or 10 ppt
-  $b Right resize grow width 10 px or 10 ppt
+  $b Shift+g resize grow height 10 px or 10 ppt
+  $b Shift+s resize shrink height 10 px or 10 ppt
 
   # back to normal: Enter or Escape or $mod+r
   $b Return $exit
@@ -144,6 +129,42 @@ mode "resize" {
   $b $mod+r $exit
 }
 
-exec --no-startup-id feh --bg-scale ~/.wallpaper
-exec --no-startup-id kree.start &
-exec --no-startup-id emacsd.start &
+
+
+# client.focused
+#     A client which currently has the focus.
+# client.focused_inactive
+#     A client which is the focused one of its container, but it does not have the focus at the moment.
+# client.unfocused
+#     A client which is not the focused one of its container.
+# client.urgent
+#     A client which has its urgency hint activated.
+# client.placeholder
+#     Background and text color are used to draw placeholder window contents (when restoring layouts). Border and indicator are ignored.
+# client.background
+#     Background color which will be used to paint the background of the client window on top of which the client will be rendered. Only clients which do not cover the whole area of this window expose the color. Note that this colorclass only takes a single color.
+
+set $yellow #ffb52a
+set $d_gray #222222
+set $m_gray #444444
+set $red #bd2c40
+
+set $text #d6d6d6
+set $bg #222222
+set $alert #bd2c40
+set $active #444444
+
+
+font pango:siji 10
+for_window [class=".*"] title_format " %title"
+
+# class                 border  backgr. text    indicator child_border
+client.focused          $active $active $text #2e9ef4   $active
+client.focused_inactive $bg     $bg     $text #484e50   $bg
+client.unfocused        $bg     $bg     $text #292d2e   #222222
+client.urgent           $alert  $alert  $text #900000   #900000
+client.placeholder      #000000 $m_gray $text #000000   #0c0c0c
+
+client.background       #ffffff
+
+exec --no-startup-id init-post-wm &
