@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd ~/Documents/screenshots
+image_to_open="$(ls | $(fuzzy-ui-provider))"
+
+
+if [ ! -z "${image_to_open}" ]; then
+    o.image "${image_to_open}"
+fi
+
+# vim: ft=sh
