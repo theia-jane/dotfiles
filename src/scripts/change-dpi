@@ -4,7 +4,7 @@ DPI="$(echo -en '96\n192' | rofi -p "dpi" -dmenu)"
 
 if [ ! -z "${DPI}" ]; then
   xrandr --dpi "${DPI}" \
-  && i3-msg restart
+  && wm-restart
 fi
 
 # vim: ft=sh
