@@ -1,0 +1,6 @@
+#!/bin/bash
+
+kree.stop
+kree.start
+
+# vim: ft=sh

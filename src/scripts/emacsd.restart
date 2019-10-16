@@ -1,0 +1,6 @@
+#!/bin/bash
+
+emacsd.stop 
+emacsd.start
+
+# vim: ft=sh

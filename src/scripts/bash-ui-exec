@@ -1,0 +1,25 @@
+#!/bin/bash
+
+IS_DROPDOWN=false
+
+while true; do
+  case "$1" in
+    --is-dropdown)
+      IS_DROPDOWN=true
+      shift 
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [ "$(test.in_terminal)" = "true" ]; then
+  COMMAND=""
+elif $IS_DROPDOWN; then
+  COMMAND="i3.dd" 
+else
+  COMMAND="gui-terminal-eval"
+fi
+
+$COMMAND $@

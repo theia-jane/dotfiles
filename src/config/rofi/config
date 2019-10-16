@@ -1,24 +1,26 @@
 rofi.color-enabled: true
 
 ! Window: ‘background’, ‘border’, ‘separator’
-rofi.color-window: argb:cc252936, #2BC1A4, #2BC1A4
+rofi.color-window: argb:cc596682, #eead0e, #eead0e
 
 ! State: ‘bg’, ‘fg’, ‘altbg’, ‘hlbg’, hlfg
-rofi.color-normal: argb:00252936, #ffffff, argb:00252936, argb:009575cd, #2BC1A4
-rofi.color-active: argb:00252936, #252936, argb:00252936, argb:009575cd, #ffc000
-rofi.color-urgent: argb:00252936, #ff0000, argb:00252936, argb:00252936, #ff0000
+rofi.color-normal: argb:00596682, #eceff4, argb:00465265, argb:00465265, #eead0e
+rofi.color-active: argb:00596682, #252936, argb:00465265, argb:00465265, #ffc000
+rofi.color-urgent: argb:00596682, #eceff4, argb:00465265, argb:00252936, #ff0000
 
-rofi.width: 40
+rofi.width: 30 
 rofi.padding: 40
 rofi.opacity: 80
-rofi.border: 2px
-rofi.line-margin: 10
-rofi.lines: 10
-rofi.separator-style: none
-rofi.columns: 2
-rofi.font: Source Code Pro 20
-rofi.bw: 4
-rofi.eh: 1
+rofi.border: 4px
+rofi.line-margin: 5 
+rofi.lines: 10 
+rofi.columns: 1 
+rofi.font: Source Code Pro 22
+rofi.bw: 0
+rofi.eh: 1 
 rofi.separator-style: solid
-rofi.hide-scrollbar: false
+rofi.hide-scrollbar: true 
+rofi.scrollbar-width: 0
 rofi.auto-select: false
+rofi.location: 2 
+rofi.yoffset: 150 

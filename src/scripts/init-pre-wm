@@ -1,0 +1,8 @@
+#!/bin/bash
+feh --bg-scale ~/.wallpaper &
+kree.start &
+emacsd.start &
+run.background deadd-notification-center &
+udiskie &
+
+# vim: ft=sh

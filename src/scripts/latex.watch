@@ -10,6 +10,7 @@ if [ ! -e "$1" ]; then
   exit 1
 fi
 
+cd "$(dirname $1)"
 zathura "$(echo $1 | sed -r 's/\.[^.]+$//').pdf" &
 echo "$1" | entr -r pdflatex "$1"
 

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash-ui-eval
+
+v | e.stdin | c 
+
+# vim: ft=sh

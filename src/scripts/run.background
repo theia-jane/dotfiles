@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Must pass an executable program or script"
+    exit 0
+fi
+
+EXEC_NAME="${1}"
+LOG_FILE="/tmp/${EXEC_NAME}.log"
+echo "Starting ${EXEC_NAME}..." >> $LOG_FILE
+
+${@} >> $LOG_FILE 2>&1 &
+
+# vim: ft=sh

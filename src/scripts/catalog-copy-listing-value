@@ -1,0 +1,8 @@
+#!/bin/bash
+
+VALUE="$(catalog-get-listing-value $@)"
+if [ ! -z "${VALUE}" ]; then
+    echo "${VALUE}" | c
+fi
+
+# vim: ft=sh

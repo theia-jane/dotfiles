@@ -1,0 +1,12 @@
+#!/bin/bash
+
+note_dir="${HOME}/notes"
+selected_file="$(cd $note_dir && fd -t f -e org | rofi -dmenu -p "File")"
+if [ -z "$selected_file" ]; then
+  echo "No file found"
+  exit 1
+fi
+
+e.emacs "${note_dir}/${selected_file}"
+
+# vim: ft=sh

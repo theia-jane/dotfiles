@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Toggle floating dropdown terminal in i3, or start if non-existing.
 # $1 is	the script run in the terminal.
@@ -7,14 +7,31 @@
 
 [ -z "$1" ] && exit
 
+USE_FULL=false
+while true; do
+  case "$1" in
+    --use-full)
+      USE_FULL=true
+      shift 
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
 
-if xwininfo -tree -root | grep "(\"dropdown_$1\" ";
+NAME="$1"
+if $USE_FULL; then
+  NAME=$(echo "$@" | sed 's/\s/_/g')
+fi
+
+if xwininfo -tree -root | grep "(\"dropdown_$NAME\" ";
 then
 	echo "Window detected."
-	i3-msg "[instance=\"dropdown_$1\"] scratchpad show; [instance=\"dropdown_$1\"] move position center"
+	i3-msg "[instance=\"dropdown_$NAME\"] scratchpad show; [instance=\"dropdown_$NAME\"] move position center"
 else
 	echo "Window not detected... spawning."
-	i3-msg "exec --no-startup-id tilix --new-process --name dropdown_$1 $(echo "$@" | cut -d ' ' -f2-) -e $1"
+	tilix --new-process --name "dropdown_$NAME" -e "$@"
 fi
 
 # vim: ft=sh

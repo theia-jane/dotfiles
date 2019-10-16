@@ -1,0 +1,5 @@
+#!/bin/bash
+
+emacsclient -e '(progn (find-file "'$1'") (org-latex-export-to-pdf))'
+
+# vim: ft=sh

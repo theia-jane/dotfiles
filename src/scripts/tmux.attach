@@ -1,0 +1,9 @@
+#!/bin/bash
+
+session_num="$(tmux ls | $(fuzzy-ui-provider) | grep -Eo '^[^:]+')" 
+
+if [ ! -z "$session_num" ]; then
+  bash-ui-exec tmux attach-session -t $session_num
+fi
+
+# vim: ft=sh

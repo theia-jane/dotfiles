@@ -1,0 +1,140 @@
+global:
+  Super+x: rofi -show run -modi run
+  Super+q: i3-msg kill
+  Super+Enter: tmux.scratch
+  Super+Space:
+    Space: rofi -show run -modi run
+    Enter: tilix
+    # Applications
+    a:
+      e: emacsclient -c
+      h: tilix -e htop
+      f: firefox.light
+      c: chromium
+      p: phpstorm
+      k: keepassxc
+      t: tilix
+      i: inkscape
+      z: zeal
+    o:
+      b: o.books
+      # TODO: Need to get kree to support this style of command. I think the space in "rofi -dmenu" is throwing it
+      # p: e.project --select-ui "rofi -dmenu"
+      p: rofi.e.project
+      l: firefox http://lfs
+      s: o.screenshot
+      # s: firefox https://learning.oreilly.com/playlists/6744cab9-674c-46e7-9c77-35b380229c9e/
+    i:
+      Shift+c: gui-paste-catalog-listing-value
+      g: gui-paste-guid
+      r:
+        n: gui-paste-random-number 99999
+          # TODO: kree can't handle numbers alone as mappings
+          # 1: gui-paste-random-number 1
+          # 2: gui-paste-random-number 2
+          # 3: gui-paste-random-number 3
+          # 4: gui-paste-random-number 4
+          # 5: gui-paste-random-number 5
+          # 6: gui-paste-random-number 6
+          # 7: gui-paste-random-number 7
+          # 8: gui-paste-random-number 8
+          # 9: gui-paste-random-number 9
+          # 0: gui-paste-random-number 10
+
+    # Notes
+    n:
+      n: e.note --today
+      Shift+n: e.note
+      f: e.notef
+      d: e.emacs ~/notes/personal/dotfiles.org
+      # c: e.emacs ~/notes/personal/dotfiles.org
+      m: e.emacs ~/notes/personal/mood.org
+      Shift+s: e.emacs ~/notes/new-software.org
+      s: e.emacs ~/notes/skills.org
+    # Run
+    r:
+      s: run.s
+      b: run.b
+      x: run.x
+    # Capture
+    c:
+      k: capture-org ~/notes/ideas/kree.org
+      w: capture-org ~/notes/ideas/workflow.org
+      b: capture-org ~/notes/read-lists/blog-posts.org
+      Shift+b: capture-org ~/notes/read-lists/books.org
+      c: capture-catalog-entry
+      s: screenshot
+    # Edit
+    e:
+      # TODO: Need to add a generic 'clipboard editting script'
+      c: e.clipboard
+      # Shift+c:
+      #   # Using my hacked version of gimp
+      #   g: clipboard.edit.image
+      #   t: e.clipboard
+      Shift+c: e.catalog
+      d: e.dot
+      s: i3.dd e.script
+      k: e.keymap
+      n: 
+        s: new.script
+        Shift+c: new.catalog
+    # Dropdown / quick actions
+    d:
+      Enter: tmux.scratch
+      r: rofi.i3.repl
+    # Screenshot
+    # Window
+    w:
+      r: i3-msg mode "resize"
+      h: i3-msg focus left
+      j: i3-msg focus down 
+      k: i3-msg focus up 
+      l: i3-msg focus right
+      Shift+h: i3-msg move left
+      Shift+j: i3-msg move down 
+      Shift+k: i3-msg move up 
+      Shift+l: i3-msg move right
+      w: i3-msg kill
+      f: i3-msg fullscreen toggle
+      # Split
+      s: 
+        h: i3-msg split h
+        v: i3-msg split v
+    s:
+      f:
+        j: gui-selection-clipboard-format-json
+  Cmd+z: i3-msg fullscreen toggle
+
+  # layout
+  Cmd+Shift+l:
+    t: i3-msg layout tabbed
+    s: i3-msg layout toggle split
+    Shift+s: i3-msg layout stacking
+  # Safety... kill kree if it's broken
+  Cmd+Shift+q:
+    Cmd+Shift+q: 
+      Cmd+Shift+q: pkill kree
+  Cmd+Shift+d:
+    k: kree.restart
+    e: emacsd.restart
+    i: i3-msg restart
+
+  Cmd+Ctrl+h: i3-msg focus left
+  Cmd+Ctrl+j: i3-msg focus down
+  Cmd+Ctrl+k: i3-msg focus up
+  Cmd+Ctrl+l: i3-msg focus right
+
+  Cmd+s: i3-msg resize shrink width 10 px or 10 ppt
+  Cmd+Shift+s: i3-msg resize shrink height 10 px or 10 ppt
+  Cmd+g: i3-msg resize grow width 10 px or 10 ppt
+  Cmd+Shift+g: i3-msg resize grow height 10 px or 10 ppt
+
+## NOTES:
+#  1. Add transient 'modes' basically modes that allow for a keymap to be sticky
+#  2. Add prefix keys (something that will modify the following keys behavior)
+
+conditional:
+  - trigger: { class: 'firefox' }
+    map:
+      Alt+x: firefox https://ddg.gg

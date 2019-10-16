@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DPI="$(echo -en '96\n192' | rofi -p "dpi" -dmenu)" 
+
+if [ ! -z "${DPI}" ]; then
+  xrandr --dpi "${DPI}" \
+  && wm-restart
+fi
+
+# vim: ft=sh

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pandoc "$@" --pdf-engine=pdflatex -o "$(echo $1 | sed -r 's/\.[^.]+$//').pdf"
+
+# vim: ft=sh

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+default_note_name="daily/$(date -Idate)"
+
+if [[ "$1" = "--today" ]]; then
+  note_name="${default_note_name}"
+else
+  note_name="$(zenity --entry --text="Name" --entry-text="${default_note_name}")"
+fi
+
+if [[ -z "${note_name}" ]]; then
+  note_name="${default_note_name}"
+fi
+
+e.emacs "${HOME}/notes/$note_name.org"
+
+# vim: ft=sh
+

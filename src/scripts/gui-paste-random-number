@@ -1,0 +1,8 @@
+#!/bin/bash
+
+COPIED_RANDOM_NUMBER="$(random-number-copy $@)"
+if [ ! -z "${COPIED_RANDOM_NUMBER}" ]; then
+    gui-paste
+fi
+
+# vim: ft=sh

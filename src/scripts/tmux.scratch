@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-tmux new -s scratch -A
+bash-ui-exec --is-dropdown tmux new -s scratch -A
 
 # vim: ft=sh
