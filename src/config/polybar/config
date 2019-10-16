@@ -1,6 +1,5 @@
 ;=========================================================
 ;
-;
 ;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
 ;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
 ;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
@@ -58,7 +57,7 @@ font-2 = siji:pixelsize=10;1
 
 modules-left = bspwm i3
 modules-center = 
-modules-right = filesystem xbacklight pulseaudio memory cpu temperature date 
+modules-right = filesystem xbacklight pulseaudio memory cpu temperature battery date 
 
 tray-position = right
 tray-padding = 2
