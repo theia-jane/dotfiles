@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ ! -z "$1" ]] && [[ ! -e "$1" ]]; then
+    echo "Must provide a file"
+    exit 0
+fi
+
+run.background feh $1
+
+# vim: ft=sh
