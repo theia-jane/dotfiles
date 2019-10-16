@@ -1,0 +1,11 @@
+#!/bin/bash
+
+file="$(scrot -z -e 'echo $f')"
+screenshot_directory="${HOME}/Documents/screenshots"
+
+if [[ ! -z "${file}" ]] && [[ ! -e "${screenshot_directory}/${file}" ]]; then
+   mv $file $screenshot_directory
+fi
+
+
+# vim: ft=sh
