@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# NOTE: Using this script eval makes it so you cannot pass parameters to the
+# script we are calling. This can likely be remedied, but I don't need it yet
+
+PREFIX_COMMAND=""
+
+while true; do
+  case "$1" in
+    --prefix-command)
+      PREFIX_COMMAND="$2"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+
+COMMAND="$PREFIX_COMMAND bash $1"
+shift
+
+
+if [ -z "$1" ]; then
+    { timeout --foreground 0.5 dd bs=1 count=1 2>/dev/null && cat; } | $COMMAND
+else
+
+    echo -n "$@" | $COMMAND
+fi
+
+# vim: ft=sh
