@@ -242,6 +242,7 @@ values."
                                        cscope
                                        syntax-checking
                                        version-control
+                                       dap
 
                                        ;; Languages
                                        clojure
@@ -251,7 +252,7 @@ values."
                                        go
                                        haskell
                                        html
-                                       java
+                                       (java :variables java-backend 'lsp)
                                        javascript
                                        latex
                                        lua
@@ -313,6 +314,7 @@ you should place your code here."
   (spacemacs/declare-prefix "o" "own-menu")
   (spacemacs/set-leader-keys "oof" '(lambda () (interactive) (counsel-find-file org-root)))
   (spacemacs/set-leader-keys "odf" '(lambda () (interactive) (counsel-find-file my-dotfiles)))
+
 
   (setq doom-themes-enable-bold t
         doom-themese-enable-italic t)
