@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env param-or-pipe-eval
+
+c
 
 if [ "$OS" = "linux" ]; then
   xdotool key ctrl+v

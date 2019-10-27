@@ -1,8 +1,0 @@
-#!/bin/bash
-
-COPIED_GUID="$(guid-copy)"
-if [ ! -z "${COPIED_GUID}" ]; then
-    gui-paste
-fi
-
-# vim: ft=sh

@@ -20,26 +20,28 @@ global:
       b: o.books
       # TODO: Need to get kree to support this style of command. I think the space in "rofi -dmenu" is throwing it
       # p: e.project --select-ui "rofi -dmenu"
-      p: rofi.e.project
+      p: e.project
       l: firefox http://lfs
       s: o.screenshot
       # s: firefox https://learning.oreilly.com/playlists/6744cab9-674c-46e7-9c77-35b380229c9e/
     i:
-      Shift+c: gui-paste-catalog-listing-value
-      g: gui-paste-guid
+      i: gui-paste
+      Shift+c: gui-paste-command catalog-get-listing-value
+      g: gui-paste-command guid
       r:
-        n: gui-paste-random-number 99999
+        n:
+          # x: gui-paste-command random-number 99999
           # TODO: kree can't handle numbers alone as mappings
-          # 1: gui-paste-random-number 1
-          # 2: gui-paste-random-number 2
-          # 3: gui-paste-random-number 3
-          # 4: gui-paste-random-number 4
-          # 5: gui-paste-random-number 5
-          # 6: gui-paste-random-number 6
-          # 7: gui-paste-random-number 7
-          # 8: gui-paste-random-number 8
-          # 9: gui-paste-random-number 9
-          # 0: gui-paste-random-number 10
+          "1": gui-paste-command random-number 9
+          "2": gui-paste-command random-number 99
+          "3": gui-paste-command random-number 999
+          "4": gui-paste-command random-number 9999
+          "5": gui-paste-command random-number 99999
+          "6": gui-paste-command random-number 999999
+          "7": gui-paste-command random-number 9999999
+          "8": gui-paste-command random-number 99999999
+          "9": gui-paste-command random-number 999999999
+          "0": gui-paste-command random-number 9999999999
 
     # Notes
     n:
@@ -67,7 +69,7 @@ global:
     # Edit
     e:
       # TODO: Need to add a generic 'clipboard editting script'
-      c: e.clipboard
+      c: clipboard-transform e.stdin
       # Shift+c:
       #   # Using my hacked version of gimp
       #   g: clipboard.edit.image
@@ -102,10 +104,15 @@ global:
         h: i3-msg split h
         v: i3-msg split v
     s:
-      f:
-        j: gui-selection-clipboard-format-json
-  Cmd+z: i3-msg fullscreen toggle
+      t:
+        j: gui-transform-selection format-json
+        g: gui-transform-selection git-transform-repo-to-ssh
+    Ctrl+c:
+      t:
+        j: clipboard-transform format-json
+        g: clipboard-transform git-transform-repo-to-ssh
 
+  Cmd+z: i3-msg fullscreen toggle
   # layout
   Cmd+Shift+l:
     t: i3-msg layout tabbed

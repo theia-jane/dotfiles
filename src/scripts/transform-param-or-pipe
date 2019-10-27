@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+COMMAND="$1"
+shift
+
+
+if [ -z "$1" ]; then
+    "$COMMAND"
+else
+    echo -n "$@" | "$COMMAND"
+fi
+
+# vim: ft=sh
