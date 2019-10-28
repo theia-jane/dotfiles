@@ -1,0 +1,20 @@
+#!/bin/bash
+
+file="${1:-$(fzf)}"
+
+if [ -z "$file" ]; then
+    exit 0
+fi
+
+
+new_name="$(echo -n "$file" | e.stdin)"
+
+if [ -z "$new_name" ]; then
+    exit 0
+fi
+
+
+mv "$file" "$new_name"
+
+
+# vim: ft=sh
