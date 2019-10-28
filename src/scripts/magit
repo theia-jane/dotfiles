@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env emacs-frame-eval
 
-(emacsclient -ce '(progn (magit) (spacemacs/toggle-maximize-buffer)) ' &) > /dev/null 2>&1
-
-# vim: ft=sh
+(progn 
+  (magit) 
+  (spacemacs/toggle-maximize-buffer)) 

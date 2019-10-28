@@ -1,3 +1,3 @@
-#!/usr/bin/env bash-ui-eval
+#!/usr/bin/env emacs-frame-eval
 
-nvim -c "FZF"
+(counsel-find-file)

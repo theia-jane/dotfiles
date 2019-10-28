@@ -1,5 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env emacs-eval
 
-emacsclient -e '(progn (find-file "'$1'") (org-latex-export-to-pdf))'
+(if (not (eq (length argv) 0))
+  (progn 
+    (find-file (car argv))
+    (org-latex-export-to-pdf)
+    (delete-file (replace-regexp-in-string "org$" "tex" (car argv)))))
 
-# vim: ft=sh
+;; vim: ft=lisp  

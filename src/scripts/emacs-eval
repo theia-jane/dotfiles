@@ -1,0 +1,25 @@
+#/bin/bash
+
+EXTRA_PARAMS=""
+while true; do
+  case "$1" in
+    -c)
+      EXTRA_PARAMS="$1 "
+      shift 1 
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+SCRIPT_NAME="$1"
+shift
+ARGS=("${@/#/\"}")
+ARGS=("${ARGS[@]/%/\"}")
+
+emacs-exec $EXTRA_PARAMS "(progn
+  (setq argv '(${ARGS[@]}))
+  $(script-contents "$SCRIPT_NAME"))" 
+
+# vim: ft=sh

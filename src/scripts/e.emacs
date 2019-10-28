@@ -21,6 +21,6 @@ done
 
 find_file_lisp="(progn ${find_file_lisp})"
 
-(emacsclient -c -e "$find_file_lisp" &) > /dev/null 2>&1 
+emacs-exec -c "$find_file_lisp"
 
 # vim: ft=sh
