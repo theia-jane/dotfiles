@@ -5,7 +5,7 @@ if [ -z "$(which xcape 2>/dev/null)" ]; then
 fi
 
 xmodmap ~/.Xmodmap
-pkill xcape \
-    && xcape -e 'Control_R=Return;Hyper_R=backslash;Hyper_L=Tab'
+pkill xcape 
+xcape -e 'Control_R=Return;Hyper_R=backslash;Hyper_L=Tab'
 
 # vim: ft=sh
