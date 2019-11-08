@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd $notes/diagrams
+e.f

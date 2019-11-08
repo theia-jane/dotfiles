@@ -1,0 +1,10 @@
+#!/bin/bash
+
+file="$1"
+extension="$2"
+
+if [[ -z "${file}" ]] || [[ -z "${extension}" ]]; then
+   exit 0
+fi
+
+echo "$(drop-extension "$file").${extension}" 

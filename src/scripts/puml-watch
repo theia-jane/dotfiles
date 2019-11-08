@@ -1,0 +1,18 @@
+#!/bin/bash
+
+file="${1:-"$notes/diagrams/$(sel diagram-list puml)"}"
+
+if [ -z "$file" ]; then
+  echo-error "Must provide a file to watch"
+  exit 1
+fi
+
+if [ ! -e "$file" ]; then
+  echo-error "Filename ($1) provided does not exist."
+  exit 1
+fi
+
+puml-pdf "$file" && open-pdf "$(replace-extension "$file" pdf)"
+echo "$file" | entr -r puml-pdf "$file"
+
+# vim: ft=sh

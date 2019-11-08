@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd "${notes}/diagrams"
+
+contents="\
+@startuml
+
+
+
+@enduml
+";
+
+name="${1:-"*untitled-diagram*"}"
+emacs-exec -c '
+(let ((buf (generate-new-buffer "'"${name}"'")))
+  (switch-to-buffer buf)
+  (insert "'"${contents}"'")
+  (plantuml-mode)
+  (goto-line 3))'
+
+# vim: ft=sh

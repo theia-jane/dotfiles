@@ -1,0 +1,10 @@
+#!/bin/bash
+
+file="$1"
+
+if [ -z "$file" ]; then
+   exit 0
+fi
+
+echo $file \
+  | sed -r 's/\.[^.]+$//'
