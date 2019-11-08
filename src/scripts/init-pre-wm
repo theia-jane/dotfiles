@@ -1,6 +1,6 @@
 #!/bin/bash
 wm-set-background
-key-init
+# key-init
 kree.start &
 emacsd.start &
 run.background deadd-notification-center &
