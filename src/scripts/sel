@@ -1,0 +1,32 @@
+#!/bin/bash
+
+MULTIPLE=""
+DEFAULT_VALUE=""
+while true; do
+    case "$1" in
+        -m)
+            MULTIPLE="-m"
+            shift
+            ;;
+        -d|--default)
+            DEFAULT_VALUE="$2"
+            shift 2
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [[ -z "$DEFAULT_VALUE" ]] && [[ -z "$1" ]]; then
+   exit
+fi
+
+if [[ ! -z "$DEFAULT_VALUE" ]]; then
+  SELECTED="${DEFAULT_VALUE}"
+else
+  SELECTED="$($@ | $(fuzzy-ui-provider "${MULTIPLE}"))"
+fi
+
+
+echo -n "$SELECTED"
