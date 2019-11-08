@@ -1,3 +1,4 @@
+export notes="${HOME}/notes"
 export cfg_sh="${cfg}/sh"
 export docs="${HOME}/Documents"
 export dbox="${HOME}/Nextcloud"
