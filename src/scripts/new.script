@@ -10,7 +10,7 @@ script_contents="\
 # vim: ft=sh";
 
 script_name="${1:-"*untitled-script*"}"
-emacs.run '
+emacs-exec -c '
 (let ((buf (generate-new-buffer "'"${script_name}"'")))
   (switch-to-buffer buf)
   (insert "'"${script_contents}"'")

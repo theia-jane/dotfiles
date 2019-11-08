@@ -10,7 +10,7 @@ listings:
 ";
 
 name="${1:-"*untitled-catalog*"}"
-emacs.run '
+emacs-exec '
 (let ((buf (generate-new-buffer "'"${name}"'")))
   (switch-to-buffer buf)
   (insert "'"${contents}"'")
