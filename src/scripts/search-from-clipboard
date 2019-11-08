@@ -1,0 +1,7 @@
+#!/bin/bash
+
+search_url="${1:-"https://ddg.gg?q="}"
+search_term="$(urlencode "$(v)")"
+browser "${search_url}${search_term}"
+
+# vim: ft=sh
