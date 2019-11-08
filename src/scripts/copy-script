@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SCRIPT_CONTENTS="$(cat.s)"
+
+if [ ! -z "${SCRIPT_CONTENTS}" ]; then
+    c "${SCRIPT_CONTENTS}"
+fi
+
+# vim: ft=sh
