@@ -2,7 +2,7 @@
 
 COMMAND=""
 ROFI_ARGS=""
-FZF_ARGS=""
+FZF_ARGS="--height 10 --reverse"
 MULTIPLE=false
 
 while true; do
