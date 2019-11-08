@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PUSH_OUTPUT="$(g push 2>&1 | fgrep 'no upstream branch')"
+
+if [ ! -z "${PUSH_OUTPUT}" ]; then
+   g push --set-upstream origin "$(g branch --show-current)"
+fi
