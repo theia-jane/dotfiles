@@ -1,0 +1,26 @@
+#!/bin/bash
+
+reviewers="$(sel -m hub-members-list | tr '\n' ',')"
+if [ ! -z "$reviewers" ]; then
+    reviewers="-r ${reviewers}"
+fi
+
+pr_file=$(mktemp --suffix=".md");
+
+pr_template_file="$(fd -H pull_request_template.md)"
+pr_template=""
+if [ -e "$pr_template_file" ]; then
+    pr_template="$(cat "$pr_template_file" | tee "$pr_file")"
+fi
+
+$EDITOR "$pr_file"
+pr="$(cat "$pr_file")"
+
+stripped_pr="$(echo -n "$pr" | strip.all_whitespace)"
+if [[ -z "$stripped_pr" ]] || [[ "$stripped_pr" = "$(echo -n "$pr_template" | strip.all_whitespace)" ]]; then
+    echo 'Aborting pull request. No PR message.' 1>&2
+    exit 1
+fi
+
+
+hub pull-request -co --no-edit --file "" "$REVIEWERS" $@
