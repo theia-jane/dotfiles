@@ -1,0 +1,3 @@
+#!/bin/bash
+
+run.background --no-log emacsdclient "$@"
