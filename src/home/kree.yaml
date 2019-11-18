@@ -1,5 +1,7 @@
 global:
   Super+x: rofi -show run -modi run
+  Super+e: i3.dd.emacs
+  Super+c: i3.dd calc
   Super+q: i3-msg kill
   Super+Enter: tmux.scratch
   Super+Space:
@@ -7,7 +9,7 @@ global:
     Enter: tilix
 
     a: # Applications
-      e: emacsclient -c
+      e: emacsdclient -c
       h: tilix -e htop
       f: firefox.light
       c: chromium
@@ -89,6 +91,8 @@ global:
       j: i3-msg focus down 
       k: i3-msg focus up 
       l: i3-msg focus right
+      c: i3-msg move position center
+      t: xdotool getactivewindow windowmove x 0
       Shift+h: i3-msg move left
       Shift+j: i3-msg move down 
       Shift+k: i3-msg move up 
