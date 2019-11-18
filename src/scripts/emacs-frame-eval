@@ -1,5 +1,5 @@
 #!/bin/bash
 
-emacs-eval -c $@
+emacs-eval -c "$@"
 
 # vim: ft=sh
