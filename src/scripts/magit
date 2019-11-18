@@ -1,5 +1,4 @@
 #!/usr/bin/env emacs-frame-eval
 
 (progn 
-  (magit) 
-  (spacemacs/toggle-maximize-buffer)) 
+  (magit)) 

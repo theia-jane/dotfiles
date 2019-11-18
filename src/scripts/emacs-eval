@@ -18,7 +18,7 @@ shift
 ARGS=("${@/#/\"}")
 ARGS=("${ARGS[@]/%/\"}")
 
-emacs-exec $EXTRA_PARAMS "(progn
+emacsdclient-bg $EXTRA_PARAMS -e "(progn
   (setq argv '(${ARGS[@]}))
   $(script-contents "$SCRIPT_NAME"))" 
 

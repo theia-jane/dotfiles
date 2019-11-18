@@ -1,14 +1,32 @@
 #!/bin/bash
 
+should_log=true
+while true; do
+  case "$1" in
+    --no-log)
+      should_log=false
+      shift 1 
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
 if [ -z "$1" ]; then
     echo "Must pass an executable program or script"
     exit 0
 fi
 
 EXEC_NAME="${1}"
-LOG_FILE="/tmp/${EXEC_NAME}.log"
+if $should_log; then
+  LOG_FILE="/tmp/${EXEC_NAME}.log"
+else
+  LOG_FILE="/dev/null"
+fi
+
 echo "Starting ${EXEC_NAME}..." >> $LOG_FILE
 
-${@} >> $LOG_FILE 2>&1 &
+nohup "${@}" >> $LOG_FILE 2>&1 &
 
 # vim: ft=sh

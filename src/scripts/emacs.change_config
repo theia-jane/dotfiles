@@ -4,7 +4,7 @@
 EMACS_CONFIGS="${HOME}/.config/emacsds"
 
 # Default directory for emacs config directory
-EMACS_CONFIG_DIR="${HOME}/.emacs.d"
+EMACS_CONFIG_DIR="${HOME}/.config/emacs"
 
 # Choose a config to use
 SELECTED_EMACS_CONFIG="$(cd ${EMACS_CONFIGS} && fd -t d -d 1 | $(fuzzy-ui-provider))"

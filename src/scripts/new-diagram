@@ -11,7 +11,7 @@ contents="\
 ";
 
 name="${1:-"*untitled-diagram*"}"
-emacs-exec -c '
+emacsdclient-bg -ce '
 (let ((buf (generate-new-buffer "'"${name}"'")))
   (switch-to-buffer buf)
   (insert "'"${contents}"'")

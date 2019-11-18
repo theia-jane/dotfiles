@@ -2,7 +2,7 @@
 
 echo "Stopping emacs daemon..." >> /tmp/emacsd.log
 
-(emacs-exec "(kill-emacs)"; \
+(emacsdclient -e "(kill-emacs)"; \
   pkill ^emacs$) >> /tmp/emacsd.log 2>&1
 
 # vim: ft=sh
