@@ -28,10 +28,11 @@ fi
 if xwininfo -tree -root | grep "(\"dropdown_$NAME\" ";
 then
 	echo "Window detected."
-	i3-msg "[instance=\"dropdown_$NAME\"] scratchpad show; [instance=\"dropdown_$NAME\"] move position center"
+	i3-msg "[instance=\"dropdown_$NAME\"] scratchpad show"
 else
 	echo "Window not detected... spawning."
 	tilix --new-process --name "dropdown_$NAME" -e "$@"
+
 fi
 
 # vim: ft=sh
