@@ -15,7 +15,7 @@ new_window pixel 0
 hide_edge_borders both
 
 for_window [class="^.*"] $no_border
-for_window $float_border 
+# for_window $float_border 
 for_window [tiling] $no_border
 
 # General dropdown window traits. The order can matter.
@@ -23,12 +23,26 @@ for_window [instance="dropdown_*"] floating enable
 for_window [instance="dropdown_*"] move scratchpad
 for_window [instance="dropdown_*"] sticky enable
 for_window [instance="dropdown_*"] scratchpad show
-for_window [instance="dropdown_*"] $float_border
+for_window [instance="dropdown_*"] $no_border 
+for_window [instance="dropdown_*"] move position center
+
+for_window [title="^Dropdown: Emacs"] floating enable
+for_window [title="^Dropdown: Emacs"] move scratchpad
+for_window [title="^Dropdown: Emacs"] scratchpad show 
+for_window [title="^Dropdown: Emacs"] $no_border
+# for_window [title="dropdown_*"] move scratchpad
+# for_window [title="dropdown_*"] sticky enable
+# for_window [title="dropdown_*"] scratchpad show
+# for_window [title="dropdown_*"] $float_border
+# for_window [title="dropdown_*"] move position center
+
+# for_window [title="dropdown_"] $no_border
+# for_window [title="dropdown_"] move absolute position 0 0
 # for_window [instance="dropdown_tmuxdd"] resize set 625 450
 # for_window [instance="dropdown_dropdowncalc"] resize set 800 300
 # for_window [instance="dropdown_tmuxdd"] border pixel 3
 # for_window [instance="dropdown_dropdowncalc"] border pixel 2
-for_window [instance="dropdown_*"] move position center
+
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
