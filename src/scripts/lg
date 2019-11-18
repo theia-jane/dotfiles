@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ls -al | grep "$1"
+
+# vim: ft=sh
