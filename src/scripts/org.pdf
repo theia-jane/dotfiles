@@ -1,9 +1,16 @@
 #!/usr/bin/env emacs-eval
 
 (if (not (eq (length argv) 0))
-  (progn 
-    (find-file (car argv))
-    (org-latex-export-to-pdf)
-    (delete-file (replace-regexp-in-string "org$" "tex" (car argv)))))
+  (let* ((filename (car argv))
+          (outfile (replace-regexp-in-string "org$" "tex" filename))
+          (org-inhibit-startup t))
+
+    (with-temp-buffer
+      (insert-file-contents filename)
+      (org-mode)
+      (org-export-to-file 'latex outfile
+        t nil nil nil nil
+        (lambda (file) (org-latex-compile file))))
+    ) )
 
 ;; vim: ft=lisp  
