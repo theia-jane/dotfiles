@@ -18,8 +18,8 @@ shift
 ARGS=("${@/#/\"}")
 ARGS=("${ARGS[@]/%/\"}")
 
-emacsdclient-bg $EXTRA_PARAMS -e "(progn
-  (setq argv '(${ARGS[@]}))
-  $(script-contents "$SCRIPT_NAME"))" 
-
+emacsdclient-bg $EXTRA_PARAMS -e "
+(let ((argv '(${ARGS[@]}))) 
+  $(script-contents "$SCRIPT_NAME")
+)" 
 # vim: ft=sh
