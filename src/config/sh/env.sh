@@ -12,6 +12,10 @@ export s=$scripts
 export CLICOLOR=1
 export GTAGSLABEL="pygments"
 
+if [ ! -z "$(which rustc)" ]; then
+  # rustup component add rust-src
+  export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+fi
 
 if [ ! -z "$(which emacsdclient)" ]; then
   EDITOR="emacsdclient -c"
