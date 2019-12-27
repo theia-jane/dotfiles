@@ -13,7 +13,8 @@ global:
       h: tilix -e htop
       f: firefox.light
       c: chromium
-      p: phpstorm
+      p: pass-menu
+      Shift+p: phpstorm
       k: keepassxc
       t: tilix
       i: inkscape
