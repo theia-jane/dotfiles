@@ -13,11 +13,11 @@ export CLICOLOR=1
 export GTAGSLABEL="pygments"
 
 
-if [ "$(which emacsdclient)" ]; then
+if [ ! -z "$(which emacsdclient)" ]; then
   EDITOR="emacsdclient -c"
 fi
 
-if [ "$(which nvim)" ]; then
+if [ ! -z "$(which nvim)" ]; then
   EDITOR="${EDITOR:-nvim}"
   export MANPAGER="nvim -c 'set ft=man' -"
 fi
