@@ -3,13 +3,14 @@
 (if (not (eq (length argv) 0))
   (let* ((filename (car argv))
           (outfile (replace-regexp-in-string "org$" "tex" filename))
-          (org-inhibit-startup t))
+          (org-inhibit-startup t)
+          (org-export-in-background t))
 
     (with-temp-buffer
       (insert-file-contents filename)
       (org-mode)
       (org-export-to-file 'latex outfile
-        t nil nil nil nil
+        nil nil nil nil nil
         (lambda (file) (org-latex-compile file))))
     ) )
 
