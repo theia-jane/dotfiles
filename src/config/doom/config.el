@@ -22,14 +22,18 @@
     :sasl-password ,(lambda (&rest _) (+pass-get-secret "irc/freenode.net"))
     :channels ("#emacs")))
 
-(after! flyspell-mode
-  (defun tw/flyspell-save-word ()
-    (interactive)
-    (let ((current-location (point))
-          (word (flyspell-get-word)))
-      (when (consp word)
-        (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
-  )
+(defun tw/flyspell-save-word ()
+  (interactive)
+  (let ((current-location (point))
+        (word (flyspell-get-word)))
+    (when (consp word)
+      (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
+
+(use-package! org-crypt
+  :config
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance (quote ("crypt"))
+        org-crypt-key nil))
 
 (after! org
   (setq
