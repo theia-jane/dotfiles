@@ -1,0 +1,11 @@
+#+TITLE: NextCloud
+
+* Symlink folders
+#+BEGIN_SRC bash
+ln -s "${HOME}/NextCloud/notes" "${HOME}/notes"
+ln -s "${HOME}/NextCloud/passwords" "${HOME}/.password-store"
+ln -s "${HOME}/NextCloud/work-notes" "${HOME}/work-notes"
+ln -s "${HOME}/NextCloud/homework" "${HOME}/homework"
+#+END_SRC
+
+#+RESULTS:
