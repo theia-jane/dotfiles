@@ -1,0 +1,7 @@
+# key: hwex
+# name: homework excercise
+# --
+* $1
+** Statement
+$0
+** Solution

@@ -1,0 +1,8 @@
+# key: __hw
+# name: homework assignment
+# --
+#+TITLE: ${1:`(file-name-base buffer-file-name)`}
+#+AUTHOR: Tyler Ware
+#+LATEX_HEADER: \input{header.tex}
+
+$0
