@@ -1,6 +1,7 @@
 #!/bin/bash
 
 run.background polybar main 
-run.background nextcloud --background 
+run.background nextcloud --background
+run.background mail-sync
 
 # vim: ft=sh
