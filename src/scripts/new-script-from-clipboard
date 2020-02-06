@@ -1,0 +1,21 @@
+#!/bin/bash
+
+script_exec="${1:-$(echo -n "bash" | $(fuzzy-ui-provider))}"
+script_name="${2:-$(zenity --entry --text="Script name:")}"
+
+if [ -z "$script_exec" ]; then
+    echo "Must provide script exec"
+    exit 1
+fi
+
+if [ -z "$script_name" ]; then
+    echo "Must provide script name"
+    exit 1
+fi
+
+script_file="$s/$script_name"
+echo "#!$(which env) $script_exec" > $script_file
+v >> $script_file
+chmod-x-s
+
+# vim: ft=sh
