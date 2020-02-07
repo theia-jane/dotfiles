@@ -68,7 +68,7 @@
     org-display-inline-images t
     org-pretty-entities t
     org-startup-with-inline-images "inlineimages"
-    org-hide-emphasis-markers t
+    org-hide-emphasis-markers nil
     org-export-with-toc nil
     org-export-with-section-numbers nil
     org-export-time-stamp-file nil
