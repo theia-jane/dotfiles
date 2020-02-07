@@ -1,0 +1,2 @@
+#!/sbin/env bash
+g remote get-url origin
