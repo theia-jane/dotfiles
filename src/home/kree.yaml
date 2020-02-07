@@ -53,6 +53,10 @@ global:
       Shift+s: e.emacs ~/notes/new-software.org
       s: e.emacs ~/notes/skills.org
 
+    Shift+n:
+      c:
+        s: new-script-from-clipboard bash
+
     r: # Run
       s: run.s
       b: run.b
