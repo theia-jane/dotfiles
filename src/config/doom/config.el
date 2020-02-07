@@ -98,6 +98,10 @@
        ("STARTED"	. "⚐")
        ("CANCELED"	. "✘")
        ("DONE"	. "✔")))
+    (defun +tw/org-ctrl-c-ret ()
+      (interactive)
+      (org-ctrl-c-ret)
+      (evil-insert-state))
   )
 
 (after! dired
