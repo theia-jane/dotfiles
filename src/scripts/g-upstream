@@ -1,0 +1,2 @@
+#!/sbin/env bash
+git config branch.$(git rev-parse --abbrev-ref HEAD).remote
