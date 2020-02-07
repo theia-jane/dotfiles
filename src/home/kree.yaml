@@ -15,10 +15,10 @@ global:
       c: chromium
       p: pass-menu
       Shift+p: phpstorm
-      k: keepassxc
       t: tilix
       i: inkscape
       z: zeal
+      g: tilix -e gotop
 
     o: # Open
       b: o.books
