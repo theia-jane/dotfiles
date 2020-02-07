@@ -4,6 +4,8 @@ global:
   Super+c: i3.dd calc
   Super+q: i3-msg kill
   Super+Enter: tmux.scratch
+  # TODO: why doesn't this work? :
+  # Super+Tab: i3-msg "workspace back_and_forth"
   Super+Space:
     Space: rofi -show run -modi run
     Enter: tilix
