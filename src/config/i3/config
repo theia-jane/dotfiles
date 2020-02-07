@@ -181,4 +181,5 @@ client.placeholder      #000000 $m_gray $text #000000   #0c0c0c
 
 client.background       #ffffff
 
+focus_on_window_activation focus
 exec --no-startup-id init-post-wm &
