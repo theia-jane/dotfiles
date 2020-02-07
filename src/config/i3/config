@@ -78,6 +78,7 @@ $b --whole-window $mod+Ctrl+n focus down
 # $b $mod+q kill 
 $b $mod+t floating toggle; $no_border; $float_border 
 
+$b $mod+tab workspace back_and_forth
 
 
 # focus the parent container
