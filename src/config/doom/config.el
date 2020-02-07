@@ -86,7 +86,7 @@
     (defun org-mode-todo-symbols (todo-alist)
       (setq org-todo-font-lock-replace
             (map-alist (lambda (keyword symbol)
-                         `(,(concat "^\\*+ \\(" keyword "\\) ")
+                         `(,(concat "^\\*+ \\(" keyword "\\)")
                            (1 (progn (compose-region (match-beginning 1) (match-end 1) ,symbol) nil))))
                        todo-alist))
 
