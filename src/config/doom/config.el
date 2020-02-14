@@ -1,5 +1,6 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
+(load! "+core.el")
 (load! "+org.el")
 (load! "+key.el")
 
@@ -50,6 +51,7 @@
 
 (config/visual/buffer-spacing)
 
+(setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
 
 (defun tw/new-org-scratch ()
   "Create a new empty buffer.
@@ -65,4 +67,5 @@ It returns the buffer (for elisp programing).
     $buf
     ))
 
-
+;; Allow local configuration
+(load!? "+profile.el")
