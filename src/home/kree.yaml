@@ -26,6 +26,7 @@ global:
       b: o.books
       p: e.project
       l: firefox http://lfs
+      h: e.emacs ~/homework
       s: o.screenshot
 
     i: # Insert
