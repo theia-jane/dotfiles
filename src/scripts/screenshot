@@ -1,6 +1,6 @@
 #!/bin/bash
 
-file="$(scrot -z -e 'echo $f')"
+file="$(scrot -s -z -e 'echo $f')"
 screenshot_directory="${HOME}/Documents/screenshots"
 
 if [[ ! -z "${file}" ]] && [[ ! -e "${screenshot_directory}/${file}" ]]; then
