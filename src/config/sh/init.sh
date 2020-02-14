@@ -198,6 +198,11 @@ if [ "${SHELL_NAME}" = "zsh" ]; then
   bindkey '\eq' fzf-git-show
 fi
 
+c2s() {
+  DIR="$(command -v "${1}" | sed -r 's%/[^/]+$%%')"
+  cd "${DIR:-$PWD}"
+}
+
 
 alias cd.p='cdf -d $p --fd-provider fd_project_dirs'
 alias cd.f='dir="$(fd -t d | fzf --height=20%)"; [ -d "$dir"] && cd "$dir"'
