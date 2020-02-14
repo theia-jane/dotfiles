@@ -2,6 +2,6 @@
 # name: homework excercise
 # --
 * $1
-** Statement
+** Statement :noexport:
 $0
-** Solution
+** Solution :ignore:
