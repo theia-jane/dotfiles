@@ -62,7 +62,8 @@ set $b bindsym
 $b --whole-window $mod+button5 workspace next_on_output
 $b --whole-window $mod+button4 workspace prev_on_output 
 $b $mod+n workspace next_on_output
-$b $mod+p workspace prev_on_output 
+$b $mod+p workspace prev_on_output
+$b $mod+Tab workspace back_and_forth
 
 # Cycle through windows in each direction 
 $b --whole-window $mod+Shift+button4 focus left 
@@ -78,7 +79,6 @@ $b --whole-window $mod+Ctrl+n focus down
 # $b $mod+q kill 
 $b $mod+t floating toggle; $no_border; $float_border 
 
-$b $mod+tab workspace back_and_forth
 
 
 # focus the parent container
