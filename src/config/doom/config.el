@@ -19,6 +19,9 @@
 
 (use-package! try)
 
+(use-package! emojify
+  (add-hook 'after-init-hook #'global-emojify-mode))
+
 (set-irc-server! "chat.freenode.net"
   `(:tls t
     :port 6697
