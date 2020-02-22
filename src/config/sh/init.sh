@@ -207,6 +207,7 @@ c2s() {
 alias cd.p='cdf -d $p --fd-provider fd_project_dirs'
 alias cd.f='dir="$(fd -t d | fzf --height=20%)"; [ -d "$dir"] && cd "$dir"'
 alias .so="source '${HOME}/.${SHELL_NAME}rc'"
+alias new-script-from-last="fc -l -1 | cut -f 2- | c && new-script-from-clipboard"
 
 
 #set emacs mode
