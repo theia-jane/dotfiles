@@ -43,6 +43,7 @@
     org-export-with-toc nil
     org-export-with-section-numbers nil
     org-export-time-stamp-file nil
+    org-export-async-init-file (expand-file-name "org-export-init.el" (dir!))
     org-directory "~/notes"
     org-src-window-setup 'current-window
     )
