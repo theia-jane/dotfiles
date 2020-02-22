@@ -1,8 +1,9 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
-(load! "+core.el")
-(load! "+org.el")
-(load! "+key.el")
+(+load!
+ "+core"
+ "+org"
+ "+key")
 
 ;;; NOTE: (use-package!) should be used with care and specifically with defering keywords
 ;;;       Using use-package! without a deferring keyword (one of: :defer :after
