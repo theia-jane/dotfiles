@@ -47,7 +47,8 @@
     "mklabs/split-term.vim",
     "chemzqm/denite-git",
     "Shougo/dein.vim",
-    "Shougo/denite.nvim"
+    "Shougo/denite.nvim",
+    "beeender/Comrade"
   ],
   "ignored": [
     "vim-scripts/taglist.vim",
