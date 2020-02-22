@@ -37,7 +37,7 @@
     org-confirm-babel-evaluate nil
     org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
     org-display-inline-images t
-    org-pretty-entities t
+    org-pretty-entities nil
     org-startup-with-inline-images "inlineimages"
     org-hide-emphasis-markers nil
     org-export-with-toc nil
