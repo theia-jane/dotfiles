@@ -82,9 +82,9 @@ global:
       #   g: clipboard.edit.image
       #   t: e.clipboard
       Shift+c: e.catalog
-      d: e.dot
+      d: e.emacs $dot
       s: i3.dd e.script
-      k: e.keymap
+      k: e.emacs $dot/src/home/kree.yaml
       n: 
         s: new.script
         Shift+c: new.catalog
