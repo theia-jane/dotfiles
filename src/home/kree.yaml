@@ -23,6 +23,7 @@ global:
       g: tilix -e gotop
 
     o: # Open
+      shift+p: +open pdf
       b: o.books
       p: e.project
       l: firefox http://lfs
