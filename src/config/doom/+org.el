@@ -31,7 +31,7 @@
     org-refile-allow-creating-parent-nodes t
     org-outline-path-complete-in-steps nil    ; Refile in a single go
     org-refile-use-outline-path 'file         ; Show full paths for refiling
-    org-highlight-latex-and-related '(latex)
+    org-highlight-latex-and-related nil ;; '(latex)
     org-M-RET-may-split-line '((default . nil)) ; don't split headings...
     org-src-tab-acts-natively t
     org-confirm-babel-evaluate nil
