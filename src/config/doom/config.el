@@ -1,6 +1,16 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
-(+load!
+(defun load!? (filename)
+  (if (file-exists-p! filename (dir!))
+      (load! filename)
+    (if (file-exists-p! (concat filename ".el") (dir!))
+        (load! (concat filename ".el")))))
+
+(defun +load!? (&rest files)
+  "Check if the file exists in the (dir!) first and then (load!)"
+  (mapcar 'load!? files))
+
+(+load!?
  "+core"
  "+org"
  "+key")
@@ -72,4 +82,4 @@ It returns the buffer (for elisp programing).
     ))
 
 ;; Allow local configuration
-(load!? "+profile.el")
+(load!? "+profile")
