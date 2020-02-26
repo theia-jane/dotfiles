@@ -86,3 +86,10 @@
 (require 'ox-extra)
 (ox-extras-activate '(ignore-headlines))
   )
+
+(set-file-template! 'org-mode
+  :when '(lambda ()
+           (file-in-directory-p (file!) "~/homework"))
+  :trigger "__hw"
+  :mode 'org-mode)
+
