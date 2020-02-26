@@ -32,8 +32,8 @@ for_window [title="^Dropdown: Emacs"] scratchpad show
 for_window [title="^Dropdown: Emacs"] $no_border
 
 # Open applications on particular workspaces
-assign [class="jetbrains-phpstorm"] 2
-assign [class="Zeal"] 2
+# assign [class="jetbrains-phpstorm"] 2
+# assign [class="Zeal"] 2
 
 # for_window [title="dropdown_*"] move scratchpad
 # for_window [title="dropdown_*"] sticky enable
