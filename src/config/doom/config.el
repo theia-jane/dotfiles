@@ -29,9 +29,9 @@
 
 (use-package! try)
 
-(use-package! emojify
-  :config
-  (add-hook 'after-init-hook #'global-emojify-mode))
+;; (use-package! emojify
+;;   :config
+;;   (add-hook 'after-init-hook #'global-emojify-mode))
 
 (set-irc-server! "chat.freenode.net"
   `(:tls t
