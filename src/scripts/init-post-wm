@@ -1,6 +1,10 @@
 #!/bin/bash
 
-run.background polybar main 
+WM="${1}"
+if [ ! "${WM}" == "xmonad" ]; then
+    run.background polybar main
+fi
+
 run.background nextcloud --background
 run.background mail-sync
 

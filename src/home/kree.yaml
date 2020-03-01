@@ -135,6 +135,7 @@ global:
     k: kree.restart
     e: emacsd.restart
     i: i3-msg restart
+    m: xmonad --restart
 
   Cmd+Ctrl+h: i3-msg focus left
   Cmd+Ctrl+j: i3-msg focus down
