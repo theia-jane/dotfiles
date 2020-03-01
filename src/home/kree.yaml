@@ -1,8 +1,8 @@
 global:
   Super+x: rofi -show run -modi run
-  Super+e: i3.dd.emacs
-  Super+c: i3.dd calc
-  Super+q: i3-msg kill
+  # Super+e: i3.dd.emacs
+  # Super+c: i3.dd calc
+  # Super+q: i3-msg kill
   Super+Enter: tmux.scratch
   # TODO: why doesn't this work? :
   # Super+Tab: i3-msg "workspace back_and_forth"
@@ -123,10 +123,10 @@ global:
 
   Cmd+z: i3-msg fullscreen toggle
   # layout
-  Cmd+Shift+l:
-    t: i3-msg layout tabbed
-    s: i3-msg layout toggle split
-    Shift+s: i3-msg layout stacking
+  # Cmd+Shift+l:
+  #   t: i3-msg layout tabbed
+  #   s: i3-msg layout toggle split
+  #   Shift+s: i3-msg layout stacking
   # Safety... kill kree if it's broken
   Cmd+Shift+q:
     Cmd+Shift+q: 
@@ -137,23 +137,23 @@ global:
     i: i3-msg restart
     m: xmonad --restart
 
-  Cmd+Ctrl+h: i3-msg focus left
-  Cmd+Ctrl+j: i3-msg focus down
-  Cmd+Ctrl+k: i3-msg focus up
-  Cmd+Ctrl+l: i3-msg focus right
+  # Cmd+Ctrl+h: i3-msg focus left
+  # Cmd+Ctrl+j: i3-msg focus down
+  # Cmd+Ctrl+k: i3-msg focus up
+  # Cmd+Ctrl+l: i3-msg focus right
 
-  Cmd+Ctrl+Shift+h: i3-msg move left 30px
-  Cmd+Ctrl+Shift+j: i3-msg move down 30px
-  Cmd+Ctrl+Shift+k: i3-msg move up 30px
-  Cmd+Ctrl+Shift+l: i3-msg move right 30px
+  # Cmd+Ctrl+Shift+h: i3-msg move left 30px
+  # Cmd+Ctrl+Shift+j: i3-msg move down 30px
+  # Cmd+Ctrl+Shift+k: i3-msg move up 30px
+  # Cmd+Ctrl+Shift+l: i3-msg move right 30px
 
-  Cmd+s: i3-msg "resize shrink width 20 px or 20 ppt; resize shrink height 20 px or 20 ppt"
-  Cmd+Alt+s: i3-msg resize shrink width 20 px or 20 ppt
-  Cmd+Shift+s: i3-msg resize shrink height 20 px or 20 ppt
+  # Cmd+s: i3-msg "resize shrink width 20 px or 20 ppt; resize shrink height 20 px or 20 ppt"
+  # Cmd+Alt+s: i3-msg resize shrink width 20 px or 20 ppt
+  # Cmd+Shift+s: i3-msg resize shrink height 20 px or 20 ppt
 
-  Cmd+g: i3-msg "resize grow width 20 px or 20 ppt; resize grow height 20px or 20 ppt"
-  Cmd+Alt+g: i3-msg resize grow width 20 px or 20 ppt
-  Cmd+Shift+g: i3-msg resize grow height 20 px or 20 ppt
+  # Cmd+g: i3-msg "resize grow width 20 px or 20 ppt; resize grow height 20px or 20 ppt"
+  # Cmd+Alt+g: i3-msg resize grow width 20 px or 20 ppt
+  # Cmd+Shift+g: i3-msg resize grow height 20 px or 20 ppt
 
 ## NOTES:
 #  1. Add transient 'modes' basically modes that allow for a keymap to be sticky

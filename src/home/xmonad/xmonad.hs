@@ -8,7 +8,7 @@ import qualified XMonad.StackSet as W
 -- import Data.Ratio ((%))
 -- import XMonad.ManageHook
 -- Actions
--- import XMonad.Actions.CycleWS
+import XMonad.Actions.CycleWS
 -- import XMonad.Actions.SpawnOn
 -- import XMonad.Actions.OnScreen
 -- import XMonad.Actions.SwapWorkspaces
@@ -48,7 +48,7 @@ import XMonad.Layout.Minimize
 -- Util
 -- import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig(additionalKeysP)
+import XMonad.Util.EZConfig(additionalKeysP,removeKeysP)
 
 
 main = do
@@ -56,17 +56,35 @@ main = do
   xmonad $ defaultConfig
     { manageHook = manageHook defaultConfig
     , modMask = mod4Mask -- Rebind Mod to the Windows key
-    , borderWidth = 5
+    , borderWidth = 4
+    , focusedBorderColor = "#ffb52a"
     , layoutHook = myLayoutHook
-    } `additionalKeysP` myKeys
+    }
+    `removeKeysP` ["M-q", "M-S-c", "M-<Tab>"]
+    `additionalKeysP` myKeys
 
-myLayoutHook =
-    Tall 1 (10/100) (60/100)
+myLayoutHook = smartBorders $
+  Tall 1 (10/100) (60/100)
     ||| TwoPane (15/100) (55/100)
     ||| Grid
     ||| Full
+    -- ||| simpleTabbed -- Not sure what this does..
 
+-- Conventions:
+-- - Key-bindings with 'Shift' move things. E.g. windows, workspaces, layouts
 myKeys =
-  [ ("M-C-r", sendMessage NextLayout)
-  , ("M-S-m", windows W.swapMaster)
+  -- Window
+  [ ("M-S-m", windows W.swapMaster) -- Swap current window with master
+  , ("M-q", kill) -- Quit the current window
+
+  -- Workspace
+  , ("M-n", moveTo Next NonEmptyWS) -- Next non-empty workspace
+  , ("M-p", moveTo Prev NonEmptyWS) -- Previous non-empty workspace
+  , ("M-S-n", shiftToNext >> nextWS) -- Drag window to next workspace
+  , ("M-S-p", shiftToPrev >> prevWS) -- Drag window to prev workspace
+  , ("M-<Tab>", toggleWS) -- Back-and-forth between workspaces
+
+  -- Layout
+  -- , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
+  , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
   ]
