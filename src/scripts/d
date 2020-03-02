@@ -1,3 +1,21 @@
 #!/bin/bash
 
-run.background --no-log "$@"
+params=""
+should_log=false
+while true; do
+  case "$1" in
+    --log|-l)
+      should_log=true
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if ! should_log; then
+    params+="--no-log "
+fi
+
+run.background "${params}" "${@}"
