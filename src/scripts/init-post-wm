@@ -1,11 +1,11 @@
 #!/bin/bash
 
-WM="${1}"
-if [ ! "${WM}" == "xmonad" ]; then
-    run.background polybar main
-fi
+# WM="${1}"
+# if [ ! "${WM}" == "xmonad" ]; then
+#     run.background polybar main
+# fi
 
-run.background nextcloud --background
-run.background mail-sync
+d -l nextcloud --background
+d -l mail-sync
 
 # vim: ft=sh
