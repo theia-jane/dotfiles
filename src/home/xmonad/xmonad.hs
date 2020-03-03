@@ -21,6 +21,7 @@ import XMonad.Actions.CycleWS
 -- import XMonad.Hooks.DynamicLog
 -- import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops
 -- import XMonad.Hooks.FadeInactive
 -- import XMonad.Hooks.UrgencyHook hiding (Never)
 -- import XMonad.Hooks.ICCCMFocus
@@ -48,12 +49,12 @@ import XMonad.Layout.Minimize
 -- Util
 -- import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig(additionalKeysP,removeKeysP)
+import XMonad.Util.EZConfig(additionalKeysP,removeKeysP,additionalMouseBindings)
 
 
 main = do
   spawn "init-post-wm xmonad"
-  xmonad $ defaultConfig
+  xmonad $ ewmh defaultConfig
     { manageHook = manageHook defaultConfig
     , modMask = mod4Mask -- Rebind Mod to the Windows key
     , borderWidth = 4
@@ -63,6 +64,7 @@ main = do
     }
     `removeKeysP` ["M-q", "M-S-c", "M-<Tab>"]
     `additionalKeysP` myKeys
+    `additionalMouseBindings` myMouseBindings
 
 myLayoutHook = smartBorders $
   Tall 1 (10/100) (60/100)
@@ -79,8 +81,8 @@ myKeys =
   , ("M-q", kill) -- Quit the current window
 
   -- Workspace
-  , ("M-n", moveTo Next NonEmptyWS) -- Next non-empty workspace
-  , ("M-p", moveTo Prev NonEmptyWS) -- Previous non-empty workspace
+  , ("M-n", myNextWS) -- Next non-empty workspace
+  , ("M-p", myPrevWS) -- Previous non-empty workspace
   , ("M-S-n", shiftToNext >> nextWS) -- Drag window to next workspace
   , ("M-S-p", shiftToPrev >> prevWS) -- Drag window to prev workspace
   , ("M-<Tab>", toggleWS) -- Back-and-forth between workspaces
@@ -89,3 +91,11 @@ myKeys =
   -- , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
   , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
   ]
+
+myMouseBindings =
+  [ ((mod4Mask, button5), (\w -> myNextWS))
+  , ((mod4Mask, button4), (\w -> myPrevWS))
+  ]
+
+myNextWS = moveTo Next NonEmptyWS
+myPrevWS = moveTo Prev NonEmptyWS
