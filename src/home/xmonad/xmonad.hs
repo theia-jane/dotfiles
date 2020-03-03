@@ -20,7 +20,7 @@ import XMonad.Actions.CycleWS
 -- import XMonad.Hooks.ManageHelpers
 -- import XMonad.Hooks.DynamicLog
 -- import XMonad.Hooks.ManageDocks
--- import XMonad.Hooks.SetWMName
+import XMonad.Hooks.SetWMName
 -- import XMonad.Hooks.FadeInactive
 -- import XMonad.Hooks.UrgencyHook hiding (Never)
 -- import XMonad.Hooks.ICCCMFocus
@@ -59,6 +59,7 @@ main = do
     , borderWidth = 4
     , focusedBorderColor = "#ffb52a"
     , layoutHook = myLayoutHook
+    , startupHook = setWMName "LG3D"
     }
     `removeKeysP` ["M-q", "M-S-c", "M-<Tab>"]
     `additionalKeysP` myKeys
