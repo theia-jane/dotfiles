@@ -10,6 +10,9 @@ global:
     Space: rofi -show run -modi run
     Enter: tilix
 
+    # dashboard
+    Super+d: i3.dd watch date
+
     a: # Applications
       e: emacsdclient -c
       h: tilix -e htop
