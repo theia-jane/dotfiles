@@ -5,6 +5,7 @@ import qualified XMonad.StackSet as W
 -- import System.IO
 -- import System.IO.Unsafe
 -- import Data.List
+import Data.Bits ((.|.))
 -- import Data.Ratio ((%))
 -- import XMonad.ManageHook
 -- Actions
@@ -98,6 +99,8 @@ myKeys =
 myMouseBindings =
   [ ((mod4Mask, button5), (\w -> myNextWS))
   , ((mod4Mask, button4), (\w -> myPrevWS))
+  , ((mod4Mask .|. shiftMask, button5), (\w -> windows W.focusDown))
+  , ((mod4Mask .|. shiftMask, button4), (\w -> windows W.focusUp))
   ]
 
 myNextWS = moveTo Next NonEmptyWS
