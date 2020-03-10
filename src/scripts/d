@@ -14,7 +14,7 @@ while true; do
   esac
 done
 
-if ! should_log; then
+if ! $should_log; then
     params+="--no-log "
 fi
 

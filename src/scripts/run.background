@@ -7,6 +7,9 @@ while true; do
       should_log=false
       shift 1 
       ;;
+    "")
+      shift 1
+      ;;
       *)
       break
       ;;
