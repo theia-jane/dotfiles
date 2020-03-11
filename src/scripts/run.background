@@ -28,7 +28,7 @@ else
   LOG_FILE="/dev/null"
 fi
 
-echo "Starting ${EXEC_NAME}..." >> $LOG_FILE
+echo "Starting ${EXEC_NAME}..." >> "$LOG_FILE"
 
 nohup "${@}" >> $LOG_FILE 2>&1 &
 

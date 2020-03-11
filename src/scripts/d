@@ -18,4 +18,4 @@ if ! $should_log; then
     params+="--no-log "
 fi
 
-run.background "${params}" "${@}"
+run.background ${params} "${@}"
