@@ -88,8 +88,8 @@
   )
 
 (set-file-template! 'org-mode
-  :when '(lambda ()
-           (file-in-directory-p (file!) "~/homework"))
+  :when '(lambda (file)
+           (file-in-directory-p file "~/homework"))
   :trigger "__hw"
   :mode 'org-mode)
 
