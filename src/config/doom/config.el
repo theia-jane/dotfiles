@@ -12,6 +12,7 @@
 
 (+load!?
  "+core"
+ "+elisp"
  "+org"
  "+key")
 
