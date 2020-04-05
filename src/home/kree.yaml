@@ -52,13 +52,10 @@ global:
           "0": gui-paste-command random-number 9999999999
 
     n: # Notes
-      n: e.note --today
-      Shift+n: e.note
+      n: e.note
       f: e.notef
+      Shift+f: e.emacs ~/notes/fruit-basket.org
       d: e.emacs ~/notes/personal/dotfiles.org
-      m: e.emacs ~/notes/personal/mood.org
-      Shift+s: e.emacs ~/notes/new-software.org
-      s: e.emacs ~/notes/skills.org
 
     Shift+n:
       c:
