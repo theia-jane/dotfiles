@@ -14,10 +14,16 @@
       (message "Not inside sexp"))))
 
 
-(general-define-key
-  :keymaps 'ctl-x-map
-  "C-e" '+elisp/eval-outer-sexp)
-
-(general-define-key
-  :keymaps 'emacs-lisp-mode-map
-  "<S-return>" '+elisp/eval-outer-sexp)
+;; Key-bindings
+(map!
+ (:map ctl-x-map
+   ;; Replace 'eros-eval-last-sexp
+   :desc "Eval outermost sexp" "C-e" #'+elisp/eval-outer-sexp
+   ;; Move 'eros-eval-last-sexp
+   "C-S-e" #'eros-eval-last-sexp)
+ (:map emacs-lisp-mode-map
+   :desc "Eval outermost sexp" "<S-return>" #'+elisp/eval-outer-sexp)
+ (:localleader
+   :map emacs-lisp-mode-map
+   :desc "Eval outermost sexp" "e o" #'+elisp/eval-outer-sexp)
+ )
