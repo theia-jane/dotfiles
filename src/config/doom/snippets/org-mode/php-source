@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: php-source
+# key: php
+# --
+#+BEGIN_SRC php
+$0
+#+END_SRC
