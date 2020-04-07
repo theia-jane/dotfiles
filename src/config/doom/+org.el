@@ -8,19 +8,6 @@
 
 (after! org
   (setq
-    ;; org-modules '(
-    ;;               org-bbdb
-    ;;               org-bibtex
-    ;;               org-docview
-    ;;               org-drill
-    ;;               org-eww
-    ;;               org-gnus
-    ;;               org-info
-    ;;               org-irc
-    ;;               org-mhe
-    ;;               org-rmail
-    ;;               org-w3m
-    ;;               )
     org-src-fontify-natively t
     org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
     org-capture-templates
@@ -92,17 +79,3 @@
            (file-in-directory-p file "~/homework"))
   :trigger "__hw"
   :mode 'org-mode)
-
-(defun tw/new-org-scratch ()
-  "Create a new empty buffer.
-New buffer will be named “org-scratch” or “org-scratch<2>”, “org-scratch<3>”, etc.
-
-It returns the buffer (for elisp programing).
-"
-  (interactive)
-  (let (($buf (generate-new-buffer "org-scratch")))
-    (switch-to-buffer $buf)
-    (org-mode)
-    (setq buffer-offer-save t)
-    $buf
-    ))
