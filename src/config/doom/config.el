@@ -67,7 +67,7 @@
 
 (config/visual/buffer-spacing)
 
-(setq doom-scratch-buffer-major-mode 'emacs-lisp-mode)
+(setq doom-scratch-initial-major-mode 'org-mode)
 
 
 ;; Allow local configuration
