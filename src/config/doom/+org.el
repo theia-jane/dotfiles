@@ -79,3 +79,8 @@
            (file-in-directory-p file "~/homework"))
   :trigger "__hw"
   :mode 'org-mode)
+
+(set-pretty-symbols! 'org-mode
+    :name "#+name:"
+    :src_block "#+begin_src"
+    :src_block_end "#+end_src")
