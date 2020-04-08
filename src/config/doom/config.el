@@ -1,10 +1,12 @@
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 
 (defun load!? (filename)
-  (if (file-exists-p! filename (dir!))
-      (load! filename)
-    (if (file-exists-p! (concat filename ".el") (dir!))
-        (load! (concat filename ".el")))))
+  (cond ((file-exists-p! filename (dir!))
+         (load! filename))
+        ((file-exists-p! (concat filename ".el") (dir!))
+         (load! (concat filename ".el")))
+        ((file-exists-p! (expand-file-name filename))
+         (load filename))))
 
 (defun +load!? (&rest files)
   "Check if the file exists in the (dir!) first and then (load!)"
@@ -69,6 +71,5 @@
 
 (setq doom-scratch-initial-major-mode 'org-mode)
 
-
 ;; Allow local configuration
-(load!? "+profile")
+(load!? "~/.local.el")
