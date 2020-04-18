@@ -1,13 +1,6 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+elisp.el -*- lexical-binding: t; -*-
 
 
-(defun +elisp/evil-is-emulated-eol? ()
-  "Determines if the point's current position is an emulated eol."
-  (and (or (evil-normal-state-p)
-        (evil-operator-state-p))
-       (= (1+ (point))
-          (line-end-position))))
-
 (defun +elisp/goto-start-of-outer-sexp ()
   (interactive)
   (with-syntax-table emacs-lisp-mode-syntax-table
@@ -40,11 +33,6 @@
     (+elisp/goto-end-of-outer-sexp)
     (eros-eval-last-sexp eval-last-sexp-arg-internal)))
 
-(defun +elisp/forward-sexp ()
-  (interactive)
-  (when (+elisp/evil-is-emulated-eol?)
-    (forward-char))
-  (forward-sexp))
 
 (defun +elisp/eval-outer-sexp-then-next (eval-last-sexp-arg-internal)
   "Evaluate outermost sexp, this utilizes the 'eros-eval-last-sexp"
@@ -53,9 +41,9 @@
   (condition-case _err
       (eros-eval-last-sexp eval-last-sexp-arg-internal)
     (t
-     (+elisp/forward-sexp)
+     (forward-sexp)
      (eros-eval-last-sexp eval-last-sexp-arg-internal)))
-  (+elisp/forward-sexp)
+  (forward-sexp)
   (+elisp/goto-start-of-outer-sexp))
 
 
@@ -75,19 +63,3 @@
  )
 
 
-;; (defun +elisp/evil--lisp-scan--filter-args (args)
-;;   "Used to advise both functions 'scan-lists and 'scan-sexps to augment
-;; scan from position if:
-
-;; 1. The scan from position is at the current point
-;; 2. The current point is at an emulate eol"
-;;   (let ((scan-from-pos (car args)))
-;;     (when (and (= scan-from-pos (point))
-;;            (evil-is-emulated-eol?))
-;;       (setf scan-from-pos (+ 1 scan-from-pos))))
-;;     args)
-
-;; (advice-remove 'scan-lists #'evil--scan-list--filter-args)
-;; (advice-remove 'scan-sexps #'evil--scan-list--filter-args)
-;; (advice-add 'scan-lists :filter-args #'evil--scan-list--filter-args)
-;; (advice-add 'scan-sexps :filter-args #'evil--scan-list--filter-args)
