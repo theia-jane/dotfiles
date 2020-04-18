@@ -1,6 +1,8 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+org.el -*- lexical-binding: t; -*-
 
 (use-package! org-crypt
+  :after org
+  :defer-incrementally t
   :config
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt"))
@@ -64,15 +66,15 @@
       (org-ctrl-c-ret)
       (evil-insert-state))
 
-    (general-define-key
-     :keymaps 'org-mode-map
-     "<S-return>" 'org-ctrl-c-ctrl-c
-     "<normal-state> <M-return>" '+tw/org-ctrl-c-ret
-     )
 
-(require 'ox-extra)
-(ox-extras-activate '(ignore-headlines))
+
   )
+
+(use-package! ox-extra
+  :after org
+  :defer-incrementally t
+  :config
+  (ox-extras-activate '(ignore-headlines)))
 
 (set-file-template! 'org-mode
   :when '(lambda (file)
@@ -84,3 +86,26 @@
     :name "#+name:"
     :src_block "#+begin_src"
     :src_block_end "#+end_src")
+
+(defun +org/goto-next-src-block ()
+  (interactive)
+  (org-next-block 1 nil "^[ \t]*#\\+begin_src")
+  (+ui/smart-scroll-to-top))
+
+(defun +org/eval-src-block-then-next ()
+  (interactive)
+  (condition-case _err
+      (org-babel-execute-src-block)
+    (t
+     (+org/goto-next-src-block)
+     (org-babel-execute-src-block)))
+  (+org/goto-next-src-block))
+
+(map!
+     (:map org-mode-map
+     "<S-return>" 'org-ctrl-c-ctrl-c
+     :ni "<C-S-return>" '+org/eval-src-block-then-next
+     "<normal-state> <M-return>" '+tw/org-ctrl-c-ret)
+     (:map evil-org-mode-map
+       :ni "<C-S-return>" '+org/eval-src-block-then-next
+       ))
