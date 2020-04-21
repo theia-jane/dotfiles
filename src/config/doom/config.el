@@ -16,6 +16,11 @@
  "+tmux"
  )
 
+
+(setq
+ find-function-C-source-directory (expand-file-name "~/src/emacs/src"))
+
+
 (set-irc-server! "chat.freenode.net"
   `(:tls t
     :port 6697
