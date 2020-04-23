@@ -13,14 +13,18 @@
   :after #'evil-ex-search
   (recenter nil t))
 
+;; FIXME -- this messes up folding :(
 ;; FIXME -- this messes up evil-up-paren
 ;;          1. Get debugging working
 ;;          2. Debug through the working function, which can be 'called' by
 ;;             doing =da(= on a paren on the begining of a line
 ;;          3. Debug through the broken version
-(defadvice! +evil--forward-sexp--advice (fn &rest args)
-  "Outside of the emulated eol with forward sexp"
+(defvar +evil--should-correct-for-eol nil)
+(defadvice! +evil--correct-eol--advice (fn &rest args)
+  "Corrects the emulate eol for low level sexp / list functions.
+This behavior is opt in only. Set '+evil--correct-eol--advice to t to
+apply the correction."
   :around '(forward-sexp up-list)
-  (when (+evil-is-emulated-eol?)
+  (when (and +evil--should-correct-for-eol (+evil-is-emulated-eol?))
     (forward-char))
   (apply fn args))

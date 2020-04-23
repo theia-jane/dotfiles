@@ -53,6 +53,18 @@ This utilizes the 'eros-eval-last-sexp."
   (recenter nil t))
 
 
+(defadvice! +elisp/correct-evil-emulate-eol (fn &rest args)
+  "Outside of the emulated eol with forward sexp"
+  :around '(beginning-of-sexp-p
+            end-of-sexp-p
+            outermost-list
+            end-of-outermost-sexp
+            +elisp/eval-outermost-sexp
+            +elisp/eval-outermost-sexp-and-continue)
+  (let ((+evil--should-correct-for-eol t))
+    (apply fn args)))
+
+
 ;; Key-bindings
 (map!
  (:map ctl-x-map
