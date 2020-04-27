@@ -5,6 +5,7 @@
 (+load!?
  ;; General
  "+reset"
+ "+core"
  "+doom"
  "+ui"
  "+key"
