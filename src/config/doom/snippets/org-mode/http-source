@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: http-source
+# key: http
+# --
+#+BEGIN_SRC http
+$0
+#+END_SRC
