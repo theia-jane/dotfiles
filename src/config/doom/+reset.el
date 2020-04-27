@@ -1,10 +1,10 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+reset.el -*- lexical-binding: t; -*-
 
 
-(unmap! global-map
+(undefine-key! global-map
       "<C-return>"
       "<C-S-return>")
 
-(unmap! evil-normal-state-map
+(undefine-key! evil-normal-state-map
       "<C-return>"
       "<C-S-return>")
