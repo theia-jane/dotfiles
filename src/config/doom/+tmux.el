@@ -61,6 +61,14 @@ but do not execute them."
                  (+tmux--generate-command-target tmux-obj)
                  keys)))
 
+(defun +tmux-select (tmux-obj)
+  (when (+tmux-session-p tmux-obj)
+    (user-error "Cannot select a session"))
+  (+tmux (concat (if (+tmux-window-p tmux-obj)
+                     "select-window"
+                   "select-pane")
+                 (+tmux--generate-command-target tmux-obj))))
+
 (defun +tmux-run-in (command &optional tmux-obj)
   "Run COMMAND in tmux. If NORETURN is non-nil, send the commands as keypresses
 but do not execute them."
