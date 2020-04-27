@@ -1,6 +1,30 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+eshell.el -*- lexical-binding: t; -*-
 
 
+(defun +eshell-get-contextual-buffer ()
+  (+ensure-buffer
+   (+doom-buffer-name "eshell")
+   '(lambda () (eshell-mode))))
+
+(defun +eshell-cd-silently (dir)
+  (eshell/cd dir)
+  (save-excursion
+    (let ((inhibit-read-only t)
+          (end-point (line-end-position)))
+      (forward-line -2)
+      (end-of-line)
+      (delete-region (point) end-point)))
+  (eshell-reset))
+
+(defun +eshell-run-command-visibly (command &optional dir)
+  (let ((buffer (+eshell-get-contextual-buffer)))
+    (with-current-buffer buffer
+      (when dir
+        (+eshell-cd-silently dir))
+      (+eshell-run-command command)
+      (evil-insert-state))
+    (unless (get-buffer-window buffer)
+      (pop-to-buffer buffer))))
 
 
 ;; (defun +run/popup (&rest args)
