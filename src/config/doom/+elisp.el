@@ -27,7 +27,7 @@
 (defun end-of-outermost-sexp ()
   (interactive)
   (ignore-error scan-error
-    (outermost-list))
+    (outermost-list t nil))
   (if (beginning-of-sexp-p)
       (end-of-sexp)))
 
