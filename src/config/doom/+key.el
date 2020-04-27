@@ -7,6 +7,8 @@
                                       (let ((file (ffap-guess-file-name-at-point)))
                                         (when file
                                           (find-file file)))))
+ (:map ivy-minibuffer-map
+   "M-SPC" #'ivy-mark)
  ;; Leader bindings
  (:leader
    :desc "Toggle Highlight" "t h" 'evil-ex-nohighlight
