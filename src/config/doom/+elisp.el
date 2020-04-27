@@ -31,6 +31,13 @@
   (if (beginning-of-sexp-p)
       (end-of-sexp)))
 
+(defun +elisp/eval-sexp-under-point (eval-last-sexp-arg-internal)
+  (interactive "P")
+  (with-syntax-table emacs-lisp-mode-syntax-table
+    (save-excursion
+      (end-of-sexp)
+      (eros-eval-last-sexp eval-last-sexp-arg-internal))))
+
 (defun +elisp/eval-outermost-sexp (eval-last-sexp-arg-internal)
   "Evaluate outermost sexp, this utilizes the 'eros-eval-last-sexp"
   (interactive "P")
