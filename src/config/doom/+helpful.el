@@ -39,3 +39,7 @@ buffer that is for a local variable / function."
                          :complete #'+helpful-org-complete-link
                          :follow #'+helpful-org-follow-link
                          :store #'+helpful-org-store-link)
+
+
+(map! :map helpful-mode-map
+      :n "gr" #'helpful-update)
