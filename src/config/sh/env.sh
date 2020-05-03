@@ -26,4 +26,6 @@ if [ ! -z "$(which nvim)" ]; then
   export MANPAGER="nvim -c 'set ft=man' -"
 fi
 
+test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+
 export EDITOR="${EDITOR:-vim}"
