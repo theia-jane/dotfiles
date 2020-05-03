@@ -18,6 +18,7 @@
     org-refile-targets '((nil :maxlevel . 7)
                           (org-agenda-files :maxlevel . 1))
     org-refile-allow-creating-parent-nodes t
+    org-src-ask-before-returning-to-edit-buffer nil
     org-outline-path-complete-in-steps nil    ; Refile in a single go
     org-refile-use-outline-path 'file         ; Show full paths for refiling
     org-highlight-latex-and-related nil ;; '(latex)
