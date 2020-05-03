@@ -65,6 +65,7 @@
        ibuffer                ; interactive buffer management
        vc                     ; version-control and Emacs, sitting in a tree
        undo
+       register
 
        :term
        eshell                 ; a consistent, cross-platform shell (WIP)
