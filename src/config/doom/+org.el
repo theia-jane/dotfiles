@@ -172,4 +172,14 @@
      :ni "<C-S-return>" '+org/eval-src-block-then-next
      "<normal-state> <M-return>" '+tw/org-ctrl-c-ret)
      (:map evil-org-mode-map
-       :ni "<C-S-return>" '+org/eval-src-block-then-next))
+       :ni "<C-S-return>" '+org/eval-src-block-then-next
+       ;; evil-org text objects
+       :vo "ae" #'evil-org-an-object
+       :vo "ie" #'evil-org-inner-object
+       :vo "aE" #'evil-org-an-element
+       :vo "iE" #'evil-org-inner-element
+       :vo "ir" #'evil-org-inner-greater-element
+       :vo "ar" #'evil-org-a-greater-element
+       :vo "aR" #'evil-org-a-subtree
+       :vo "iR" #'evil-org-inner-subtree
+       ))
