@@ -80,14 +80,15 @@ but do not execute them."
   (+tmux-send-keys "C-c" tmux-obj))
 
 (defun +tmux-create-session (session-name)
+  "TODO"
   (+tmux (format "new-session -s '%s' -d" session-name))
   (+tmux-get-session session-name))
 
 (defun +tmux-get-or-create-session (session-name)
-  (let ((session (+tmux-get-session session-name)))
-    (unless session
-      (setq session (+tmux-create-session session-name)))
-    session))
+  "TODO"
+  (condition-case _err
+      (+tmux-get-session session-name)
+    (t (+tmux-create-session session-name))))
 
 (defun +tmux-create-window (session window-name)
   (+tmux (format "new-window %s -n '%s' -d" (+tmux--generate-command-target session) window-name))
