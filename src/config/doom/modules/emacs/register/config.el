@@ -14,11 +14,19 @@ don't convert the register contents to a string.")
         (setq macro `(lambda () ,(car (read-from-string (substring-no-properties macro))))))
       (list count macro)))
 
-  (defadvice! +register--evil-get-register-a (register-value)
-    "If `+register-get-register-as-string-p' is non-nil
-then try to convert the REGISTER-VALUE to a string."
-    :filter-return 'evil-get-register
-    (+register-value-to-string register-value))
+  (defadvice! +register--evil-get-register-a (fn &rest args)
+    "General extension fo the capabilities of `evil-get-register'.
+
+  - Enables broader use of special ex-registers (e.g. C-w, C-W, C-o, C-f)
+  - Converts register contents to string depending on if
+    `+register-get-register-as-string-p' is non-nil."
+    :around #'evil-get-register
+    (let ((evil-ex-current-buffer evil-ex-current-buffer))
+      (when (memq major-mode '(minibuffer-inactive-mode))
+        (with-selected-window (minibuffer-selected-window)
+          (setq evil-ex-current-buffer (current-buffer))))
+      (+register-value-to-string (apply fn args))))
+
 
   (defadvice! +register--evil-paste-special-a (fn &rest args)
     "Sets `+register-get-register-as-string-p' to t, so
