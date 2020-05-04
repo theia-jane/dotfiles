@@ -11,3 +11,4 @@
 (package! try)
 (package! command-log-mode)
 (package! ob-sagemath)
+(package! howdoyou)

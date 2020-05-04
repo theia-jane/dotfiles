@@ -21,6 +21,8 @@
 (setq
  find-function-C-source-directory (expand-file-name "~/src/emacs/src"))
 
+(use-package! howdoyou
+  :defer-incrementally t)
 
 (set-irc-server! "chat.freenode.net"
   `(:tls t

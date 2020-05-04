@@ -21,6 +21,7 @@
        :desc "Find mine"          "m" #'+snippets/find-private
        :desc "Find all"           "a" #'+snippets/find
        ))
+   :desc "How do you..." "s h" #'howdoyou-query
    (:prefix ("P" . "personal")
      (:prefix ("o" . "open")
 
