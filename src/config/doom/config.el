@@ -17,6 +17,25 @@
  "+tmux"
  )
 
+(defadvice! +counsel-projectile-find-file (&optional arg dwim)
+  :override 'counsel-projectile-find-file
+  "Jump to a file in the current project.
+
+With a prefix ARG, invalidate the cache first.  If DWIM is
+non-nil, use completion based on context."
+  (interactive "P")
+  (if (and (eq projectile-require-project-root 'prompt)
+           (not (projectile-project-p)))
+      (counsel-projectile-find-file-action-switch-project)
+    (projectile-maybe-invalidate-cache arg)
+    (let* ((project-files (projectile-current-project-files))
+           (files (and dwim (projectile-select-files project-files))))
+      (ivy-read (projectile-prepend-project-name "Find file: ")
+                (or files project-files)
+                :matcher counsel-projectile-find-file-matcher
+                :sort counsel-projectile-sort-files
+                :action counsel-projectile-find-file-action
+                :caller '+counsel-projectile-find-file))))
 
 (setq
  find-function-C-source-directory (expand-file-name "~/src/emacs/src"))
