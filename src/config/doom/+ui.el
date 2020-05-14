@@ -9,4 +9,6 @@
 (after! dired
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 
+(load-theme 'doom-gruvbox t)
+
 (setq-default line-spacing 7)
