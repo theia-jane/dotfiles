@@ -1,3 +1,23 @@
 #!/usr/bin/env bash-ui-eval
 
-${EDITOR:-vim} $@
+non_blocking=true
+while true; do
+  case "$1" in
+    -w|--wait)
+      non_blocking=false
+      shift
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+
+command="${EDITOR:-vim} $@"
+
+if $non_blocking; then
+    command="d ${command}"
+fi
+
+$command
