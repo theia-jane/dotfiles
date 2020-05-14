@@ -14,6 +14,7 @@
  "+elisp"
  "+org"
  "+eshell"
+ "+pdf"
  "+tmux"
  )
 
