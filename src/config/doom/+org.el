@@ -65,11 +65,7 @@
     (defun +tw/org-ctrl-c-ret ()
       (interactive)
       (org-ctrl-c-ret)
-      (evil-insert-state))
-
-
-
-  )
+      (evil-insert-state)))
 
 (use-package! ox-extra
   :after org
@@ -86,7 +82,12 @@
 (set-pretty-symbols! 'org-mode
     :name "#+name:"
     :src_block "#+begin_src"
-    :src_block_end "#+end_src")
+    :src_block_end "#+end_src"
+    :src_block "#+begin_example"
+    :src_block_end "#+end_example"
+    :src_block "#+BEGIN_EXAMPLE"
+    :src_block_end "#+END_EXAMPLE")
+
 
 (defun +org/goto-next-src-block ()
   (interactive)
@@ -182,4 +183,6 @@
        :vo "ar" #'evil-org-a-greater-element
        :vo "aR" #'evil-org-a-subtree
        :vo "iR" #'evil-org-inner-subtree
+       :vn "zn" #'+evil:narrow-buffer
+
        ))
