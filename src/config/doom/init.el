@@ -141,6 +141,7 @@
         +hugo                 ; use Emacs for hugo blogging
         ;; +ipython           ; ipython/jupyter support for babel
         +pandoc               ; export-with-pandoc support
+        +gnuplot
         +babel
         +jupyter
         ;;+pomodoro           ; be fruitful with the tomato technique
