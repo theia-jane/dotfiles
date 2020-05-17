@@ -24,15 +24,17 @@ NAME="$1"
 if $USE_FULL; then
   NAME=$(echo "$@" | sed 's/\s/_/g')
 fi
+NAME="dropdown_${NAME}"
 
-if xwininfo -tree -root | grep "(\"dropdown_$NAME\" ";
-then
+XWIN_MATCH="$(xwininfo -tree -root | fgrep "(\"${NAME}\"" | awk '{print $1}' | head -1)"
+
+if [ ! -z "$XWIN_MATCH" ]; then
 	echo "Window detected."
-	i3-msg "[instance=\"dropdown_$NAME\"] scratchpad show"
+  i3-msg "[instance=\"$NAME\"] scratchpad show" \
+    || x-kill-by-win-id "${XWIN_MATCH}"
 else
 	echo "Window not detected... spawning."
-	tilix --new-process --name "dropdown_$NAME" -e "$@"
-
+	tilix --new-process --name "${NAME}" -e "$@"
 fi
 
 # vim: ft=sh
