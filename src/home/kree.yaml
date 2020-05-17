@@ -67,6 +67,7 @@ global:
       x: run.x
 
     c: # Capture
+      o: org-capture
       k: capture-org ~/notes/ideas/kree.org
       w: capture-org ~/notes/ideas/workflow.org
       b: capture-org ~/notes/read-lists/blog-posts.org
