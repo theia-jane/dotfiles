@@ -4,7 +4,7 @@ import qualified XMonad.StackSet as W
 -- import Control.Monad
 -- import System.IO
 -- import System.IO.Unsafe
--- import Data.List
+import Data.List
 import Data.Bits ((.|.))
 -- import Data.Ratio ((%))
 -- import XMonad.ManageHook
@@ -18,9 +18,9 @@ import XMonad.Actions.CycleWS
 -- import XMonad.Actions.UpdatePointer
 -- import XMonad.Actions.SpawnOn
 -- Hooks
--- import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.ManageHelpers
 -- import XMonad.Hooks.DynamicLog
--- import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops
 -- import XMonad.Hooks.FadeInactive
@@ -56,7 +56,7 @@ import XMonad.Util.EZConfig(additionalKeysP,removeKeysP,additionalMouseBindings)
 main = do
   spawn "init-post-wm xmonad"
   xmonad $ ewmh defaultConfig
-    { manageHook = manageHook defaultConfig
+    { manageHook = myManageHook <+> manageHook defaultConfig
     , modMask = mod4Mask -- Rebind Mod to the Windows key
     , borderWidth = 4
     , focusedBorderColor = "#ffb52a"
@@ -67,6 +67,18 @@ main = do
     `additionalKeysP` myKeys
     `additionalMouseBindings` myMouseBindings
 
+doPaletteFloat = doFloatDep move
+  where
+    move (W.RationalRect _ _ w h) = W.RationalRect cx cy w h
+      where cx = (1-w)/2
+            cy = 0.05
+
+myManageHook = composeAll
+  [ title =? "doom-capture" --> doPaletteFloat
+  , (isPrefixOf "dropdown_" `fmap` appName) --> doPaletteFloat
+
+  -- basic float: doFloat
+  ]
 myLayoutHook = smartBorders $
   Tall 1 (10/100) (60/100)
     ||| TwoPane (15/100) (55/100)
