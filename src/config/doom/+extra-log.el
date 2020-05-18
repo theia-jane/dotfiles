@@ -18,3 +18,38 @@
   "Stop logging out the *Messages* buffer"
   (interactive)
   (cancel-function-timers '+message/save-log-file))
+
+(defadvice! +log-hooks (fn &rest args)
+  "Log hooks that are currently being run.
+
+NOTE: This is still a WIP"
+  :around '(run-mode-hooks
+            run-hooks
+            run-hook-with-args
+            run-hook-with-args-until-success
+            run-hook-with-args-until-failure
+            run-hook-wrapped
+            run-window-configuration-change-hook)
+  
+  (with-current-buffer (+log-hooks-buffer)
+    (save-excursion
+      (goto-char (point-max))
+      (let* ((name (pcase fn
+                         ((pred symbolp) (symbol-name fn))
+                         ((pred subrp) (subr-name fn))
+                         (_ (type-of fn))))
+            (run-hooks-name (pcase name
+                              ((or
+                                "run-hook-wrapped"
+                                "run-hook-with-args"
+                                "run-hook-with-args-until-success"
+                                "run-hook-with-args-until-failure")
+                               (list (car args)))
+                              ("run-hooks" args)
+                              (_ args)))
+            (extra-detail ""))
+        (insert (concat "\n" (format "[%s] Running hook(s): %s%s"  name run-hooks-name extra-detail)))))
+  (apply fn args)))
+
+(defun +log-hooks-buffer () (get-buffer-create (+doom-buffer-name "log-hooks")))
+(defun +log-hooks-buffer-clear () (with-current-buffer (+log-hooks-buffer) (erase-buffer)))
