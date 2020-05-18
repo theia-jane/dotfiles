@@ -1,8 +1,16 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+pdf.el -*- lexical-binding: t; -*-
-;;;
 
+;; General
 (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 
+(after! pdf-tools
+  (setq-default pdf-view-display-size 'fit-width))
+
+(map! :map pdf-view-mode-map
+      :nv "C-d" #'pdf-view-next-page
+      :nv "C-u" #'pdf-view-previous-page)
+
+;; Advice
 (defadvice! +pdf-view--preserve-hscroll (fn &rest args)
   "Temporary hack to resolve issue in pdf tools and evil collection.
 
@@ -29,6 +37,20 @@ don't do anything if the buffer is already displayed."
   (let ((display-buffer-overriding-action '(+buffer--display-in-vertical-split-maybe . nil)))
     (apply fn args)))
 
+(defadvice! +pdf--resize (&rest _)
+  "Center the image horizontally when resizing."
+  :after '(pdf-view-enlarge
+           pdf-view-shrink
+           pdf-view-scale-reset)
+  (+image-center-horizontally))
+
+(defadvice! +pdf-view-next-page--top (&rest _)
+  "After we move to the next page, we should start at the top of the page."
+  :after '(pdf-view-next-page
+           pdf-view-next-page-command)
+  (image-set-window-vscroll 0))
+
+;; Helpers
 (defun +image-center-horizontally ()
   "Center an image (or PDF) horizontally."
   (interactive)
@@ -38,14 +60,3 @@ don't do anything if the buffer is already displayed."
 	 (win-width (- (nth 2 edges) (nth 0 edges)))
 	 (img-width (ceiling (car (image-display-size image)))))
     (image-set-window-hscroll (max 0 (/ (- img-width win-width) 2)))))
-
-(defadvice! +pdf--resize (&rest _)
-  "Center the image horizontally when resizing."
-  :after '(pdf-view-enlarge
-           pdf-view-shrink
-           pdf-view-scale-reset)
-  (+image-center-horizontally))
-
-
-(after! pdf-tools
-  (setq-default pdf-view-display-size 'fit-width))
