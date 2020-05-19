@@ -9,9 +9,7 @@
         org-crypt-key nil))
 
 (after! org
-  (setq
-    org-src-fontify-natively t
-    org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
+  (setq org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
     org-capture-templates
     '(("p" "Plain" entry (file "") "* %?")
       ("t" "Todo" entry (file "") "* TODO %?"))
@@ -79,6 +77,15 @@
   :trigger "__hw"
   :mode 'org-mode)
 
+(setq +pretty-code-symbols (append
+                            `(:title ,(propertize "" 'display '(raise 1))
+                              :author ,(propertize "" 'display '(raise 0.1))
+                              :setting ,(propertize "" 'display '(raise 0.1))
+                              :latex ,(all-the-icons-fileicon "tex")
+                              )
+                            +pretty-code-symbols))
+
+
 (set-pretty-symbols! 'org-mode
     :name "#+name:"
     :src_block "#+begin_src"
@@ -86,7 +93,13 @@
     :src_block "#+begin_example"
     :src_block_end "#+end_example"
     :src_block "#+BEGIN_EXAMPLE"
-    :src_block_end "#+END_EXAMPLE")
+    :src_block_end "#+END_EXAMPLE"
+    :title "#+TITLE:"
+    :setting "#+PROPERTY:"
+    :author "#+AUTHOR:"
+    :latex "#+LATEX_HEADER:"
+    :latex "#+LATEX_HEADER_EXTRA:")
+
 
 
 (defun +org/goto-next-src-block ()
@@ -187,3 +200,11 @@
        :vn "zn" #'+evil:narrow-buffer
 
        ))
+
+(defun +tw/org--display-hook()
+  (setq display-line-numbers nil
+   left-margin-width 3
+   right-margin-width 3)
+  (global-hl-line-mode -1))
+
+(add-hook 'org-mode-hook #'+tw/org--display-hook)
