@@ -171,6 +171,7 @@
      "<S-return>" 'org-ctrl-c-ctrl-c
      "<M-S-return>" '+org/M-S-Return
      :ni "<C-S-return>" '+org/eval-src-block-then-next
+     :n "M-i" #'org-edit-special
      "<normal-state> <M-return>" '+tw/org-ctrl-c-ret)
      (:map evil-org-mode-map
        :ni "<C-S-return>" '+org/eval-src-block-then-next
