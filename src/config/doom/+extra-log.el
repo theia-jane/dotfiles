@@ -53,3 +53,16 @@ NOTE: This is still a WIP"
 
 (defun +log-hooks-buffer () (get-buffer-create (+doom-buffer-name "log-hooks")))
 (defun +log-hooks-buffer-clear () (with-current-buffer (+log-hooks-buffer) (erase-buffer)))
+
+(defmacro +message-val (&rest args)
+  "Prints out the name of the variable and it's value (if any)."
+  `(string-join (mapcar (lambda (symb)
+                          (format "%s (%s): %s" (symbol-name symb)
+                                  (if (boundp symb)
+                                      (type-of (symbol-value symb))
+                                    "unbound")
+                                  (if (boundp symb)
+                                      (symbol-value symb)
+                                    ""))
+                          ) ',args)
+                ", "))
