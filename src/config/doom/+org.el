@@ -52,9 +52,9 @@
                             `(:title ,(propertize "" 'display '(raise 1))
                               :author ,(propertize "" 'display '(raise 0.1))
                               :setting ,(propertize "" 'display '(raise 0.1))
-                              :latex ,(all-the-icons-fileicon "tex"))
+                              :latex ,(all-the-icons-fileicon "tex")
+                              :property ,(all-the-icons-octicon "chevron-right"))
                             +pretty-code-symbols))
-
 
 (set-pretty-symbols! 'org-mode
   :name "#+name:"
@@ -68,9 +68,9 @@
   :setting "#+PROPERTY:"
   :author "#+AUTHOR:"
   :latex "#+LATEX_HEADER:"
-  :latex "#+LATEX_HEADER_EXTRA:")
-
-
+  :latex "#+LATEX_HEADER_EXTRA:"
+  :property  "#+STARTUP:"
+  :property "#+RESULTS:")
 
 (defun +org/goto-next-src-block ()
   (interactive)
@@ -176,14 +176,6 @@
 
        ))
 
-(defun +tw/org--display-hook()
-  (setq display-line-numbers nil
-        left-margin-width 3
-        right-margin-width 3)
-  (global-hl-line-mode -1))
-
-(add-hook 'org-mode-hook #'+tw/org--display-hook)
-
 (defvar +font-lock-icons-default-prefix-format "\\(%s\\)" "TODO")
 
 (defvar +font-lock-icons-default-icon-resolver #'identity
@@ -286,17 +278,16 @@ Regexp match data 0 specifies the characters to be composed."
           ((pred stringp)
            (if (stringp next-arg)
                (let ((resolved-pattern (format prefix-format arg))
-                     (resolved-icon (funcall icon-resolver next-arg)))
+                     (resolved-icon `(funcall #',icon-resolver ,next-arg)))
                  (setq mode-font-lock-alist (cons
                                              (cons mode (cons
                                                          (list resolved-pattern
-                                                               (list 1 `(progn (+prettify--compose ,resolved-icon) nil) ))
+                                                               (list 1 `(progn (+prettify--compose (funcall #',icon-resolver ,next-arg)) nil) ))
                                                          (cdr (assq mode mode-font-lock-alist))))
                                              (assoc-delete-all mode mode-font-lock-alist))))
              (error "Icon must be a string")))
           (_ (error "Unsupported key or type: '%s'" arg)))))
     mode-font-lock-alist))
-
 
 (defun +font-lock-icons! (&rest args)
   (let ((mode-lock-list (+font-lock-icons--parse-args args)))
@@ -314,8 +305,9 @@ Regexp match data 0 specifies the characters to be composed."
    "CANCELED" "✘"
    "DONE" "✔"
 
+
    :prefix-format (rx "#+" (or "begin" "BEGIN")
-                      "_" (or "src" "SRC" "example" "EXAMPLE" "2")
+                      "_" (or "src" "SRC" "example" "EXAMPLE")
                       " " (group "%s"))
    :icon-resolver #'all-the-icons-fileicon
    "emacs-lisp" "emacs"
@@ -324,4 +316,5 @@ Regexp match data 0 specifies the characters to be composed."
    "sh" "terminal"
 
    :icon-resolver #'all-the-icons-alltheicon
-   "python" "python")
+   "python" "python"
+   )
