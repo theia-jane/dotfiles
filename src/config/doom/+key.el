@@ -20,7 +20,8 @@
    "M-SPC" #'ivy-mark)
  ;; Leader bindings
  (:leader
-   :desc "Toggle Highlight" "t h" 'evil-ex-nohighlight
+   :desc "Toggle Highlight" "t h" #'evil-ex-nohighlight
+   :desc "Messages" "h C-m" #'+open-messages
    (:prefix ("S" . "snippets")
      :desc "New snippet"          "n" #'yas-new-snippet ;; #'+snippets/new
      :desc "Edit snippet"         "e" #'+snippets/edit
