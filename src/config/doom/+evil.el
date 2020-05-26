@@ -9,10 +9,6 @@
        (= (1+ (point))
           (line-end-position))))
 
-(defadvice! +evil--center-ex-search (&rest _)
-  :after #'evil-ex-search
-  (recenter nil t))
-
 ;; FIXME -- this messes up folding :(
 ;; FIXME -- this messes up evil-up-paren
 ;;          1. Get debugging working

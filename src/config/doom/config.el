@@ -9,6 +9,7 @@
  "+doom"
  "+ui"
  "+key"
+ "+movement"
  ;; Features / tools / etc
  "+evil"
  "+elisp"
