@@ -21,6 +21,7 @@
  ;; Leader bindings
  (:leader
    :desc "Toggle Highlight" "t h" #'evil-ex-nohighlight
+   :desc "Diff file" "g d" #'vc-ediff
    :desc "Messages" "h C-m" #'+open-messages
    (:prefix ("S" . "snippets")
      :desc "New snippet"          "n" #'yas-new-snippet ;; #'+snippets/new

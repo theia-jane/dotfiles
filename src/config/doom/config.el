@@ -2,6 +2,9 @@
 
 (load! "bootstrap")
 
+(use-package! rextract
+  :defer-incrementally t)
+
 (+load!?
  ;; General
  "+reset"
@@ -15,6 +18,7 @@
  "+elisp"
  "+org"
  "+eshell"
+ "+magit"
  "+pdf"
  "+tmux"
  )

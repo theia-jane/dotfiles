@@ -12,3 +12,5 @@
 (package! command-log-mode)
 (package! ob-sagemath)
 (package! howdoyou)
+(package! rextract
+  :recipe (:host github :repo "tylerware/rextract.el"))
