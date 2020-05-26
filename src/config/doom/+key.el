@@ -7,6 +7,15 @@
                                       (let ((file (ffap-guess-file-name-at-point)))
                                         (when file
                                           (find-file file)))))
+ (:map (reb-mode-map reb-lisp-mode-map)
+  :nv "RET" #'reb-force-update
+  :i "<C-return>" #'reb-force-update
+  :nv "q" #'reb-quit
+  :ni "C-j" #'reb-next-match
+  :ni "C-k" #'reb-prev-match
+  :n "M-TAB" #'reb-change-syntax
+  :n "M-b" #'reb-change-target-buffer
+  :n "M-y" #'reb-copy)
  (:map ivy-minibuffer-map
    "M-SPC" #'ivy-mark)
  ;; Leader bindings
@@ -35,7 +44,7 @@
                                           (insert "__hw")
                                           (yas-expand-from-trigger-key)))
        ))
-   )
+   :desc "Re-Builder" "o b" #'re-builder)
  ;; Global bindings
  (:desc "Jump forward" "C->" 'better-jumper-jump-forward
    :desc "Jump back" "C-<" 'better-jumper-jump-backward))
