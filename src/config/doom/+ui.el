@@ -23,7 +23,12 @@
         left-margin-width 5
         right-margin-width 5
         header-line-format " "
-        line-spacing 14)
+        evil-respect-visual-line-mode t
+        line-spacing 14
+        fill-column 100)
+  (auto-fill-mode 1)
+  (if (> (line-number-at-pos (point-max)) 1500)
+    (org-overview)) ;; Is there an earlier point I can set this up at?
   (vi-tilde-fringe-mode -1)
   (hl-line-mode -1))
 
