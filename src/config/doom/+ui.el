@@ -24,6 +24,7 @@
         right-margin-width 5
         header-line-format " "
         line-spacing 14)
+  (vi-tilde-fringe-mode -1)
   (hl-line-mode -1))
 
 (add-hook 'org-mode-hook #'+ui/org--display-hook)
