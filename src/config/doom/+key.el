@@ -51,4 +51,10 @@
    :desc "Re-Builder" "o b" #'re-builder)
  ;; Global bindings
  (:desc "Jump forward" "C->" 'better-jumper-jump-forward
-   :desc "Jump back" "C-<" 'better-jumper-jump-backward))
+  :desc "Jump back" "C-<" 'better-jumper-jump-backward)
+
+ (:personal-leader
+  (:prefix ("o" . "open")
+   :desc "Fruit basket" "f" (lambda! (+find-file `(,org-directory "projects" "fruit-basket.org")))
+   )))
+
