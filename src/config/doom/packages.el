@@ -14,3 +14,5 @@
 (package! howdoyou)
 (package! rextract
   :recipe (:host github :repo "tylerware/rextract.el"))
+
+(package! doct)
