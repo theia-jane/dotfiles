@@ -44,3 +44,21 @@ do as you say."
       (with-current-buffer buffer
           (funcall setup-fn)))
     buffer))
+(defun +find-file (filename &optional wildcards)
+  "Like `find-file', but with path joining.
+
+If FILENAME is a list of file paths, then join them together.
+For example:
+
+    (+find-file '(\"/tmp/\" \"path\" \"file\"))
+
+Will call `find-file' with the file \"/tmp/path/file\".
+
+For WILDCARDS see `find-file'.
+"
+  (interactive
+   (find-file-read-args "Find file: "
+                        (confirm-nonexistent-file-or-buffer)))
+  (when (listp filename)
+    (setq filename (apply #'f-join filename)))
+  (find-file filename wildcards))
