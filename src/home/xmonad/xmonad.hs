@@ -63,7 +63,7 @@ main = do
     , layoutHook = myLayoutHook
     , startupHook = setWMName "LG3D"
     }
-    `removeKeysP` ["M-q", "M-S-c", "M-<Tab>", "M-l", "M-h"]
+    `removeKeysP` ["M-q", "M-S-c", "M-<Tab>", "M-l", "M-h", "M-.", "M-,"]
     `additionalKeysP` myKeys
     `additionalMouseBindings` myMouseBindings
 
