@@ -1,5 +1,7 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+key.el -*- lexical-binding: t; -*-
 
+(define-leader! personal "s-,")
+
 (map!
  ;; Normal mode
  (:map evil-normal-state-map
