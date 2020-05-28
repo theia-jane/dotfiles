@@ -47,9 +47,8 @@
        (magit-git-items "status" "-z" "--porcelain=2"))))
 
   ;; Add some caching.. no need to parse them if we don't need to
-  (memoize #'+magit-get-status-items 2)
-
-  (+magit-get-status-items default-directory)
+  (add-transient-hook! '+magit-get-status-items
+    (memoize #'+magit-get-status-items 2))
 
   (defun +magit-all-commitable-files (&optional ignore-untracked)
     "TODO"
