@@ -56,6 +56,7 @@ NOTE: This is still a WIP"
 
 (defmacro +message-val (&rest args)
   "Prints out the name of the variable and it's value (if any)."
+  ;; Think this doesn't work b.c. of when the macro is being expanded
   `(string-join (mapcar (lambda (symb)
                           (format "%s (%s): %s" (symbol-name symb)
                                   (if (boundp symb)
