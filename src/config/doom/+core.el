@@ -165,22 +165,32 @@ For WILDCARDS see `find-file'.
              (evil-define-key* '(normal visual motion emacs insert) map (kbd ,key-symbol) ',command-symbol)
              (general-override-mode +1))))
 
-       (defmacro ,define-fn-symbol (&rest args)
-         ,(format "Define <%s-leader> key.
-
-Uses `general-define-key' under the hood, but does not support :major-modes,
-:states, :prefix or :non-normal-prefix. Use `map!' for a more convenient
-interface.
-
-See `%s-leader-key' to change the work-leader prefix." name name)
-         `(general-define-key
-           :states '(normal visual motion emacs insert)
-           :major-modes t
-           :prefix ,,key-symbol
-           ,@args)
-
-         )
-
+       (defmacro ,define-fn-symbol (&rest keys)
+         (let (prefix forms wkforms)
+           (while keys
+             (let ((key (pop keys))
+                   (def (pop keys)))
+               (if (keywordp key)
+                   (when (memq key '(:prefix :infix))
+                     (setq prefix def))
+                 (when prefix
+                   (setq key `(general--concat t ,prefix ,key)))
+                 (let* ((udef (cdr-safe (doom-unquote def)))
+                        (bdef (if (general--extended-def-p udef)
+                                  (general--extract-def (general--normalize-extended-def udef))
+                                def)))
+                   (unless (eq bdef :ignore)
+                     (push `(define-key ,',map-symbol (general--kbd ,key)
+                              ,bdef)
+                           forms))
+                   (when-let (desc (cadr (memq :which-key udef)))
+                     (prependq!
+                      wkforms `((which-key-add-key-based-replacements
+                                  (general--concat t ,',key-symbol ,key)
+                                  ,desc))))))))
+           (macroexp-progn
+            (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+                    (nreverse forms)))))
 
        (unless (plist-get doom-map-extra-mapping-fns ,keyword-symbol)
          (setq doom-map-extra-mapping-fns (append doom-map-extra-mapping-fns
