@@ -11,8 +11,11 @@
 (use-package! doct
   :commands (doct))
 
+
 (after! org
-  (setq org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
+  (setq org-directory "~/notes"
+        org-agenda-files `(,(f-join org-directory "projects"))
+        org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
         org-refile-targets '((nil :maxlevel . 7)
                              (org-agenda-files :maxlevel . 1))
         org-refile-allow-creating-parent-nodes t
@@ -32,7 +35,6 @@
         org-export-with-section-numbers nil
         org-export-time-stamp-file nil
         org-export-async-init-file (expand-file-name "org-export-init.el" (dir!))
-        org-directory "~/notes"
         org-src-window-setup 'current-window))
 
 (after! org-capture
