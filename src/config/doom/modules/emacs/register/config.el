@@ -74,7 +74,7 @@ pasting sexps from a register will succeed."
 (defun +register-value-to-string (register-value)
   "TODO"
   (cond ((stringp register-value) register-value)
-        ((vectorp register-value) (key-sequence-to-string register-value))
+        ((vectorp register-value) (+register-key-sequence-to-string register-value))
         ((consp register-value)
          (let ((print-quoted t)
                (print-length nil)
