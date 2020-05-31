@@ -25,8 +25,10 @@ don't convert the register contents to a string.")
       (when (memq major-mode '(minibuffer-inactive-mode))
         (with-selected-window (minibuffer-selected-window)
           (setq evil-ex-current-buffer (current-buffer))))
-      (+register-value-to-string (apply fn args))))
-
+      (let ((output (apply fn args)))
+        (if +register-get-register-as-string-p
+            (+register-value-to-string output)
+          output))))
 
   (defadvice! +register--evil-paste-special-a (fn &rest args)
     "Sets `+register-get-register-as-string-p' to t, so
