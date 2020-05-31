@@ -56,6 +56,6 @@
 
  (:personal-leader
   (:prefix ("o" . "open")
-   :desc "Fruit basket" "f" (lambda! (+find-file `(,org-directory "projects" "fruit-basket.org")))
+   :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org")))
    )))
 
