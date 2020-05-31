@@ -225,11 +225,11 @@ function vterm_printf(){
 }
 
 #set emacs mode
-set -o emacs 
+# set -o emacs
 
 if [ "$SHELL_NAME" = "bash" -o "$SHELL_NAME" = "zsh" ] ; then
   for source_file in $(ls "$cfg_sh/$SHELL_NAME"); do
-    source "$cfg_sh/$SHELL_NAME/$source_file" 
+    source "$cfg_sh/$SHELL_NAME/$source_file"
   done
 fi
 
