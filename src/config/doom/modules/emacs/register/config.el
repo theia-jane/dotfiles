@@ -80,7 +80,7 @@ pasting sexps from a register will succeed."
                (print-length nil)
                (print-level nil))
            (prin1-to-string register-value)))
-        (t (error "Not able to get te hregister as a string"))))
+        (t (error "Not able to get the register as a string"))))
 
 
 (defun +register-key-sequence-to-string (key-sequence)
