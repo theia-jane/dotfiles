@@ -196,7 +196,5 @@ For WILDCARDS see `find-file'.
          (setq doom-map-extra-mapping-fns (append doom-map-extra-mapping-fns
                                                   '(,keyword-symbol
                                                         ,define-fn-symbol))))
-       (use-package! which-key
-         :config
-         (which-key-add-key-based-replacements ,key-symbol ,(format "<%s-leader>" name)))
-       )))
+       (after! which-key
+         (which-key-add-key-based-replacements ,key-symbol ,(format "<%s-leader>" name))))))
