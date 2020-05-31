@@ -481,7 +481,6 @@ Regexp match data 0 specifies the characters to be composed."
                 (s (apply #'min s))
                 (e (apply #'max e)))
       (with-silent-modifications
-        (message "post hook %s-%s" s e)
         (setq prettify-symbols--current-symbol-bounds (list s e))
         (remove-text-properties s e '(composition nil))
         (remove-text-properties s e '(display nil))
