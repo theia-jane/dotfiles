@@ -562,3 +562,31 @@ Regexp match data 0 specifies the characters to be composed."
    :icon-resolver #'all-the-icons-alltheicon
    "python" "python"
    )
+
+;;; Babel
+(defadvice! +org-babel--resolve-tangle-path-to-dir-a (info)
+  "Add :tangle-relative property to org babel header args.
+
+This new property will make the :tangle files relative to
+the :dir or to the value of :tangle-relative.
+
+If :tangle-relative is
+- equal to 'dir, then it uses :dir
+- a string it uses the value passed
+"
+  :filter-return #'org-babel-get-src-block-info
+  (let* ((prop-alist (nth 2 info))
+         (dir (alist-get :dir prop-alist))
+         (tangle (alist-get :tangle prop-alist))
+         (tangle-relative (alist-get :tangle-relative prop-alist)))
+    (when (and dir
+               (not (equal tangle "yes"))
+               (not (equal tangle "no"))
+               tangle-relative)
+      (setf (alist-get :tangle prop-alist)
+            (f-join (cond
+                     ((stringp tangle-relative) tangle-relative)
+                     ((eq tangle-relative 'dir) dir)
+                     (t ""))
+                    tangle))))
+  info)
