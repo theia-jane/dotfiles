@@ -575,7 +575,7 @@ If :tangle-relative is
 - a string it uses the value passed
 "
   :around #'org-babel-get-src-block-info
-  (let ((info (apply fn light datum)))
+  (let ((info (funcall fn light datum)))
     (unless light
       (let* ((prop-alist (nth 2 info))
              (dir (alist-get :dir prop-alist))
