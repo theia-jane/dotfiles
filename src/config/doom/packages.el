@@ -16,3 +16,4 @@
   :recipe (:host github :repo "tylerware/rextract.el"))
 
 (package! doct)
+(package! hl-line :disable t)
