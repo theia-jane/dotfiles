@@ -198,3 +198,31 @@ For WILDCARDS see `find-file'.
                                                         ,define-fn-symbol))))
        (after! which-key
          (which-key-add-key-based-replacements ,key-symbol ,(format "<%s-leader>" name))))))
+
+
+(defun +clone-buffer (&optional newname display-flag)
+  "Clones the current buffer.
+
+If the current buffer is visiting a file, then the clone
+will not be associated with the file.
+
+This is basically a pass through to `call-buffer'."
+  (interactive)
+  (let* ((buffer-file-name nil)
+         (buffer-file-truename nil)
+         (cloned-buffer (if (called-interactively-p)
+                            (call-interactively #'clone-buffer)
+                          (clone-buffer newname display-flag))))
+    (with-current-buffer cloned-buffer
+      (set-buffer-modified-p t))
+    cloned-buffer))
+
+(defun +rename-buffer (name &optional unique)
+  "An interactive version of `rename-buffer'.
+
+See `rename-buffer' for valid values of NAME and UNIQUE."
+    (interactive
+     (list (read-string (format "Rename '%s' to: " (buffer-name)))))
+  (when (null name)
+    (user-error "No name provided, buffer name unchanged"))
+  (rename-buffer name unique))
