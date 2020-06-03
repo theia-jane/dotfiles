@@ -28,6 +28,7 @@
 
   (defun +bookmark-org-store-link ()
     "Store a `bookmark:' link. "
+    (require 'bookmark)
     (let ((bookmark-record (bookmark-make-record)))
       (when (or (and (null (buffer-file-name))
                      (not (eq bookmark-make-record-function 'bookmark-make-record-default)))
