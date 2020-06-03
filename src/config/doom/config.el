@@ -14,6 +14,7 @@
  "+key"
  "+movement"
  ;; Features / tools / etc
+ "+bookmark"
  "+ivy"
  "+evil"
  "+elisp"
