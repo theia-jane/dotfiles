@@ -226,3 +226,19 @@ See `rename-buffer' for valid values of NAME and UNIQUE."
   (when (null name)
     (user-error "No name provided, buffer name unchanged"))
   (rename-buffer name unique))
+(defun +counsel/popup-buffer ()
+  "Pull a buffer in as a popup.
+
+TODO: Add some extra actions to specifiy where to pull the popup at
+"
+  (interactive)
+  (ivy-read "Popup buffer: " #'internal-complete-buffer
+            :preselect (buffer-name (other-buffer (current-buffer)))
+            :action #'(lambda (match)
+                        (+popup-buffer (get-buffer match)))
+            :matcher #'ivy--switch-buffer-matcher
+            :caller 'ivy-switch-buffer ;; setting to get prettyness from 'ivy-rich
+            ))
+
+(ivy-configure '+counsel/popup-buffer
+  :display-transformer-fn #'ivy-switch-buffer-transformer)
