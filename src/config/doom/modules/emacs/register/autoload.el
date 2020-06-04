@@ -9,7 +9,7 @@ don't convert the register contents to a string.")
   :filter-args 'evil-execute-macro
   (let ((count (nth 0 args))
         (macro (nth 1 args)))
-    (when (+elisp-string-p macro)
+    (when (+register--elisp-string-p macro)
       (setq macro `(lambda () ,(car (read-from-string (substring-no-properties macro))))))
     (list count macro)))
 
@@ -117,7 +117,8 @@ pasting sexps from a register will succeed."
         (insert (+register-value-to-string register-contents))
         (set-buffer-modified-p nil)
         (when (eq register-type 'elisp)
-          (emacs-lisp-mode)))
+          (emacs-lisp-mode)
+          (pp-buffer)))
 
       (setq buffer-file-name nil
             +register--register-type register-type
