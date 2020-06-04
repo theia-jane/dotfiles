@@ -242,3 +242,25 @@ TODO: Add some extra actions to specifiy where to pull the popup at
 
 (ivy-configure '+counsel/popup-buffer
   :display-transformer-fn #'ivy-switch-buffer-transformer)
+
+
+(defun +set-buffer-local-variable ()
+  (interactive)
+  (ivy-read "[buffer] Change variable: " (buffer-local-variables)
+            :require-match t
+            :action #'(lambda (var-record)
+                        (when var-record
+                          (eval `(setq-local ,(car var-record)
+                                             ,(read (read-string
+                                                     "elisp value: "))))))
+            :caller 'counsel-describe-variable))
+
+(defun +counsel-describe-buffer-local-variable ()
+  (interactive)
+  (ivy-read "[buffer] Describe variable: " (buffer-local-variables)
+            :require-match t
+            :keymap counsel-describe-map
+            :action (lambda (x)
+                      (funcall counsel-describe-variable-function (intern x)))
+            :caller 'counsel-describe-variable))
+
