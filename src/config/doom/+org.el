@@ -592,3 +592,17 @@ If :tangle-relative is
                          (t ""))
                         tangle)))))
   info))
+
+
+(defadvice! +org-babel--buffer-arg (fn result &optional result-params info hash lang)
+  "Popup results of an org src block if :buffer t is given as a header argument "
+  :around  'org-babel-insert-result ;; probably a better type of advice
+  (funcall fn result result-params info hash lang)
+  ;; (message "%s" (pp-to-string info))
+  (when-let ((buffer-val (alist-get :buffer (nth 2 info))))
+    (let* ((result-buffer-name (concat "*org:results:" (buffer-name) "["  hash "]*" ))
+           (result-buffer (get-buffer-create result-buffer-name)))
+      (with-current-buffer result-buffer
+        (erase-buffer)
+        (insert result)
+        (+popup-buffer (current-buffer))))))
