@@ -35,7 +35,6 @@
     :desc "Find all"           "a" #'+snippets/find
     ))
   :desc "How do you..." "s h" #'howdoyou-query
-  :desc "Switch project" "p p" #'(lambda () (interactive) (counsel-projectile-switch-project "v"))
   (:prefix ("P" . "personal")
    (:prefix ("o" . "open")
 

@@ -14,3 +14,8 @@ where there are duplicate actions with the same key."
                          :from-end t))
   results)
 
+(defadvice! +counsel-projectile-switch-project--set-default-a (args)
+  :filter-args #'counsel-projectile-switch-project
+  (list (or
+         (car args)
+         "v")))
