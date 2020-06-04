@@ -10,7 +10,11 @@ don't convert the register contents to a string.")
   (let ((count (nth 0 args))
         (macro (nth 1 args)))
     (when (+register--elisp-string-p macro)
-      (setq macro `(lambda () ,(car (read-from-string (substring-no-properties macro))))))
+      (let ((elisp-form (car (read-from-string (substring-no-properties macro)))))
+        (setq macro (if (and (listp elisp-form)
+                             (eq 'lambda (car elisp-form)))
+                        elisp-form
+                      `(lambda () ,elisp-form)))))
     (list count macro)))
 
 (defadvice! +register--evil-get-register-a (register-value)
