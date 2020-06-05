@@ -1,0 +1,114 @@
+#+TITLE: Management CLI
+
+In short, I need a way to easily manage my literate config from the command line. These will all live under =bin/=. Here is a list of those commands:
+- =config-tangle= :: generates the source files
+
+* Tangle
+:PROPERTIES:
+:header-args: :tangle bin/config-tangle :tangle-relative 'dir :dir ../ :noweb yes
+:END:
+
+This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
+
+To start we need to setup of the script to run using emacs-lisp.
+#+BEGIN_SRC sh :shebang #!/usr/bin/env sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+END_SRC
+
+
+We need to pull in the org babel library for tangling and Im adding extension to tangling, which enable choosing where relative tangle is based.
+#+BEGIN_SRC elisp
+(require 'ob-tangle)
+<<tangle-relative>>
+#+END_SRC
+
+Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
+
+For my literate config I want to have the default tangle directory to from the to be the root of this repository, which this will set up.
+#+BEGIN_SRC elisp
+(defvar config-root (with-temp-buffer
+                      (shell-command "git rev-parse --show-toplevel" (current-buffer))
+                      (replace-string "\n" "")
+                      (buffer-string)))
+
+(setq org-babel-default-header-args `((:session . "none")
+                                      (:noweb . "yes")
+                                      (:root-dir . ,config-root)
+                                      (:mkdirp . "yes")
+                                      (:tangle-relative . dir)
+                                      (:tangle . "no")))
+
+#+END_SRC
+
+I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
+#+begin_src elisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+end_src
+
+
+Finally, actually tangle the files that in the =literate/=
+#+BEGIN_SRC elisp
+(dolist (file (directory-files-recursively
+               (concat config-root "/literate")
+               "\\.org$"))
+    (org-babel-tangle-file file))
+
+(kill-emacs 0)
+#+END_SRC
+
+* Tangle relative
+#+NAME: tangle-relative
+#+BEGIN_SRC elisp
+(defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
+  "Add :tangle-relative & :root-dir property to org babel header args.
+
+The :tangle-relative property will make the :tangle files relative to
+the :dir or to the value of :tangle-relative.
+
+If :tangle-relative is
+- equal to 'dir, then it uses :dir
+- a string it uses the value passed
+
+The :root-dir property can be used in conjunction with :tangle-relative.
+if specified, then:
+- if :dir has no value, the file is tangled relative to :root-dir
+- if :dir has a value, but is an absolute path (unix), then :root-dir is ignored and the :dir is used for tangling
+- if :dir has a value, but is not an absolute path (unix), then :root-dir and :dir are combined and the file is tangled to that path"
+  (let ((info (funcall fn light datum)))
+    (unless light
+      (let* ((prop-alist (nth 2 info))
+             (dir (alist-get :dir prop-alist))
+             (root-dir (substitute-env-vars
+                        (alist-get :root-dir prop-alist)))
+             (tangle (alist-get :tangle prop-alist))
+             (tangle-relative (alist-get :tangle-relative prop-alist)))
+        (when (and (not (equal tangle "yes"))
+                   (not (equal tangle "no"))
+                   tangle-relative)
+          (setf (alist-get :tangle prop-alist)
+                (let ((directory (substitute-env-vars
+                                  (cond ((stringp tangle-relative) tangle-relative)
+                                        ((eq tangle-relative 'dir) dir)
+                                        (t "")))))
+
+                  (unless (null root-dir)
+                    (setq directory (cond
+                                     ((null directory)
+                                      root-dir)
+                                     ((equal (substring directory 0 1) "/")
+                                      directory)
+                                     (t (concat
+                                         (file-name-as-directory root-dir) directory)))))
+
+                    (concat
+                     (file-name-as-directory directory)
+                     tangle))))))
+      info))
+
+  (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
+#+END_SRC
+** TODO Try to get this in a separate file
+
+
+(file-name-as-directory "")

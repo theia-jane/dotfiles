@@ -1,0 +1,7 @@
+#+TITLE: Git
+#+PROPERTY: header-args:bash :dir src/scripts :shebang #/usr/bin/env bash
+
+To start, let's make a script that's just a shortcut for =git=.
+#+BEGIN_SRC bash :tangle g
+git "$@"
+#+END_SRC

@@ -1,0 +1,73 @@
+#!/usr/bin/env sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+(require 'ob-tangle)
+(defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
+  "Add :tangle-relative & :root-dir property to org babel header args.
+
+The :tangle-relative property will make the :tangle files relative to
+the :dir or to the value of :tangle-relative.
+
+If :tangle-relative is
+- equal to 'dir, then it uses :dir
+- a string it uses the value passed
+
+The :root-dir property can be used in conjunction with :tangle-relative.
+if specified, then:
+- if :dir has no value, the file is tangled relative to :root-dir
+- if :dir has a value, but is an absolute path (unix), then :root-dir is ignored and the :dir is used for tangling
+- if :dir has a value, but is not an absolute path (unix), then :root-dir and :dir are combined and the file is tangled to that path"
+  (let ((info (funcall fn light datum)))
+    (unless light
+      (let* ((prop-alist (nth 2 info))
+             (dir (alist-get :dir prop-alist))
+             (root-dir (substitute-env-vars
+                        (alist-get :root-dir prop-alist)))
+             (tangle (alist-get :tangle prop-alist))
+             (tangle-relative (alist-get :tangle-relative prop-alist)))
+        (when (and (not (equal tangle "yes"))
+                   (not (equal tangle "no"))
+                   tangle-relative)
+          (setf (alist-get :tangle prop-alist)
+                (let ((directory (substitute-env-vars
+                                  (cond ((stringp tangle-relative) tangle-relative)
+                                        ((eq tangle-relative 'dir) dir)
+                                        (t "")))))
+
+                  (unless (null root-dir)
+                    (setq directory (cond
+                                     ((null directory)
+                                      root-dir)
+                                     ((equal (substring directory 0 1) "/")
+                                      directory)
+                                     (t (concat
+                                         (file-name-as-directory root-dir) directory)))))
+
+                    (concat
+                     (file-name-as-directory directory)
+                     tangle))))))
+      info))
+
+  (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
+
+(defvar config-root (with-temp-buffer
+                      (shell-command "git rev-parse --show-toplevel" (current-buffer))
+                      (replace-string "\n" "")
+                      (buffer-string)))
+
+(setq org-babel-default-header-args `((:session . "none")
+                                      (:noweb . "yes")
+                                      (:root-dir . ,config-root)
+                                      (:mkdirp . "yes")
+                                      (:tangle-relative . dir)
+                                      (:tangle . "no")))
+
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+
+(dolist (file (directory-files-recursively
+               (concat config-root "/literate")
+               "\\.org$"))
+    (org-babel-tangle-file file))
+
+(kill-emacs 0)
