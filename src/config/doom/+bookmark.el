@@ -20,7 +20,7 @@
           (let ((print-escape-newlines t)
                 (print-quoted t))
             (prin1 bookmark-record (current-buffer)))
-          (buffer-string)))))
+          (base64-encode-string (buffer-string))))))
 
   (defun +bookmark-org--generate-link (bookmark-record-or-name)
     (concat "bookmark:"
@@ -40,7 +40,7 @@
 
   (defun +bookmark-org-follow-link (path _)
     "Follow a `bookmark' link."
-    (let* ((path-read (read path))
+    (let* ((path-read (read (base64-decode-string path)))
            (bookmark-or-name (if (listp path-read) path-read path)))
       (bookmark-jump bookmark-or-name)))
 
