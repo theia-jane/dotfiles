@@ -14,14 +14,10 @@
     (let* ((bookmark-record (bookmark-get-bookmark bookmark-record-or-name)))
       (when bookmark-record
         ;; Stole this from (pp-to-string), basicallly, don't pretty print
-        (with-temp-buffer
-          (lisp-mode-variables nil)
-          (set-syntax-table emacs-lisp-mode-syntax-table)
-          (let ((print-escape-newlines t)
-                (print-quoted t))
-            (prin1 bookmark-record (current-buffer)))
-          (base64-encode-string (buffer-string))))))
-
+        (let ((print-escape-newlines t)
+              (print-quoted t))
+          (base64-encode-string (prin1-to-string bookmark-record) t))))))
+ 
   (defun +bookmark-org--generate-link (bookmark-record-or-name)
     (concat "bookmark:"
             (+bookmark-org--generate-path bookmark-record-or-name)))
