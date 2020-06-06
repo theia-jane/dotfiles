@@ -1,7 +1,0 @@
-#!/bin/bash
-
-g reset HEAD .
-g.af
-git commit
-
-# vim: ft=sh

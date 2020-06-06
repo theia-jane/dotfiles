@@ -1,6 +1,0 @@
-#!/bin/bash
-
-g.s \
-| xargs -r git stash drop
-
-# vim: ft=sh

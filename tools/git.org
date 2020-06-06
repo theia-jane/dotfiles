@@ -1,0 +1,48 @@
+#+TITLE: git
+Storing all the history you didn't know you wanted, publicly.
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir ${HOME}/bin :shebang #/usr/bin/env bash
+:END:
+A collection of shortcuts to information or workflows in git.
+
+I am lazy and typing =g= is /SO/ much quicker.
+#+BEGIN_SRC bash :tangle g
+git "$@"
+#+END_SRC
+
+I don't typically know the name of the branch I want ahead of time. This let's me defer needing to know by providing a list I can choose from.
+#+BEGIN_SRC bash :tangle g-co
+git branch --all \
+  | sed "s%remotes/origin/%%" \
+  | grep -E -v -e "->" -e "$(git rev-parse --abbrev-ref HEAD --)" \
+  | sort \
+  | uniq \
+  | fzf \
+  | cut -c 3- \
+  | xargs -r git checkout
+#+END_SRC
+
+I can mess up a repository quite royally. This is my get out of jail card -- brute force cleaning FTW!
+#+BEGIN_SRC bash :tangle g-clean
+readonly ROOT="$(git rev-parse --show-toplevel)"
+
+if [ -d "$ROOT" ]; then
+    cd "$ROOT"
+    git reset HEAD .
+    git status -u --porcelain=v2 \
+        | awk '{print $(NF)}' \
+        | xargs -r rm -rf
+    git checkout -- .
+fi
+#+END_SRC
+
+I'll often forget to create the branch on the remote. This script will do that for me.
+#+BEGIN_SRC bash :tangle g-push
+PUSH_OUTPUT="$(git push 2>&1 | grep 'no upstream branch')"
+
+if [ -n "${PUSH_OUTPUT}" ]; then
+   git push --set-upstream origin "$(git branch --show-current)"
+fi
+#+END_SRC
