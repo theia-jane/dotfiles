@@ -1,0 +1,6 @@
+#+TITLE: Configuration & Utilities
+If you're going to a use a tool, you should use one that's specialized and fits you.
+
+* Intro
+Welcome! This is my configuration and utilities repository -- a home for the things that keep me productive and happy using a computer. Things are currently being transitioned from a hodge-podge of configuration files that I link everywhere to using a literate programming approach. The end state will /hopefully/ be that this repository reads a little more like a book.
+
