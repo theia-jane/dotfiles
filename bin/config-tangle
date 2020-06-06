@@ -65,9 +65,13 @@ if specified, then:
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 
-(dolist (file (directory-files-recursively
-               (concat config-root "/literate")
-               "\\.org$"))
+(dolist (file (directory-files-recursively config-root
+                                           "\\.org$"
+                                           nil
+                                           #'(lambda (name)
+                                               (string-match
+                                                "\\(?:literate\\|tools\\)$"
+                                                name))))
     (org-babel-tangle-file file))
 
 (kill-emacs 0)

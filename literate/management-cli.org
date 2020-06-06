@@ -49,9 +49,13 @@ I want my tangled scripts to automatically be executable, so I'll make sure it's
 
 Finally, actually tangle the files that in the =literate/=
 #+BEGIN_SRC elisp
-(dolist (file (directory-files-recursively
-               (concat config-root "/literate")
-               "\\.org$"))
+(dolist (file (directory-files-recursively config-root
+                                           "\\.org$"
+                                           nil
+                                           #'(lambda (name)
+                                               (string-match
+                                                "\\(?:literate\\|tools\\)$"
+                                                name))))
     (org-babel-tangle-file file))
 
 (kill-emacs 0)
