@@ -52,18 +52,35 @@ I want my tangled scripts to automatically be executable, so I'll make sure it's
 
 Finally, actually tangle the files that in the =literate/= & =tools/=
 #+BEGIN_SRC elisp
-(ob-tangle-dir
- config-root
- (apply-partially
-  #'string-match
-  (rx line-start
-      (eval (file-name-as-directory config-root))
-      (or "literate/"
-          "tools/"
-          "personal-details.org"))))
+
+(defun config-file-filter (file)
+  (string-match
+   (rx line-start
+       (eval (file-name-as-directory config-root))
+       (or "literate/"
+           "tools/"
+           (and (+ (not "/")) ".org")))
+   file))
+
+(defun config-files ()
+  (seq-filter
+   #'config-file-filter
+   (directory-files-recursively config-root "\\.org$")))
+
+(defun config-tangle ()
+  (let ((files (config-files)))
+    (message "Tangling files: %s" files)
+    (ob-with-global-lib
+     (ob-lib-from-files files t (lambda (file)
+                                  (setq file (string-remove-prefix (file-name-as-directory config-root) file))
+                                  (string-remove-suffix ".org" file)))
+     (ob-tangle-files files))))
+
+(config-tangle)
 
 (kill-emacs 0)
 #+END_SRC
+
 
 * Org babel
 Some additions I've made to org-babel
@@ -73,16 +90,23 @@ Some additions I've made to org-babel
 (require 'ob-lob)
 (require 'subr-x)
 
-(defun org-files (dir &optional file-filter)
-  (seq-filter (or file-filter #'identity)
-              (directory-files-recursively dir "\\.org$")))
 
-(defmacro with-ob-library (library &rest body)
+
+(defmacro ob-with-lib (library &rest body)
   `(let ((org-babel-library-of-babel ,library))
-     (message "Using library: %s" (pp-to-string org-babel-library-of-babel))
      ,@body))
 
-(defun ob-namespace-library (library namespace)
+(defmacro ob-with-global-lib (&rest body)
+  `(ob-with-lib org-babel-library-of-babel
+                ,@body))
+
+(defmacro ob-lib-changes (&rest body)
+  `(ob-with-global-lib
+    (let ((previous-lib org-babel-library-of-babel))
+      ,@body
+      (seq-difference org-babel-library-of-babel previous-lib))))
+
+(defun ob-namespace-lib (namespace library)
   (mapcar
    (lambda (entry)
      (let* ((old-name (symbol-name (car entry)))
@@ -92,25 +116,55 @@ Some additions I've made to org-babel
        entry))
    library))
 
-(defun ob-library-from-file (file)
-  (with-ob-library
-   nil
-   (org-babel-lob-ingest file)
-   org-babel-library-of-babel))
+(defun ob-lib-from-file (file &optional load namespace)
+  (message "namespace %s" namespace)
+  (let ((library (ob-lib-changes (org-babel-lob-ingest file))))
+    (when namespace
+      (setq library (ob-namespace-lib namespace library)))
 
-(defun ob-library-from-dir (dir &optional file-filter)
-  (let* ((dir (file-name-as-directory dir)) ;; Normalize DIR
-         (files (org-files dir file-filter)))
-    (cl-loop for file in files append
-             (let* ((relative-file (string-remove-prefix dir file))
-                    (namespace (string-remove-suffix ".org" relative-file))
-                    (library (ob-library-from-file file)))
-               (ob-namespace-library library namespace)))))
+    (when load
+      (setq org-babel-library-of-babel (append
+                                        library
+                                        org-babel-library-of-babel)))
+    library))
 
-(defun ob-library-for-current-buffer ()
+(defun ob-lib-from-files (files &optional load namespace-fn)
+  ;; If there are no cycles in the dependencies (fileA -needs-> fileB -needs-> fileC -needs-> fileA)
+  ;; then this is enough tries to ensure we load all the files. Eventually, we could get more sophisticated
+  ;; in how we load src blocks as cyclic file dependency does not imply a cyclic src block dependency.
+  ;; This is good enough for now
+  (let* ((max-tries (length files))
+         (retry-table (make-hash-table :test #'equal
+                                       :size (length files)))
+         (library
+          (ob-lib-changes
+           (while files
+             (let* ((file (pop files))
+                    (try-count (or (gethash file retry-table) 0)))
+               (puthash file (1+ try-count) retry-table)
+               (condition-case err
+                   (progn
+                     (ob-lib-from-file file t (funcall (or namespace-fn #'identity) file))
+                     (message "Successfully loaded library from file: %s" file))
+                 (t (message "Error when loading (%s): %s" file err)
+                    (if (< try-count max-tries)
+                        ;; Put in back on the end and hope what it needs can be loaded
+                        (setq files (append files (list file)))
+                      (user-error "Unable to resolve library references for %s after %s tries" file max-tries))))))
+           (message "Finished loading %s libraries" (length files)))))
+
+    (when load
+      (setq org-babel-library-of-babel
+            (append library org-babel-library-of-babel)))
+    library))
+
+
+
+
+(defun ob-lib-for-buffer ()
   (if-let* ((babel-library (cdr (assoc "babel-library"
-                                  (append org-keyword-properties
-                                          org-global-properties))))
+                                       (append org-keyword-properties
+                                               org-global-properties))))
             (babel-library (car (read-from-string (concat "(" babel-library ")")))))
       (let ((library org-babel-library-of-babel)
             include-dirs)
@@ -140,12 +194,12 @@ Some additions I've made to org-babel
                                 (push dir include-dirs))))
                            (t nil)))))))
 
-            (setq library
-                  (append
-                   (apply #'append (mapcar (lambda (dir)
-                                             (ob-library-from-dir dir))
-                                           include-dirs))
-                   library))
+            ;; (setq library
+            ;;       (append
+            ;;        (apply #'append (mapcar (lambda (dir)
+            ;;                                  (ob-library-from-dir dir))
+            ;;                                include-dirs))
+            ;;        library))
             library)))))
 #+END_SRC
 
@@ -202,11 +256,10 @@ if specified, then:
 
 #+NAME: org-babel/tangle-dir
 #+BEGIN_SRC elisp
-(defun ob-tangle-dir (dir &optional file-filter)
-  (with-ob-library
-   (append (ob-library-from-dir dir file-filter)
-           org-babel-library-of-babel)
-   (cl-loop for file
-            in (org-files dir file-filter)
-            do (org-babel-tangle-file file))))
+(defun ob-tangle-files (files)
+  (cl-loop for file
+           in files
+           do
+           (message "Tangling file: %s" file)
+           (org-babel-tangle-file file)))
 #+END_SRC
