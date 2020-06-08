@@ -1,0 +1,20 @@
+#+TITLE: Fonts
+
+#+NAME: font-info
+| type    | name            |
+|---------+-----------------|
+| default | Source Code Pro |
+
+#+NAME: get-name
+#+BEGIN_SRC elisp :var type='() :noweb yes
+(let* ((font-info (quote <<lib/table-plist(rows=font-info())>>))
+       (lookup (lambda (type)
+                 (when-let ((matched-plist (cl-find-if
+                                           (lambda (row-plist)
+                                             (equal type (plist-get row-plist :type)))
+                                           font-info)))
+                   (plist-get matched-plist :name)))))
+  (funcall lookup (or type  "default")))
+#+END_SRC
+
+

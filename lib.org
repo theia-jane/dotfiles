@@ -1,0 +1,18 @@
+#+TITLE: Lib
+Convenience methods for working with org-mode source blocks
+
+#+NAME: table-plist
+#+BEGIN_SRC elisp :var rows='() :colnames no
+(when rows
+  (let* ((rows (delete 'hline rows))
+         (keywords (mapcar
+                    (lambda (header)
+                      (setq header (replace-regexp-in-string " " "" (downcase header)))
+                      (intern (concat ":" header)))
+                    (pop rows))))
+    (mapcar
+     (lambda (row)
+       (cl-loop for i below (length keywords)
+                append (list (nth i keywords) (nth i row))))
+     rows)))
+#+END_SRC
