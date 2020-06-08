@@ -1,0 +1,20 @@
+#+TITLE: Personal Details
+
+#+NAME: contact-info
+| Full Name       | Tyler Ware               |
+| Email           | tyler.ware.777@gmail.com |
+| Github Username | tylerware                |
+
+#+NAME: contact
+#+BEGIN_SRC elisp :var field='nil :noweb yes
+(let ((contact-info (quote <<contact-info()>>)))
+  (if field
+      (if-let ((matched-record (cl-find-if
+                                (lambda (record)
+                                  (equal field (car record)))
+                                contact-info)))
+          (cadr matched-record)
+        "")
+    contact-info))
+#+END_SRC
+

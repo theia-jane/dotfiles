@@ -55,13 +55,14 @@ if specified, then:
 
 (defmacro with-ob-library (library &rest body)
   `(let ((org-babel-library-of-babel ,library))
+     (message "Using library: %s" (pp-to-string org-babel-library-of-babel))
      ,@body))
 
 (defun ob-namespace-library (library namespace)
   (mapcar
    (lambda (entry)
      (let* ((old-name (symbol-name (car entry)))
-            (new-name (concat namespace ":" old-name)))
+            (new-name (concat namespace "/" old-name)))
        (setf (car entry) (intern new-name)
              (nth 5 entry) new-name)
        entry))
@@ -143,7 +144,8 @@ if specified, then:
                                       (:mkdirp          . "yes")
                                       (:tangle-relative . dir)
                                       (:tangle          . "no")
-                                      (:comments        . "yes")))
+                                      (:comments        . "yes"))
+      org-confirm-babel-evaluate nil)
 ;; Tangle:3 ends here
 
 ;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:4]]
@@ -159,7 +161,8 @@ if specified, then:
   (rx line-start
       (eval (file-name-as-directory config-root))
       (or "literate/"
-          "tools/"))))
+          "tools/"
+          "personal-details.org"))))
 
 (kill-emacs 0)
 ;; Tangle:5 ends here

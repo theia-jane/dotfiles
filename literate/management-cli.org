@@ -39,8 +39,8 @@ For my literate config I want to have the default tangle directory to from the t
                                       (:mkdirp          . "yes")
                                       (:tangle-relative . dir)
                                       (:tangle          . "no")
-                                      (:comments        . "yes")))
-
+                                      (:comments        . "yes"))
+      org-confirm-babel-evaluate nil)
 #+END_SRC
 
 I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
@@ -59,7 +59,8 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
   (rx line-start
       (eval (file-name-as-directory config-root))
       (or "literate/"
-          "tools/"))))
+          "tools/"
+          "personal-details.org"))))
 
 (kill-emacs 0)
 #+END_SRC
@@ -78,13 +79,14 @@ Some additions I've made to org-babel
 
 (defmacro with-ob-library (library &rest body)
   `(let ((org-babel-library-of-babel ,library))
+     (message "Using library: %s" (pp-to-string org-babel-library-of-babel))
      ,@body))
 
 (defun ob-namespace-library (library namespace)
   (mapcar
    (lambda (entry)
      (let* ((old-name (symbol-name (car entry)))
-            (new-name (concat namespace ":" old-name)))
+            (new-name (concat namespace "/" old-name)))
        (setf (car entry) (intern new-name)
              (nth 5 entry) new-name)
        entry))
@@ -146,6 +148,10 @@ Some additions I've made to org-babel
                    library))
             library)))))
 #+END_SRC
+
+#+RESULTS: org-babel/load-namespaced-libraries
+: ob-library-for-current-buffer
+
 ** Tangle
 #+NAME: org-babel/resolve-tangle-path
 #+BEGIN_SRC elisp

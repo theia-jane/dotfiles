@@ -1,9 +1,42 @@
 #+TITLE: git
 Storing all the history you didn't know you wanted, publicly.
 
+* Config
+:PROPERTIES:
+:header-args:conf: :dir $HOME/.config :tangle git/config
+:END:
+
+It's nice to have some shortcuts, so here are mine.
+#+BEGIN_SRC conf
+[alias]
+    st = status
+    co = checkout
+    root = rev-parse --show-toplevel
+    ci = commit
+    a = add
+    apply = apply --ignore-whitespace
+#+END_SRC
+
+git needs to know who I am, so people can blame me for my past mistakes.
+#+BEGIN_SRC conf
+[user]
+    name = <<personal-details/contact(field="Full Name")>>
+    email = <<personal-details/contact(field="Email")>>
+[github]
+    user = <<personal-details/contact(field="Github Username")>>
+[credential]
+    helper = gnome-keyring
+#+END_SRC
+
+Not sure why I have this default, but it was in my original (pre-literate) config, so I've left it.
+#+BEGIN_SRC conf
+[push]
+    default = simple
+#+END_SRC
+
 * Scripts
 :PROPERTIES:
-:header-args:bash: :comments yes :dir ${HOME}/bin :shebang #/usr/bin/env bash
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #/usr/bin/env bash
 :END:
 A collection of shortcuts to information or workflows in git.
 
