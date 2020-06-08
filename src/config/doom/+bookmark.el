@@ -16,7 +16,7 @@
         ;; Stole this from (pp-to-string), basicallly, don't pretty print
         (let ((print-escape-newlines t)
               (print-quoted t))
-          (base64-encode-string (prin1-to-string bookmark-record) t))))))
+          (base64-encode-string (prin1-to-string bookmark-record) t)))))
  
   (defun +bookmark-org--generate-link (bookmark-record-or-name)
     (concat "bookmark:"
