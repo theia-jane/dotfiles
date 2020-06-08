@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
+;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:2]]
 (require 'ob-tangle)
 (defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
   "Add :tangle-relative & :root-dir property to org babel header args.
@@ -20,58 +21,145 @@ if specified, then:
   (let ((info (funcall fn light datum)))
     (unless light
       (let* ((prop-alist (nth 2 info))
-             (dir (alist-get :dir prop-alist))
-             (root-dir (substitute-env-vars
-                        (alist-get :root-dir prop-alist)))
+             (dir (substitute-env-vars (or (alist-get :dir prop-alist) "")))
+             (root-dir (substitute-env-vars (or (alist-get :root-dir prop-alist) "")))
              (tangle (alist-get :tangle prop-alist))
              (tangle-relative (alist-get :tangle-relative prop-alist)))
-        (when (and (not (equal tangle "yes"))
+        (when (and (stringp tangle)
+                   (not (equal tangle "yes"))
                    (not (equal tangle "no"))
+                   (not (string-prefix-p "/" tangle))
                    tangle-relative)
           (setf (alist-get :tangle prop-alist)
-                (let ((directory (substitute-env-vars
-                                  (cond ((stringp tangle-relative) tangle-relative)
-                                        ((eq tangle-relative 'dir) dir)
-                                        (t "")))))
-
+                (let ((directory (if (eq tangle-relative 'dir) dir "")))
                   (unless (null root-dir)
                     (setq directory (cond
-                                     ((null directory)
-                                      root-dir)
-                                     ((equal (substring directory 0 1) "/")
-                                      directory)
-                                     (t (concat
-                                         (file-name-as-directory root-dir) directory)))))
+                                     ((null directory) root-dir)
+                                     ((string-prefix-p "/" directory) directory)
+                                     (t (concat (file-name-as-directory root-dir) directory)))))
 
-                    (concat
-                     (file-name-as-directory directory)
-                     tangle))))))
-      info))
+                  (let ((tangle-path (concat
+                                      (file-name-as-directory directory)
+                                      tangle)))
+                    tangle-path))))))
 
-  (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
+    info))
 
+(advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
+(require 'ob-lob)
+(require 'subr-x)
+
+(defun org-files (dir &optional file-filter)
+  (seq-filter (or file-filter #'identity)
+              (directory-files-recursively dir "\\.org$")))
+
+(defmacro with-ob-library (library &rest body)
+  `(let ((org-babel-library-of-babel ,library))
+     ,@body))
+
+(defun ob-namespace-library (library namespace)
+  (mapcar
+   (lambda (entry)
+     (let* ((old-name (symbol-name (car entry)))
+            (new-name (concat namespace ":" old-name)))
+       (setf (car entry) (intern new-name)
+             (nth 5 entry) new-name)
+       entry))
+   library))
+
+(defun ob-library-from-file (file)
+  (with-ob-library
+   nil
+   (org-babel-lob-ingest file)
+   org-babel-library-of-babel))
+
+(defun ob-library-from-dir (dir &optional file-filter)
+  (let* ((dir (file-name-as-directory dir)) ;; Normalize DIR
+         (files (org-files dir file-filter)))
+    (cl-loop for file in files append
+             (let* ((relative-file (string-remove-prefix dir file))
+                    (namespace (string-remove-suffix ".org" relative-file))
+                    (library (ob-library-from-file file)))
+               (ob-namespace-library library namespace)))))
+
+(defun ob-library-for-current-buffer ()
+  (if-let* ((babel-library (cdr (assoc "babel-library"
+                                  (append org-keyword-properties
+                                          org-global-properties))))
+            (babel-library (car (read-from-string (concat "(" babel-library ")")))))
+      (let ((library org-babel-library-of-babel)
+            include-dirs)
+        (while babel-library
+          (let ((arg (pop babel-library)))
+            (pcase arg
+              (:include-dir
+               (when babel-library
+                 (let (stop arg)
+                   (while (and babel-library (not stop))
+                     (setq arg (pop babel-library))
+                     (cond ((keywordp arg)
+                            (setq stop t)
+                            (push arg babel-library))
+                           ((eq arg 'project)
+                            (when-let ((dir (projectile-project-root)))
+                              (push dir include-dirs)))
+                           ((and (stringp arg)
+                                 (directory-name-p arg))
+                            (push arg include-dirs))
+                           ((symbolp arg)
+                            (let ((dir (if (boundp arg)
+                                           (symbol-value arg)
+                                         (symbol-name arg))))
+                              (when (and (stringp dir)
+                                         (directory-name-p dir))
+                                (push dir include-dirs))))
+                           (t nil)))))))
+
+            (setq library
+                  (append
+                   (apply #'append (mapcar (lambda (dir)
+                                             (ob-library-from-dir dir))
+                                           include-dirs))
+                   library))
+            library)))))
+(defun ob-tangle-dir (dir &optional file-filter)
+  (with-ob-library
+   (append (ob-library-from-dir dir file-filter)
+           org-babel-library-of-babel)
+   (cl-loop for file
+            in (org-files dir file-filter)
+            do (org-babel-tangle-file file))))
+;; Tangle:2 ends here
+
+;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:3]]
 (defvar config-root (with-temp-buffer
                       (shell-command "git rev-parse --show-toplevel" (current-buffer))
                       (replace-string "\n" "")
                       (buffer-string)))
 
-(setq org-babel-default-header-args `((:session . "none")
-                                      (:noweb . "yes")
-                                      (:root-dir . ,config-root)
-                                      (:mkdirp . "yes")
+(setq org-babel-default-header-args `((:session         . "none")
+                                      (:noweb           . "yes")
+                                      (:root-dir        . ,config-root)
+                                      (:mkdirp          . "yes")
                                       (:tangle-relative . dir)
-                                      (:tangle . "no")))
+                                      (:tangle          . "no")
+                                      (:comments        . "yes")))
+;; Tangle:3 ends here
 
+;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:4]]
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
+;; Tangle:4 ends here
 
-(dolist (file (directory-files-recursively config-root
-                                           "\\.org$"
-                                           nil
-                                           #'(lambda (name)
-                                               (string-match
-                                                "\\(?:literate\\|tools\\)$"
-                                                name))))
-    (org-babel-tangle-file file))
+;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:5]]
+(ob-tangle-dir
+ config-root
+ (apply-partially
+  #'string-match
+  (rx line-start
+      (eval (file-name-as-directory config-root))
+      (or "literate/"
+          "tools/"))))
 
 (kill-emacs 0)
+;; Tangle:5 ends here
