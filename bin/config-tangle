@@ -3,6 +3,18 @@
 
 ;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:2]]
 (require 'ob-tangle)
+(defun org-babel-expand-body:conf (body params)
+  "Expand BODY according to PARAMS, return the expanded body."
+  (let ((vars (org-babel--get-vars params)))
+    (message "%s" (pp-to-string vars))
+    (if (null vars) (concat body "\n")
+      (cl-loop for var in vars
+               do
+               (setq body (replace-regexp-in-string
+                           (rx "${" (eval (prin1-to-string (car var))) "}")
+                           (format "%s" (cdr var))
+                           body)))
+      body)))
 (defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
   "Add :tangle-relative & :root-dir property to org babel header args.
 
@@ -203,6 +215,15 @@ if specified, then:
   (seq-filter
    #'config-file-filter
    (directory-files-recursively config-root "\\.org$")))
+
+(defun config-tangle ()
+  (let ((files (config-files)))
+    (message "Tangling files: %s" files)
+    (ob-with-global-lib
+     (ob-lib-from-files files t (lambda (file)
+                                  (setq file (string-remove-prefix (file-name-as-directory config-root) file))
+                                  (string-remove-suffix ".org" file)))
+     (ob-tangle-files files))))
 
 (defun config-tangle ()
   (let ((files (config-files)))

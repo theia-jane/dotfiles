@@ -1,0 +1,72 @@
+#+TITLE: rofi
+#+PROPERTY: header-args :dir $HOME/.config/rofi :tangle config
+
+* Size and position
+Not too wide. Not to tall. Just right.
+#+BEGIN_SRC conf
+rofi.lines: 10
+rofi.width: 30
+#+END_SRC
+
+Personally, I like 'dropdown' type things to show up in the top / center. 2 is the [[bookmark:KCJyb2ZpICAtICBBICB3aW5kb3cgc3dpdGNoZXIsIGFwcGxpY2F0aW9uIGxhdW5jaGVyLCBzc2ggZGlhbG9nIGFuZCBkbWVudSIgKGZyb250LWNvbnRleHQtc3RyaW5nIC4gIi1sb2NhdGlvblxuXG4gICAgICIpIChyZWFyLWNvbnRleHQtc3RyaW5nIC4gInVsdDogNTBcblxuICAgICAgICIpIChwb3NpdGlvbiAuIDEwNDIyKSAobG9jYXRpb24gLiAjKCJtYW4gMSByb2ZpIiA2IDEwIChoZWxwLWVjaG8gIkEgd2luZG93IHN3aXRjaGVyLCBhcHBsaWNhdGlvbiBsYXVuY2hlciwgc3NoIGRpYWxvZyBhbmQgZG1lbnUgcmVwbGFjZW1lbnQiKSkpIChtYW4tYXJncyAuICMoIjEgcm9maSIgMiA2IChoZWxwLWVjaG8gIkEgd2luZG93IHN3aXRjaGVyLCBhcHBsaWNhdGlvbiBsYXVuY2hlciwgc3NoIGRpYWxvZyBhbmQgZG1lbnUgcmVwbGFjZW1lbnQiKSkpIChoYW5kbGVyIC4gTWFuLWJvb2ttYXJrLWp1bXApIChkZWZhdWx0cyAicm9maSAgLSAgQSAgd2luZG93IHN3aXRjaGVyLCBhcHBsaWNhdGlvbiBsYXVuY2hlciwgc3NoIGRpYWxvZyBhbmQgZG1lbnUiICIqTWFuIDEgcm9maSoiKSk=][magic]] number that makes that happen. So =rofi= will be centered and shifted down:
+#+BEGIN_SRC conf
+rofi.location: 2
+rofi.yoffset: 150
+#+END_SRC
+
+* Look and feel
+- [ ] Refactor to using [[bookmark:KCJyb2ZpLXRoZW1lIC0gUm9maSB0aGVtZSBmb3JtYXQgZmlsZXMiIChmcm9udC1jb250ZXh0LXN0cmluZyAuICJcbiAgICAgICBCb3RoIGZpZSIpIChyZWFyLWNvbnRleHQtc3RyaW5nIC4gImZpZXJ9OiB7dmFsdWV9O1xuIikgKHBvc2l0aW9uIC4gNDM1NSkgKGxvY2F0aW9uIC4gIygibWFuIDUgcm9maS10aGVtZSIgNiAxNiAoaGVscC1lY2hvICJSb2ZpIHRoZW1lIGZvcm1hdCBmaWxlcyIpKSkgKG1hbi1hcmdzIC4gIygiNSByb2ZpLXRoZW1lIiAyIDEyIChoZWxwLWVjaG8gIlJvZmkgdGhlbWUgZm9ybWF0IGZpbGVzIikpKSAoaGFuZGxlciAuIE1hbi1ib29rbWFyay1qdW1wKSAoZGVmYXVsdHMgInJvZmktdGhlbWUgLSBSb2ZpIHRoZW1lIGZvcm1hdCBmaWxlcyIgIipNYW4gNSByb2ZpLXRoZW1lKiIpKQ==][=rasi=]] for look and feel also take a look at [[https://github.com/davatorium/rofi-themes][rofi-themes]] on github
+ 
+** Decluttering
+Reducing the things going on: no scrollbar & a solid separator.
+#+BEGIN_SRC conf
+rofi.hide-scrollbar: true
+rofi.scrollbar-width: 0
+rofi.separator-style: solid
+#+END_SRC
+
+** Spacing
+I like spacing, so add plenty of that
+#+BEGIN_SRC conf
+rofi.padding: 49
+rofi.line-margin: 5
+rofi.bw: 15
+#+END_SRC
+
+** Colors
+:PROPERTIES:
+:header-args+: :var none="argb:00000000" bg=colors/get(name="dark0") fg=colors/get(name="light2")
+:header-args+: :var bg-soft=colors/get(name="dark0_soft") active=colors/get(name="neutral_yellow")
+:END:
+
+Make it beautiful!
+#+BEGIN_SRC conf :noweb yes
+rofi.color-enabled: true
+
+# Window:          background, border,      separator
+rofi.color-window: #${bg},     #${bg-soft}, #${bg-soft}
+
+# State:           bg,      fg,     altbg,    hlbg,   hlfg
+rofi.color-normal: ${none}, #${fg}, ${none}, ${none}, #${active}
+rofi.color-active: ${none}, #${fg}, ${none}, ${none}, #${active}
+rofi.color-urgent: ${none}, #${fg}, ${none}, ${none}, #${active}
+#+END_SRC
+
+
+** Fonts
+#+BEGIN_SRC conf
+rofi.font: <<fonts/get-name()>> 22
+#+END_SRC
+
+* Behavior
+I don't want auto-select to be on, so I turn it off. (Although it seems its always off)
+#+BEGIN_SRC conf
+rofi.auto-select: false
+#+END_SRC
+
+Use regex for searching by default
+#+BEGIN_SRC conf
+rofi.matching: regex
+#+END_SRC
+
+

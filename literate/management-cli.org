@@ -19,6 +19,7 @@ To start we need to setup of the script to run using emacs-lisp.
 We need to pull in the org babel library for tangling and Im adding extension to tangling, which enable choosing where relative tangle is based.
 #+BEGIN_SRC elisp
 (require 'ob-tangle)
+<<conf-expand>>
 <<org-babel/resolve-tangle-path>>
 <<org-babel/load-namespaced-libraries>>
 <<org-babel/tangle-dir>>
@@ -42,6 +43,8 @@ For my literate config I want to have the default tangle directory to from the t
                                       (:comments        . "yes"))
       org-confirm-babel-evaluate nil)
 #+END_SRC
+
+#+RESULTS:
 
 I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
 #+begin_src elisp
@@ -76,10 +79,22 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
                                   (string-remove-suffix ".org" file)))
      (ob-tangle-files files))))
 
+(defun config-tangle ()
+  (let ((files (config-files)))
+    (message "Tangling files: %s" files)
+    (ob-with-global-lib
+     (ob-lib-from-files files t (lambda (file)
+                                  (setq file (string-remove-prefix (file-name-as-directory config-root) file))
+                                  (string-remove-suffix ".org" file)))
+     (ob-tangle-files files))))
+
 (config-tangle)
 
 (kill-emacs 0)
 #+END_SRC
+
+#+RESULTS:
+
 
 
 * Org babel
@@ -204,6 +219,7 @@ Some additions I've made to org-babel
 #+END_SRC
 
 #+RESULTS: org-babel/load-namespaced-libraries
+: ob-lib-for-buffer
 : ob-library-for-current-buffer
 
 ** Tangle
@@ -254,6 +270,8 @@ if specified, then:
 (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
 #+END_SRC
 
+#+RESULTS: org-babel/resolve-tangle-path
+
 #+NAME: org-babel/tangle-dir
 #+BEGIN_SRC elisp
 (defun ob-tangle-files (files)
@@ -262,4 +280,23 @@ if specified, then:
            do
            (message "Tangling file: %s" file)
            (org-babel-tangle-file file)))
+#+END_SRC
+
+#+RESULTS: org-babel/tangle-dir
+: ob-tangle-files
+* Conf var expand
+#+NAME: conf-expand
+#+BEGIN_SRC elisp
+(defun org-babel-expand-body:conf (body params)
+  "Expand BODY according to PARAMS, return the expanded body."
+  (let ((vars (org-babel--get-vars params)))
+    (message "%s" (pp-to-string vars))
+    (if (null vars) (concat body "\n")
+      (cl-loop for var in vars
+               do
+               (setq body (replace-regexp-in-string
+                           (rx "${" (eval (prin1-to-string (car var))) "}")
+                           (format "%s" (cdr var))
+                           body)))
+      body)))
 #+END_SRC
