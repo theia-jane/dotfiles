@@ -35,7 +35,10 @@
         org-export-with-section-numbers nil
         org-export-time-stamp-file nil
         org-export-async-init-file (expand-file-name "org-export-init.el" (dir!))
-        org-src-window-setup 'current-window))
+        org-src-window-setup 'current-window
+        org-list-allow-alphabetical t)
+
+
   ;; A start, but I want to add a lot more rotations!
   ;; - block type
   ;; - option 'yes', 'no'
