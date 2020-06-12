@@ -1,3 +1,10 @@
+#+TITLE: xmonad
+#+PROPERTY: header-args :dir ${HOME}/.xmonad :tangle xmonad.hs :comments no
+
+After making changes be sure to run src_bash{xmonad --restart} if you're running xmonad or src_bash{xmonad --recompile} if you are not.
+
+* Imports
+#+BEGIN_SRC haskell
 import XMonad
 import qualified XMonad.StackSet as W
 -- import qualified Data.Map        as M
@@ -51,41 +58,29 @@ import XMonad.Layout.Minimize
 -- import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP,removeKeysP,additionalMouseBindings)
-
-
+#+END_SRC
+* Main
+#+BEGIN_SRC haskell
 main = do
   spawn "init-post-wm xmonad"
   xmonad $ ewmh defaultConfig
     { manageHook = myManageHook <+> manageHook defaultConfig
     , modMask = mod4Mask -- Rebind Mod to the Windows key
-    , borderWidth = 4
-    , focusedBorderColor = "#ffb52a"
-    , layoutHook = myLayoutHook
-    , startupHook = setWMName "LG3D"
+    , borderWidth = 6
+    , focusedBorderColor = "#<<colors/get(role="accent")>>"
+    , normalBorderColor = "#<<colors/get(role="gray")>>"
+, layoutHook = myLayoutHook
+, startupHook = setWMName "LG3D"
     }
     `removeKeysP` ["M-q", "M-S-c", "M-<Tab>", "M-l", "M-h", "M-.", "M-,"]
     `additionalKeysP` myKeys
     `additionalMouseBindings` myMouseBindings
 
-doPaletteFloat = doFloatDep move
-  where
-    move (W.RationalRect _ _ w h) = W.RationalRect cx cy w h
-      where cx = (1-w)/2
-            cy = 0.05
+#+END_SRC
 
-myManageHook = composeAll
-  [ title =? "doom-capture" --> doPaletteFloat
-  , (isPrefixOf "dropdown_" `fmap` appName) --> doPaletteFloat
-
-  -- basic float: doFloat
-  ]
-myLayoutHook = smartBorders $
-  Tall 1 (10/100) (60/100)
-    ||| TwoPane (15/100) (55/100)
-    ||| Grid
-    ||| Full
-    -- ||| simpleTabbed -- Not sure what this does..
-
+* Input bindings
+** Keys
+#+BEGIN_SRC haskell
 -- Conventions:
 -- - Key-bindings with 'Shift' move things. E.g. windows, workspaces, layouts
 myKeys =
@@ -107,13 +102,49 @@ myKeys =
   , ("M-S-=", sendMessage Expand)
   -- , ("M-=", sendMessage Expand)
   ]
-
+#+END_SRC
+** Mouse
+#+BEGIN_SRC haskell
 myMouseBindings =
   [ ((mod4Mask, button5), (\w -> myNextWS))
   , ((mod4Mask, button4), (\w -> myPrevWS))
   , ((mod4Mask .|. shiftMask, button5), (\w -> windows W.focusDown))
   , ((mod4Mask .|. shiftMask, button4), (\w -> windows W.focusUp))
   ]
+#+END_SRC
 
+* Windows
+** Manage Hook
+#+BEGIN_SRC haskell
+myManageHook = composeAll
+  [ title =? "doom-capture" --> doPaletteFloat
+  , (isPrefixOf "dropdown_" `fmap` appName) --> doPaletteFloat
+  -- basic float: doFloat
+  ]
+#+END_SRC
+** Floating
+#+BEGIN_SRC haskell
+doPaletteFloat = doFloatDep move
+  where
+    move (W.RationalRect _ _ w h) = W.RationalRect cx cy w h
+      where cx = (1-w)/2
+            cy = 0.05
+#+END_SRC
+** Layout
+#+BEGIN_SRC haskell
+myLayoutHook = smartBorders $
+  Tall 1 (10/100) (60/100)
+    ||| TwoPane (15/100) (55/100)
+    ||| Grid
+    ||| Full
+    -- ||| simpleTabbed -- Not sure what this does..
+
+#+END_SRC
+
+* Navigating
+** Workspaces
+#+BEGIN_SRC haskell
 myNextWS = moveTo Next NonEmptyWS
 myPrevWS = moveTo Prev NonEmptyWS
+#+END_SRC
+
