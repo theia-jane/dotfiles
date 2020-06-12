@@ -36,6 +36,17 @@
         org-export-time-stamp-file nil
         org-export-async-init-file (expand-file-name "org-export-init.el" (dir!))
         org-src-window-setup 'current-window))
+  ;; A start, but I want to add a lot more rotations!
+  ;; - block type
+  ;; - option 'yes', 'no'
+  ;; - results types (output, etc)
+  ;; - list rotation, todo rotation (might make sense to create a DWIM rotation)
+  (set-rotate-patterns! 'org-mode
+    :symbols `(,(sort (append (list "emacs-lisp")
+                              (mapcar #'car org-src-lang-modes))
+                      (lambda (&rest strings)
+                        (apply #'string< (mapcar #'downcase strings))))
+               ("yes" "no"))))
 
 (after! org-capture
 
@@ -607,14 +618,3 @@ If :tangle-relative is
         (insert result)
         (+popup-buffer (current-buffer))))))
 
-;; A start, but I want to add a lot more rotations!
-;; - block type
-;; - option 'yes', 'no'
-;; - results types (output, etc)
-;; - list rotation, todo rotation (might make sense to create a DWIM rotation)
-(set-rotate-patterns! 'org-mode
-  :symbols `(,(sort (append (list "emacs-lisp")
-                           (mapcar #'car org-src-lang-modes))
-                   (lambda (&rest strings)
-                     (apply #'string< (mapcar #'downcase strings))))
-             ("yes" "no")))
