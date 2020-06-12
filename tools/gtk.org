@@ -1,0 +1,22 @@
+#+TITLE: GTK
+
+* Setting up the themes
+:PROPERTIES:
+:header-args: :dir ${HOME}
+:END:
+
+#+NAME: theme-and-icons
+#+BEGIN_SRC conf
+gtk-icon-theme-name = Arc-Dark
+gtk-theme-name = Arc-Dark
+#+END_SRC
+
+** GTK-3
+#+BEGIN_SRC conf :tangle .config/gtk-3.0/settings.ini
+[Settings]
+<<theme-and-icons>>
+#+END_SRC
+** GTK-2
+#+BEGIN_SRC conf :tangle .gtkrc-2.0
+<<theme-and-icons>>
+#+END_SRC
