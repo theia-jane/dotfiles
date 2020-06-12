@@ -35,8 +35,8 @@ rofi.bw: 15
 
 ** Colors
 :PROPERTIES:
-:header-args+: :var none="argb:00000000" bg=colors/get(name="dark0") fg=colors/get(name="light2")
-:header-args+: :var bg-soft=colors/get(name="dark0_soft") active=colors/get(name="neutral_yellow")
+:header-args+: :var none="argb:00000000" bg=colors/get(role="bg") fg=colors/get(role="fg")
+:header-args+: :var bg-alt=colors/get(role="bg-alt") active=colors/get(role="accent")
 :END:
 
 Make it beautiful!
@@ -44,7 +44,7 @@ Make it beautiful!
 rofi.color-enabled: true
 
 # Window:          background, border,      separator
-rofi.color-window: #${bg},     #${bg-soft}, #${bg-soft}
+rofi.color-window: #${bg},     #${bg-alt}, #${bg-alt}
 
 # State:           bg,      fg,     altbg,    hlbg,   hlfg
 rofi.color-normal: ${none}, #${fg}, ${none}, ${none}, #${active}
