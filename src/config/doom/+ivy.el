@@ -1,7 +1,8 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+ivy.el -*- lexical-binding: t; -*-
 
 (after! ivy
-  (setq ivy-read-action-function #'ivy-hydra-read-action)
+  (setq ivy-read-action-function #'ivy-hydra-read-action
+        ivy-height 13)
   (push '(swiper . 10) ivy-height-alist))
 
 
