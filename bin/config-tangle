@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
-;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:2]]
+;; [[file:../management-cli.org::*Tangle][Tangle:2]]
 (require 'ob-tangle)
 (defun org-babel-expand-body:conf (body params)
   "Expand BODY according to PARAMS, return the expanded body."
@@ -180,7 +180,7 @@ if specified, then:
            (org-babel-tangle-file file)))
 ;; Tangle:2 ends here
 
-;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:3]]
+;; [[file:../management-cli.org::*Tangle][Tangle:3]]
 (defvar config-root (with-temp-buffer
                       (shell-command "git rev-parse --show-toplevel" (current-buffer))
                       (replace-string "\n" "")
@@ -196,12 +196,12 @@ if specified, then:
       org-confirm-babel-evaluate nil)
 ;; Tangle:3 ends here
 
-;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:4]]
+;; [[file:../management-cli.org::*Tangle][Tangle:4]]
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 ;; Tangle:4 ends here
 
-;; [[file:~/Projects/dotfiles/literate/management-cli.org::*Tangle][Tangle:5]]
+;; [[file:../management-cli.org::*Tangle][Tangle:5]]
 (defun config-file-filter (file)
   (string-match
    (rx line-start

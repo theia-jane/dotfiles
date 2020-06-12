@@ -5,7 +5,7 @@ In short, I need a way to easily manage my literate config from the command line
 
 * Tangle
 :PROPERTIES:
-:header-args: :tangle bin/config-tangle :tangle-relative 'dir :dir ../ :noweb yes :comments yes
+:header-args: :tangle bin/config-tangle :tangle-relative 'dir :noweb yes :comments yes
 :END:
 
 This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
@@ -94,8 +94,6 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
 #+END_SRC
 
 #+RESULTS:
-
-
 
 * Org babel
 Some additions I've made to org-babel
