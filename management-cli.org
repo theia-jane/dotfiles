@@ -1,4 +1,5 @@
 #+TITLE: Management CLI
+#+STARTUP: overview
 
 In short, I need a way to easily manage my literate config from the command line. These will all live under =bin/=. Here is a list of those commands:
 - =config-tangle= :: generates the source files
@@ -297,4 +298,6 @@ if specified, then:
                            (format "%s" (cdr var))
                            body)))
       body)))
+
+(defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
 #+END_SRC
