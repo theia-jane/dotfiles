@@ -1,0 +1,2 @@
+#+TITLE: Cinnamon
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/cinnamon

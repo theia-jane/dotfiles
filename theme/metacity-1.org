@@ -1,0 +1,2 @@
+#+TITLE: Metacity 1
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/metacity-1

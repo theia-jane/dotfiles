@@ -1,0 +1,2 @@
+#+TITLE: xfwm4
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/xfwm4

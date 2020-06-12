@@ -1,0 +1,13 @@
+#+TITLE: Theme
+
+This is to come. I'm going to make my own theme for cinnamon, gnome, gtk, etc.
+And honestly, this might get pulled off into it's own repo. IDK.
+
+* Tasks
+** DONE Create files for normal theme layout
+I copied the theme directory layout from Arc Dark -- not sure if I need / will add themes for every thing
+** TODO Start with gtk-{2,3}.0
+* References
+- [[https://www.linux.org/threads/installing-obtaining-and-making-gtk-themes.11811/][Making a GTK Theme]]
+- [[https://www.linux.org/threads/creating-icon-themes.11826/][Making an icon theme]]
+- [[file:/usr/share/themes/Arc-Dark/][Arc Dark theme]]

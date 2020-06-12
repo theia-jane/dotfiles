@@ -1,0 +1,2 @@
+#+TITLE: Plank
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/plank

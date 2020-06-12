@@ -1,0 +1,2 @@
+#+TITLE: Gnome Shell
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/gnome-shell

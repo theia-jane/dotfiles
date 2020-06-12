@@ -1,0 +1,2 @@
+#+TITLE: GTK 3.0
+#+PROPERTY: header-args :dir ${HOME}/.themes/system-theme/gtk-3.0
