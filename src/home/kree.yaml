@@ -52,7 +52,7 @@ global:
           "0": gui-paste-command random-number 9999999999
 
     n: # Notes
-      n: e.note
+      n: org-capture
       f: e.notef
       Shift+f: e.emacs ~/notes/fruit-basket.org
       d: e.emacs ~/notes/personal/dotfiles.org
