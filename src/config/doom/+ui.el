@@ -18,22 +18,38 @@
    (org-level-3 :height 1.025)
    (org-document-info-keyword :height 1.0)))
 
-(defun +ui/org--display-hook()
+
+(defun +ui/non-code--display-hook()
   (setq display-line-numbers nil
         left-margin-width 5
         right-margin-width 5
         header-line-format " "
-        evil-respect-visual-line-mode t
+        evil-respect-visual-line-mode nil
         line-spacing 14
-        fill-column 100)
+        fill-column 80)
   (if (> (line-number-at-pos (point-max)) 1500)
-    (org-overview)) ;; Is there an earlier point I can set this up at? Seems like it isn't as effective as #+STARTUP: overview
-  (vi-tilde-fringe-mode -1)
-  (hl-line-mode -1))
+      (pcase major-mode
+        ;; Is there an earlier point I can set this up at? Seems like it isn't as effective as #+STARTUP: overview
+        (org-mode (org-overview))))
 
-(add-hook 'org-mode-hook #'+ui/org--display-hook)
+  ;; If margins are quite behaving like you want, you should take a look at what
+  ;; visual-fill-column-mode is doing under the hood
+  ;; (setq visual-fill-column-width 80
+  ;;       visual-fill-column-center-text t)
+  ;; (visual-fill-column-mode)
+  (vi-tilde-fringe-mode -1)
+  (hl-line-mode -1)
+
+  )
+
+(setq +ui/non-code--hook-list '(org-mode-hook
+                                markdown-mode-hook))
+
+(dolist (hook +ui/non-code--hook-list)
+  (add-hook hook #'+ui/non-code--display-hook))
+
 (add-hook 'writeroom-mode-disable-hook (lambda ()
-                                         (if (eq major-mode 'org-mode)
+                                         (if (memq major-mode +ui/non-code--hook-list)
                                              (mapc (lambda (w)
                                                      (with-selected-window w
                                                        (set-window-margins (selected-window) 5 5)))
