@@ -267,3 +267,29 @@ TODO: Add some extra actions to specifiy where to pull the popup at
                       (funcall counsel-describe-variable-function (intern x)))
             :caller 'counsel-describe-variable))
 
+
+(defun apply-partially-r (fn &rest args)
+  (-rpartial fn args))
+
+(defun apply-nth (fn n arg)
+  (lambda (&rest args)
+    (apply fn
+           (append (subseq args 0 n)
+                   (list arg)
+                   (subseq args n)))))
+
+(defun enlist (exp)
+  (if (listp exp) exp (list exp)))
+
+(defun apply-enlist (fn args)
+  (apply fn (enlist args)))
+
+(defun tee (args &rest fns)
+  (mapcar
+   (apply-partially-r #'apply-enlist args)
+   fns))
+
+(defun pipe (args &rest fns)
+  (apply-enlist
+   (apply #'-compose fns)
+   args))
