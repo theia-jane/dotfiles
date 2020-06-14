@@ -9,12 +9,8 @@ don't convert the register contents to a string.")
   :filter-args 'evil-execute-macro
   (let ((count (nth 0 args))
         (macro (nth 1 args)))
-    (when (+register--elisp-string-p macro)
-      (let ((elisp-form (car (read-from-string (substring-no-properties macro)))))
-        (setq macro (if (and (listp elisp-form)
-                             (eq 'lambda (car elisp-form)))
-                        elisp-form
-                      `(lambda () ,elisp-form)))))
+    (when-let ((elisp-form (+register--get-callable-from-value macro)))
+      (setq macro elisp-form))
     (list count macro)))
 
 (defadvice! +register--evil-get-register-a (register-value)
@@ -44,27 +40,32 @@ pasting sexps from a register will succeed."
 
 
 ;;; Register Edit Mode
+(defvar-local +register--register-type nil)
+(put '+register--register-type 'permanent-local t)
+
+(defvar-local +register--previous-contents nil)
+(put '+register--previous-contents 'permanent-local t)
+
+(defvar-local +register--register nil)
+(put '+register--register 'permanent-local t)
+
 (define-minor-mode +register-edit-mode
-  "TODO"
+  "Minor mode for editting a register."
   :init-val nil
   :lighter ""
   :keymap (make-sparse-keymap)
   (setq header-line-format "Edit, then exit with `C-c C-c' or abort with `C-c C-k'"))
 
-(defvar-local +register--register-type nil)
-(defvar-local +register--previous-contents nil)
-(defvar-local +register--register nil)
-
-(defun +register-edit-mode--save ()
-  "TODO"
+(defun +register-edit-mode-save ()
+  "Save the current register-edit buffer to it's register and close the buffer. "
   (interactive)
   (unless +register--register
-    (user-error "Not in a register edit buffer"))
+    (user-error "Not in a register edit buffer or register unknown"))
 
   (let ((register-contents (substring-no-properties (buffer-string))))
     (set-register +register--register
                   (pcase +register--register-type
-                    ('elisp (if (and (+register--elisp-string-p register-contents)
+                    ('elisp (if (and (+register--get-callable-from-value register-contents)
                                      (consp +register--previous-contents))
                                 (car (read-from-string register-contents))
                               register-contents))
@@ -73,45 +74,67 @@ pasting sexps from a register will succeed."
   (kill-current-buffer))
 
 (map! :map +register-edit-mode-map
-      :desc "Save to register and close" "C-c C-c" #'+register-edit-mode--save
+      :desc "Save to register and close" "C-c C-c" #'+register-edit-mode-save
       :desc "Abort register edit" "C-c C-k" #'kill-current-buffer)
 
 ;;; helper methods
 (defun +register-value-to-string (register-value)
-  "TODO"
+  ""
   (cond ((stringp register-value) register-value)
         ((vectorp register-value) (key-sequence-to-string register-value))
-        ((consp register-value)
-         (let ((print-quoted t)
-               (print-length nil)
-               (print-level nil))
-           (prin1-to-string register-value)))
-        (t (error "Not able to get te hregister as a string"))))
+        ((or (symbolp register-value)
+             (consp register-value)) (prin1-to-string register-value))
+        (t (error "Not able to get the register as a string"))))
+
+
+
+
 
 
 (defun +register-key-sequence-to-string (key-sequence)
   "TODO"
   (if (vectorp key-sequence)
       (mapconcat #'(lambda (key)
-                     ()
                      (key-description `[,key]))
                  key-sequence
                  " ")
     (user-error "Not a valid key sequence")))
 
-(defun +register--elisp-string-p (text)
-  "TODO"
-  (and (stringp text)
-       (string-match "^\(\\([^\t\r\n\s\(\)]+\\)\s" text)
-       (symbolp (intern (match-string 1 text)))))
+
+(defun +register--get-callable-from-value (value)
+  "Get a callable version of the VALUE.
+
+If VALUE is a string, it will be read first. If the resulting form or it's symbol
+is callable, then it will be wrapped in a lambda, so it can be evaluated.
+
+If the form is something that isn't callable (e.g a string, vector, etc)
+then nil is returned.
+"
+
+  (let* ((form (if (stringp value)
+                   (car (read-from-string value))
+                 value)))
+    (cond
+     ((and (symbolp form)
+           (fboundp form)) (lambda () (eval (list form))))
+     ((or
+       (functionp form)
+       (and (consp form)
+            (memq (car form) '(lambda function)))) form)
+     ((and (consp form)
+           (symbolp (car form))
+           (fboundp (car form))) `(lambda () ,form))
+     (t nil))))
+
 
 ;;;###autoload
 (defun +register-edit (register)
   "Edit a REGISTER's value. This will pop to a buffer to edit said value."
   (let* ((register-contents (get-register register))
          (register-type (cond
-                         ((or (consp register-contents)
-                              (+register--elisp-string-p register-contents)) 'elisp)
+                         ((or (symbolp register-contents)
+                              (consp register-contents)
+                              (+register--get-callable-from-value register-contents)) 'elisp)
                          ((vectorp register-contents) 'key-sequence)
                          (t 'plain)))
          (buffer (get-buffer-create (concat "*+register-edit:" (char-to-string register) "*"))))
