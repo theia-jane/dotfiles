@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: startup
+# key: +s
+# condition: t
+# --
+#+STARTUP: $0
