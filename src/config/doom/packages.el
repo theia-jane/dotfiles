@@ -18,6 +18,9 @@
 (package! rextract
   :recipe (:host github :repo "tylerware/rextract.el"))
 
+(package! graphql-mode)
+(package! ob-graphql)
+
 (package! doct)
 (package! hl-line :disable t)
 
