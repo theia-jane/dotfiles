@@ -23,6 +23,8 @@
  "+magit"
  "+pdf"
  "+tmux"
+ ;; Hacks
+ "+hacks"
  )
 
 
