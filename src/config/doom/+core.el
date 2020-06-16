@@ -293,3 +293,7 @@ TODO: Add some extra actions to specifiy where to pull the popup at
   (apply-enlist
    (apply #'-compose fns)
    args))
+
+
+(defun d (command)
+  (shell-command (concat "d " command)))
