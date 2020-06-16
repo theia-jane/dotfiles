@@ -297,3 +297,13 @@ TODO: Add some extra actions to specifiy where to pull the popup at
 
 (defun d (command)
   (shell-command (concat "d " command)))
+
+(defun firefox (url &optional container)
+  (let ((url (if container
+                 (format "ext+container:name=%s&url=%s"
+                         container
+                         (url-hexify-string url))
+                 url)))
+    (when url
+      (d (format "firefox '%s'" url)))))
+
