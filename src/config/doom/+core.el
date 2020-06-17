@@ -307,3 +307,6 @@ TODO: Add some extra actions to specifiy where to pull the popup at
     (when url
       (d (format "firefox '%s'" url)))))
 
+(defmacro with-directory (directory &rest body)
+  `(let ((default-directory ,directory))
+    ,@body))
