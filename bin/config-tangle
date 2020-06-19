@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
-;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:2]]
+;; [[file:../management-cli.org::*Tangle][Tangle:2]]
 (require 'ob-tangle)
 (defun org-babel-expand-body:conf (body params)
   "Expand BODY according to PARAMS, return the expanded body."
@@ -62,8 +62,6 @@ if specified, then:
 (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
 (require 'ob-lob)
 (require 'subr-x)
-
-
 
 (defmacro ob-with-lib (library &rest body)
   `(let ((org-babel-library-of-babel ,library))
@@ -180,9 +178,37 @@ if specified, then:
            do
            (message "Tangling file: %s" file)
            (org-babel-tangle-file file)))
+(defun org-babel--var-table (fn &optional light datum)
+  "TODO"
+  (let ((info (funcall fn light datum)))
+    (unless light
+      (when-let* ((prop-alist (nth 2 info))
+                  (var-table (alist-get :var-table prop-alist))
+                  (var-table (split-string var-table " "))
+                  (table-ref (car var-table))
+                  (resolved-table (org-babel-ref-resolve table-ref))
+                  (names-column (or (ignore-error
+                                        (string-to-number (nth 1 var-table)))
+                                    0))
+                  (values-column (or (ignore-error
+                                         (string-to-number (nth 2 var-table)))
+                                     1))
+                  (var-params
+                   (seq-filter
+                    (lambda (x) (eq :var (car x)))
+                    (org-babel-process-params
+                     (mapcar (lambda (row)
+                               (cons :var (format "%s=%s"
+                                                  (nth names-column row)
+                                                  (nth values-column row))))
+                             resolved-table)))))
+        (setf (nth 2 info) (append prop-alist var-params))))
+    info))
+
+(advice-add #'org-babel-get-src-block-info :around #'org-babel--var-table)
 ;; Tangle:2 ends here
 
-;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:3]]
+;; [[file:../management-cli.org::*Tangle][Tangle:3]]
 (defvar config-root (with-temp-buffer
                       (shell-command "git rev-parse --show-toplevel" (current-buffer))
                       (replace-string "\n" "")
@@ -198,12 +224,12 @@ if specified, then:
       org-confirm-babel-evaluate nil)
 ;; Tangle:3 ends here
 
-;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:4]]
+;; [[file:../management-cli.org::*Tangle][Tangle:4]]
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 ;; Tangle:4 ends here
 
-;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:5]]
+;; [[file:../management-cli.org::*Tangle][Tangle:5]]
 (defun config-file-filter (file)
   (string-match
    (rx line-start

@@ -24,6 +24,7 @@ We need to pull in the org babel library for tangling and Im adding extension to
 <<org-babel/resolve-tangle-path>>
 <<org-babel/load-namespaced-libraries>>
 <<org-babel/tangle-dir>>
+<<org-babel/var-table>>
 #+END_SRC
 
 Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
@@ -300,4 +301,38 @@ if specified, then:
       body)))
 
 (defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
+#+END_SRC
+* Var Tables
+Defining a bunch of vars can be a pain, so using a table is a great way to minimize that pain. This enables using =:var-table table-ref col1 col2=
+
+#+NAME: org-babel/var-table
+#+BEGIN_SRC elisp
+(defun org-babel--var-table (fn &optional light datum)
+  "TODO"
+  (let ((info (funcall fn light datum)))
+    (unless light
+      (when-let* ((prop-alist (nth 2 info))
+                  (var-table (alist-get :var-table prop-alist))
+                  (var-table (split-string var-table " "))
+                  (table-ref (car var-table))
+                  (resolved-table (org-babel-ref-resolve table-ref))
+                  (names-column (or (ignore-error
+                                        (string-to-number (nth 1 var-table)))
+                                    0))
+                  (values-column (or (ignore-error
+                                         (string-to-number (nth 2 var-table)))
+                                     1))
+                  (var-params
+                   (seq-filter
+                    (lambda (x) (eq :var (car x)))
+                    (org-babel-process-params
+                     (mapcar (lambda (row)
+                               (cons :var (format "%s=%s"
+                                                  (nth names-column row)
+                                                  (nth values-column row))))
+                             resolved-table)))))
+        (setf (nth 2 info) (append prop-alist var-params))))
+    info))
+
+(advice-add #'org-babel-get-src-block-info :around #'org-babel--var-table)
 #+END_SRC
