@@ -59,4 +59,8 @@
  (:personal-leader
   (:prefix ("o" . "open")
    :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org")))
-   )))
+   )
+  (:prefix ("f" . "files")
+   :desc "Find in private config" "p" (cmd! (doom-project-find-file personal/config-directory))
+   )
+  ))

@@ -5,6 +5,8 @@
 (use-package! rextract
   :defer-incrementally t)
 
+(defvar personal/config-directory (expand-file-name "~/Projects/dotfiles"))
+
 (+load!?
  ;; General
  "+reset"
