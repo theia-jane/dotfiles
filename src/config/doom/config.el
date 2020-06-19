@@ -27,6 +27,7 @@
  "+tmux"
  ;;lang
  "+c"
+ "+scheme"
  ;; Hacks
  "+hacks"
  )
