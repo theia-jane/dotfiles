@@ -38,18 +38,32 @@
         org-src-window-setup 'current-window
         org-list-allow-alphabetical t)
 
-
   ;; A start, but I want to add a lot more rotations!
   ;; - block type
   ;; - option 'yes', 'no'
   ;; - results types (output, etc)
   ;; - list rotation, todo rotation (might make sense to create a DWIM rotation)
   (set-rotate-patterns! 'org-mode
-    :symbols `(,(sort (append (list "emacs-lisp")
-                              (mapcar #'car org-src-lang-modes))
-                      (lambda (&rest strings)
-                        (apply #'string< (mapcar #'downcase strings))))
-               ("yes" "no"))))
+    :symbols `(
+               ;; TODO doesn't like compose, figure out why..
+               ,(sort (cons "emacs-lisp"
+                            (mapcar (-compose #'downcase #'car) org-src-lang-modes))
+                      #'string<)
+               ("yes" "no"))
+    :patterns (list (cons
+                     (rx line-start
+                         "#+"
+                         (group (+ word))
+                         ":")
+                     (sort (delete-duplicates
+                            (mapcar (lambda (keyword)
+                                      (concat "#+" keyword))
+                                    org-options-keywords)
+                            :test #'equal)
+                           #'string<)))))
+
+
+
 
 (after! org-capture
 
@@ -189,111 +203,119 @@ is selected, only the bare key is returned."
 
   (setq doct-after-conversion-functions '(+doct-iconify-capture-templates))
 
+  (mapcar #'car org-capture-templates)
+
+  (defun add-doct! (declarations)
+    (setq org-capture-templates (cl-delete-duplicates
+           (append org-capture-templates
+                   (doct declarations))
+           :key #'car
+           :test #'equal)))
+
 ;; add-transient-hook! 'org-capture-select-template
-  (setq org-capture-templates
-          (doct `(("Shower thought" :keys "s"
-                   :icon ("light-bulb" :set "octicon" :color "yellow")
-                   :file "projects/shower-thoughts.org"
-                   :prepend t
-                   :type entry
-                   :template "* %?")
-                  ("Fruit basket snack" :keys "f"
-                   :icon ("shopping-basket" :set "faicon" :color "red")
-                   :file "projects/fruit-basket.org"
-                   :prepend t
-                   :type entry
-                   :template "* TODO %?")
-                  ("Is something broken?" :keys "b"
-                   :icon ("bug" :set "faicon" :color "green")
-                   :file "projects/broken-windows.org"
-                   :prepend t
-                   :type entry
-                   :template "* TODO %?")
-                  ("I probably won't read it, but I'll store of anyway..." :keys "r"
-                   :icon ("book" :set "faicon" :color "blue")
-                   :file "projects/reading.org"
-                   :prepend t
-                   :type entry
-                   :template ("* TODO %?" "%t"))
-                  ("File it later" :keys "l"
-                   :icon ("desktop_windows" :set "material" :color "orange")
-                   :file "needs-filing.org"
-                   :type entry
-                   :template ("* %?"))
-                  ;; ("Interesting" :keys "i"
-                  ;;  :icon ("eye" :set "faicon" :color "lcyan")
-                  ;;  :file +org-capture-todo-file
-                  ;;  :prepend t
-                  ;;  :headline "Interesting"
-                  ;;  :type entry
-                  ;;  :template ("* [ ] %{desc}%? :%{i-type}:"
-                  ;;             "%i %a")
-                  ;;  :children (("Webpage" :keys "w"
-                  ;;              :icon ("globe" :set "faicon" :color "green")
-                  ;;              :desc "%(org-cliplink-capture) "
-                  ;;              :i-type "read:web"
-                  ;;              )
-                  ;;             ("Article" :keys "a"
-                  ;;              :icon ("file-text" :set "octicon" :color "yellow")
-                  ;;              :desc ""
-                  ;;              :i-type "read:reaserch"
-                  ;;              )
-                  ;;             ("Information" :keys "i"
-                  ;;              :icon ("info-circle" :set "faicon" :color "blue")
-                  ;;              :desc ""
-                  ;;              :i-type "read:info"
-                  ;;              )
-                  ;;             ("Idea" :keys "I"
-                  ;;              :icon ("bubble_chart" :set "material" :color "silver")
-                  ;;              :desc ""
-                  ;;              :i-type "idea"
-                  ;;              )))
-                  ;; ("Tasks" :keys "k"
-                  ;;  :icon ("inbox" :set "octicon" :color "yellow")
-                  ;;  :file +org-capture-todo-file
-                  ;;  :prepend t
-                  ;;  :headline "Tasks"
-                  ;;  :type entry
-                  ;;  :template ("* TODO %? %^G%{extra}"
-                  ;;             "%i %a")
-                  ;;  :children (("General Task" :keys "k"
-                  ;;              :icon ("inbox" :set "octicon" :color "yellow")
-                  ;;              :extra ""
-                  ;;              )
-                  ;;             ("Task with deadline" :keys "d"
-                  ;;              :icon ("timer" :set "material" :color "orange" :v-adjust -0.1)
-                  ;;              :extra "\nDEADLINE: %^{Deadline:}t"
-                  ;;              )
-                  ;;             ("Scheduled Task" :keys "s"
-                  ;;              :icon ("calendar" :set "octicon" :color "orange")
-                  ;;              :extra "\nSCHEDULED: %^{Start time:}t"
-                  ;;              )
-                  ;;             ))
-                  ;; ("Project" :keys "p"
-                  ;;  :icon ("repo" :set "octicon" :color "silver")
-                  ;;    :prepend t
-                  ;;    :type entry
-                  ;;    :headline "Inbox"
-                  ;;    :template ("* %{time-or-todo} %?"
-                  ;;               "%i"
-                  ;;               "%a")
-                  ;;    :file ""
-                  ;;    :custom (:time-or-todo "")
-                  ;;    :children (("Project-local todo" :keys "t"
-                  ;;                :icon ("checklist" :set "octicon" :color "green")
-                  ;;                :time-or-todo "TODO"
-                  ;;                :file +org-capture-project-todo-file)
-                  ;;               ("Project-local note" :keys "n"
-                  ;;                :icon ("sticky-note" :set "faicon" :color "yellow")
-                  ;;                :time-or-todo "%U"
-                  ;;                :file +org-capture-project-notes-file)
-                  ;;               ("Project-local changelog" :keys "c"
-                  ;;                :icon ("list" :set "faicon" :color "blue")
-                  ;;                :time-or-todo "%U"
-                  ;;                :heading "Unreleased"
-                  ;;                :file +org-capture-project-changelog-file))
-                  ;;    )
-                  ))))
+  (add-doct! `(("Shower thought" :keys "s"
+                :icon ("light-bulb" :set "octicon" :color "yellow")
+                :file "projects/shower-thoughts.org"
+                :prepend t
+                :type entry
+                :template "* %?")
+               ("Fruit basket snack" :keys "f"
+                :icon ("shopping-basket" :set "faicon" :color "red")
+                :file "projects/fruit-basket.org"
+                :prepend t
+                :type entry
+                :template "* TODO %?")
+               ("Is something broken?" :keys "b"
+                :icon ("bug" :set "faicon" :color "green")
+                :file "projects/broken-windows.org"
+                :prepend t
+                :type entry
+                :template "* TODO %?")
+               ("I probably won't read it, but I'll store of anyway..." :keys "r"
+                :icon ("book" :set "faicon" :color "blue")
+                :file "projects/reading.org"
+                :prepend t
+                :type entry
+                :template ("* TODO %?" "%t"))
+               ("File it later" :keys "l"
+                :icon ("desktop_windows" :set "material" :color "orange")
+                :file "needs-filing.org"
+                :type entry
+                :template ("* %?"))
+               ;; ("Interesting" :keys "i"
+               ;;  :icon ("eye" :set "faicon" :color "lcyan")
+               ;;  :file +org-capture-todo-file
+               ;;  :prepend t
+               ;;  :headline "Interesting"
+               ;;  :type entry
+               ;;  :template ("* [ ] %{desc}%? :%{i-type}:"
+               ;;             "%i %a")
+               ;;  :children (("Webpage" :keys "w"
+               ;;              :icon ("globe" :set "faicon" :color "green")
+               ;;              :desc "%(org-cliplink-capture) "
+               ;;              :i-type "read:web"
+               ;;              )
+               ;;             ("Article" :keys "a"
+               ;;              :icon ("file-text" :set "octicon" :color "yellow")
+               ;;              :desc ""
+               ;;              :i-type "read:reaserch"
+               ;;              )
+               ;;             ("Information" :keys "i"
+               ;;              :icon ("info-circle" :set "faicon" :color "blue")
+               ;;              :desc ""
+               ;;              :i-type "read:info"
+               ;;              )
+               ;;             ("Idea" :keys "I"
+               ;;              :icon ("bubble_chart" :set "material" :color "silver")
+               ;;              :desc ""
+               ;;              :i-type "idea"
+               ;;              )))
+               ;; ("Tasks" :keys "k"
+               ;;  :icon ("inbox" :set "octicon" :color "yellow")
+               ;;  :file +org-capture-todo-file
+               ;;  :prepend t
+               ;;  :headline "Tasks"
+               ;;  :type entry
+               ;;  :template ("* TODO %? %^G%{extra}"
+               ;;             "%i %a")
+               ;;  :children (("General Task" :keys "k"
+               ;;              :icon ("inbox" :set "octicon" :color "yellow")
+               ;;              :extra ""
+               ;;              )
+               ;;             ("Task with deadline" :keys "d"
+               ;;              :icon ("timer" :set "material" :color "orange" :v-adjust -0.1)
+               ;;              :extra "\nDEADLINE: %^{Deadline:}t"
+               ;;              )
+               ;;             ("Scheduled Task" :keys "s"
+               ;;              :icon ("calendar" :set "octicon" :color "orange")
+               ;;              :extra "\nSCHEDULED: %^{Start time:}t"
+               ;;              )
+               ;;             ))
+               ;; ("Project" :keys "p"
+               ;;  :icon ("repo" :set "octicon" :color "silver")
+               ;;    :prepend t
+               ;;    :type entry
+               ;;    :headline "Inbox"
+               ;;    :template ("* %{time-or-todo} %?"
+               ;;               "%i"
+               ;;               "%a")
+               ;;    :file ""
+               ;;    :custom (:time-or-todo "")
+               ;;    :children (("Project-local todo" :keys "t"
+               ;;                :icon ("checklist" :set "octicon" :color "green")
+               ;;                :time-or-todo "TODO"
+               ;;                :file +org-capture-project-todo-file)
+               ;;               ("Project-local note" :keys "n"
+               ;;                :icon ("sticky-note" :set "faicon" :color "yellow")
+               ;;                :time-or-todo "%U"
+               ;;                :file +org-capture-project-notes-file)
+               ;;               ("Project-local changelog" :keys "c"
+               ;;                :icon ("list" :set "faicon" :color "blue")
+               ;;                :time-or-todo "%U"
+               ;;                :heading "Unreleased"
+               ;;                :file +org-capture-project-changelog-file))
+               ;;    )
+               )))
 
 (use-package! ox-extra
   :after org

@@ -2,6 +2,9 @@
 
 (load! "bootstrap")
 
+(use-package! dash-functional
+  :commands (-compose))
+
 (use-package! rextract
   :defer-incrementally t)
 
