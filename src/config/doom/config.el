@@ -25,6 +25,8 @@
  "+magit"
  "+pdf"
  "+tmux"
+ ;;lang
+ "+c"
  ;; Hacks
  "+hacks"
  )
