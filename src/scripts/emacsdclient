@@ -16,7 +16,7 @@ for try_n in $(seq $max_tries); do
     continue
   fi
 
-  emacsclient "$@" && succeeded_in_launching=true
+  (emacsclient "$@" > /dev/null) && succeeded_in_launching=true
   break
 done
 
