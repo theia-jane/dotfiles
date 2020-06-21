@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 EXTRA_PARAMS=""
 while true; do
@@ -22,4 +22,3 @@ emacsdclient-bg $EXTRA_PARAMS -e "
 (let ((argv '(${ARGS[@]}))) 
   $(script-contents "$SCRIPT_NAME")
 )" 
-# vim: ft=sh

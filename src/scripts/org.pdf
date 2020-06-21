@@ -1,4 +1,5 @@
 #!/usr/bin/env emacs-eval
+;; -*- mode: emacs-lisp -*-
 
 (if (not (eq (length argv) 0))
   (let* ((filename (car argv))
@@ -12,6 +13,4 @@
       (org-export-to-file 'latex outfile
         nil nil nil nil nil
         (lambda (file) (org-latex-compile file))))
-    ) )
-
-;; vim: ft=lisp  
+    ))
