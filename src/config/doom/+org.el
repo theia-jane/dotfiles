@@ -55,7 +55,7 @@
                          "#+"
                          (group (+ word))
                          ":")
-                     (sort (delete-duplicates
+                     (sort (cl-delete-duplicates
                             (mapcar (lambda (keyword)
                                       (concat "#+" keyword))
                                     org-options-keywords)
