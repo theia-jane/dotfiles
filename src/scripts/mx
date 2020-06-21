@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+FORWARD_ARGS=""
+while true; do
+  case "$1" in
+    -nf|--no-frame)
+      FORWARD_ARGS+="$1 "
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+el $FORWARD_ARGS -mx "$1"
