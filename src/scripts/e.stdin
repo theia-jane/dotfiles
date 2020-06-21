@@ -21,7 +21,7 @@ done
 TMP=$(mktemp --suffix="$FILE_TYPE");
 echo -En "$(< /dev/stdin)" > $TMP
 
-e $TMP > /dev/tty
+e -w $TMP > /dev/tty
 
 if [ $OUTPUT_FORMAT = "filename" ]; then
   echo $TMP
