@@ -30,6 +30,6 @@ fi
 
 echo "Starting ${EXEC_NAME}..." >> "$LOG_FILE"
 
-nohup "${@}" >> $LOG_FILE 2>&1 &
+nohup "${@}" < /dev/stdin >> $LOG_FILE 2>&1 &
 
 # vim: ft=sh
