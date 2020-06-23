@@ -212,6 +212,7 @@ is selected, only the bare key is returned."
            :key #'car
            :test #'equal)))
 
+  (setq org-capture-templates nil)
 ;; add-transient-hook! 'org-capture-select-template
   (add-doct! `(("Shower thought" :keys "s"
                 :icon ("light-bulb" :set "octicon" :color "yellow")
