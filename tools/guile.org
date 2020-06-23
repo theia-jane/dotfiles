@@ -1,0 +1,11 @@
+#+TITLE: Guile
+
+* REPL
+:PROPERTIES:
+:header-args:scheme: :dir $HOME :tangle .guile
+:END:
+By default the guile repl is nerfed.. add some basic niceties
+#+BEGIN_SRC scheme
+(use-modules (ice-9 readline))
+(activate-readline)
+#+END_SRC
