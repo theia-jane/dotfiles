@@ -60,7 +60,13 @@
                                       (concat "#+" keyword))
                                     org-options-keywords)
                             :test #'equal)
-                           #'string<)))))
+                           #'string<))))
+
+  ;; Make my org directory be a project root
+  (defun +org-notes-root (dir)
+    (and (file-in-directory-p dir org-directory)
+         org-directory))
+  (push '+org-notes-root projectile-project-root-files-functions))
 
 
 
