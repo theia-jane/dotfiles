@@ -64,9 +64,11 @@
 
   ;; Make my org directory be a project root
   (defun +org-notes-root (dir)
-    (and (file-in-directory-p dir org-directory)
+    (and dir
+         (file-in-directory-p dir org-directory)
          org-directory))
-  (push '+org-notes-root projectile-project-root-files-functions))
+  (after! projectile
+    (push '+org-notes-root projectile-project-root-files-functions)))
 
 
 
