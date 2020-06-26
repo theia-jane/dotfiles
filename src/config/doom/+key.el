@@ -35,6 +35,7 @@
     :desc "Find all"           "a" #'+snippets/find
     ))
   :desc "How do you..." "s h" #'howdoyou-query
+  :desc "Erase buffer" "b e" #'erase-buffer
   (:prefix ("P" . "personal")
    (:prefix ("o" . "open")
 
