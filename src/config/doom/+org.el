@@ -452,6 +452,7 @@ is selected, only the bare key is returned."
        :n "M-i" #'org-edit-special
        "<normal-state> <M-return>" '+tw/org-ctrl-c-ret)
       (:map evil-org-mode-map
+       :ni "M-o" #'org-cleave
        :ni "<C-S-return>" '+org/eval-src-block-then-next
        ;; evil-org text objects
        :vo "ae" #'evil-org-an-object
@@ -652,3 +653,15 @@ If :tangle-relative is
         (insert result)
         (+popup-buffer (current-buffer))))))
 
+(defun org-cleave ()
+  "TODO"
+  (interactive)
+  (let* ((el (org-element-at-point))
+         (el-type (car el))
+         (post-affiliated (plist-get (nth 1 el) :post-affiliated)))
+    (when (eq el-type 'src-block)
+      (let ((src-begin-line (save-excursion
+                              (goto-char post-affiliated)
+                              (buffer-substring (point) (line-end-position)))))
+        (end-of-line)
+        (insert (format "\n#+END_SRC\n\n%s\n" src-begin-line))))))
