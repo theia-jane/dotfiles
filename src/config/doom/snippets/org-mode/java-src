@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: java-src
+# key: java
+# condition: t
+# --
+#+BEGIN_SRC java :classname $1
+class $1 {
+    public static void main(String[] args) {
+        $0
+    }
+}
+#+END_SRC
