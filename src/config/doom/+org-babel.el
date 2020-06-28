@@ -39,3 +39,8 @@
 ;;   :execute (lambda (body params)
 ;;              (message "%s %s" body params))
 ;;   :lang "scheme")
+
+(define-ob! cat
+  :execute (lambda (body params)
+             (format body))
+  :lang "text")
