@@ -30,6 +30,7 @@
         org-display-inline-images t
         org-pretty-entities nil
         org-startup-with-inline-images "inlineimages"
+        org-startup-folded 'overview
         org-hide-emphasis-markers nil
         org-export-with-toc nil
         org-export-with-section-numbers nil
