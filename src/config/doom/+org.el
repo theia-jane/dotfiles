@@ -69,9 +69,7 @@
          (file-in-directory-p dir org-directory)
          org-directory))
   (after! projectile
-    (push '+org-notes-root projectile-project-root-files-functions)))
-
-
+    (add-to-list 'projectile-project-root-files-functions '+org-notes-root)))
 
 
 (after! org-capture
