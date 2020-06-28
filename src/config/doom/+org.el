@@ -91,26 +91,26 @@
           (set-window-parameter nil 'mode-line-format 'none)
           (org-capture)))
 
-(defun org-capture-select-template-prettier (&optional keys)
-  "Select a capture template, in a prettier way than default
+  (defun org-capture-select-template-prettier (&optional keys)
+    "Select a capture template, in a prettier way than default
 Lisp programs can force the template by setting KEYS to a string."
-  (let ((org-capture-templates
-         (or (org-contextualize-keys
-              (org-capture-upgrade-templates org-capture-templates)
-              org-capture-templates-contexts)
-             '(("t" "Task" entry (file+headline "" "Tasks")
-                "* TODO %?\n  %u\n  %a")))))
-    (if keys
-        (or (assoc keys org-capture-templates)
-            (error "No capture template referred to by \"%s\" keys" keys))
-      (org-mks org-capture-templates
-               "Select a capture template\n━━━━━━━━━━━━━━━━━━━━━━━━━"
-               "Template key: "
-               `(("q" ,(concat (all-the-icons-octicon "stop" :face 'all-the-icons-red :v-adjust 0.01) "\tAbort")))))))
-(advice-add 'org-capture-select-template :override #'org-capture-select-template-prettier)
+    (let ((org-capture-templates
+           (or (org-contextualize-keys
+                (org-capture-upgrade-templates org-capture-templates)
+                org-capture-templates-contexts)
+               '(("t" "Task" entry (file+headline "" "Tasks")
+                  "* TODO %?\n  %u\n  %a")))))
+      (if keys
+          (or (assoc keys org-capture-templates)
+              (error "No capture template referred to by \"%s\" keys" keys))
+        (org-mks org-capture-templates
+                 "Select a capture template\n━━━━━━━━━━━━━━━━━━━━━━━━━"
+                 "Template key: "
+                 `(("q" ,(concat (all-the-icons-octicon "stop" :face 'all-the-icons-red :v-adjust 0.01) "\tAbort")))))))
+  (advice-add 'org-capture-select-template :override #'org-capture-select-template-prettier)
 
-(defun org-mks-pretty (table title &optional prompt specials)
-  "Select a member of an alist with multiple keys. Prettified.
+  (defun org-mks-pretty (table title &optional prompt specials)
+    "Select a member of an alist with multiple keys. Prettified.
 
 TABLE is the alist which should contain entries where the car is a string.
 There should be two types of entries.
@@ -133,70 +133,70 @@ TITLE will be placed over the selection in the temporary buffer,
 PROMPT will be used when prompting for a key.  SPECIALS is an
 alist with (\"key\" \"description\") entries.  When one of these
 is selected, only the bare key is returned."
-  (save-window-excursion
-    (let ((inhibit-quit t)
-    (buffer (org-switch-to-buffer-other-window "*Org Select*"))
-    (prompt (or prompt "Select: "))
-    case-fold-search
-    current)
-      (unwind-protect
-    (catch 'exit
-      (while t
-        (setq-local evil-normal-state-cursor (list nil))
-        (erase-buffer)
-        (insert title "\n\n")
-        (let ((des-keys nil)
-        (allowed-keys '("\C-g"))
-        (tab-alternatives '("\s" "\t" "\r"))
-        (cursor-type nil))
-    ;; Populate allowed keys and descriptions keys
-    ;; available with CURRENT selector.
-    (let ((re (format "\\`%s\\(.\\)\\'"
-          (if current (regexp-quote current) "")))
-          (prefix (if current (concat current " ") "")))
-      (dolist (entry table)
-        (pcase entry
-          ;; Description.
-          (`(,(and key (pred (string-match re))) ,desc)
-           (let ((k (match-string 1 key)))
-       (push k des-keys)
-       ;; Keys ending in tab, space or RET are equivalent.
-       (if (member k tab-alternatives)
-           (push "\t" allowed-keys)
-         (push k allowed-keys))
-       (insert (propertize prefix 'face 'font-lock-comment-face) (propertize k 'face 'bold) (propertize "›" 'face 'font-lock-comment-face) "  " desc "…" "\n")))
-          ;; Usable entry.
-          (`(,(and key (pred (string-match re))) ,desc . ,_)
-           (let ((k (match-string 1 key)))
-       (insert (propertize prefix 'face 'font-lock-comment-face) (propertize k 'face 'bold) "   " desc "\n")
-       (push k allowed-keys)))
-          (_ nil))))
-    ;; Insert special entries, if any.
-    (when specials
-      (insert "─────────────────────────\n")
-      (pcase-dolist (`(,key ,description) specials)
-        (insert (format "%s   %s\n" (propertize key 'face '(bold all-the-icons-red)) description))
-        (push key allowed-keys)))
-    ;; Display UI and let user select an entry or
-    ;; a sub-level prefix.
-    (goto-char (point-min))
-    (unless (pos-visible-in-window-p (point-max))
-      (org-fit-window-to-buffer))
-    (let ((pressed (org--mks-read-key allowed-keys prompt)))
-      (setq current (concat current pressed))
-      (cond
-       ((equal pressed "\C-g") (user-error "Abort"))
-       ;; Selection is a prefix: open a new menu.
-       ((member pressed des-keys))
-       ;; Selection matches an association: return it.
-       ((let ((entry (assoc current table)))
-          (and entry (throw 'exit entry))))
-       ;; Selection matches a special entry: return the
-       ;; selection prefix.
-       ((assoc current specials) (throw 'exit current))
-       (t (error "No entry available")))))))
-  (when buffer (kill-buffer buffer))))))
-(advice-add 'org-mks :override #'org-mks-pretty)
+    (save-window-excursion
+      (let ((inhibit-quit t)
+            (buffer (org-switch-to-buffer-other-window "*Org Select*"))
+            (prompt (or prompt "Select: "))
+            case-fold-search
+            current)
+        (unwind-protect
+            (catch 'exit
+              (while t
+                (setq-local evil-normal-state-cursor (list nil))
+                (erase-buffer)
+                (insert title "\n\n")
+                (let ((des-keys nil)
+                      (allowed-keys '("\C-g"))
+                      (tab-alternatives '("\s" "\t" "\r"))
+                      (cursor-type nil))
+                  ;; Populate allowed keys and descriptions keys
+                  ;; available with CURRENT selector.
+                  (let ((re (format "\\`%s\\(.\\)\\'"
+                                    (if current (regexp-quote current) "")))
+                        (prefix (if current (concat current " ") "")))
+                    (dolist (entry table)
+                      (pcase entry
+                        ;; Description.
+                        (`(,(and key (pred (string-match re))) ,desc)
+                         (let ((k (match-string 1 key)))
+                           (push k des-keys)
+                           ;; Keys ending in tab, space or RET are equivalent.
+                           (if (member k tab-alternatives)
+                               (push "\t" allowed-keys)
+                             (push k allowed-keys))
+                           (insert (propertize prefix 'face 'font-lock-comment-face) (propertize k 'face 'bold) (propertize "›" 'face 'font-lock-comment-face) "  " desc "…" "\n")))
+                        ;; Usable entry.
+                        (`(,(and key (pred (string-match re))) ,desc . ,_)
+                         (let ((k (match-string 1 key)))
+                           (insert (propertize prefix 'face 'font-lock-comment-face) (propertize k 'face 'bold) "   " desc "\n")
+                           (push k allowed-keys)))
+                        (_ nil))))
+                  ;; Insert special entries, if any.
+                  (when specials
+                    (insert "─────────────────────────\n")
+                    (pcase-dolist (`(,key ,description) specials)
+                      (insert (format "%s   %s\n" (propertize key 'face '(bold all-the-icons-red)) description))
+                      (push key allowed-keys)))
+                  ;; Display UI and let user select an entry or
+                  ;; a sub-level prefix.
+                  (goto-char (point-min))
+                  (unless (pos-visible-in-window-p (point-max))
+                    (org-fit-window-to-buffer))
+                  (let ((pressed (org--mks-read-key allowed-keys prompt)))
+                    (setq current (concat current pressed))
+                    (cond
+                     ((equal pressed "\C-g") (user-error "Abort"))
+                     ;; Selection is a prefix: open a new menu.
+                     ((member pressed des-keys))
+                     ;; Selection matches an association: return it.
+                     ((let ((entry (assoc current table)))
+                        (and entry (throw 'exit entry))))
+                     ;; Selection matches a special entry: return the
+                     ;; selection prefix.
+                     ((assoc current specials) (throw 'exit current))
+                     (t (error "No entry available")))))))
+          (when buffer (kill-buffer buffer))))))
+  (advice-add 'org-mks :override #'org-mks-pretty)
 
   (defun +doct-icon-declaration-to-icon (declaration)
     "Convert :icon declaration to icon"
@@ -224,13 +224,13 @@ is selected, only the bare key is returned."
 
   (defun add-doct! (declarations)
     (setq org-capture-templates (cl-delete-duplicates
-           (append org-capture-templates
-                   (doct declarations))
-           :key #'car
-           :test #'equal)))
+                                 (append org-capture-templates
+                                         (doct declarations))
+                                 :key #'car
+                                 :test #'equal)))
 
   (setq org-capture-templates nil)
-;; add-transient-hook! 'org-capture-select-template
+  ;; add-transient-hook! 'org-capture-select-template
   (add-doct! `(("Shower thought" :keys "s"
                 :icon ("light-bulb" :set "octicon" :color "yellow")
                 :file "projects/shower-thoughts.org"
@@ -259,81 +259,7 @@ is selected, only the bare key is returned."
                 :icon ("desktop_windows" :set "material" :color "orange")
                 :file "needs-filing.org"
                 :type entry
-                :template ("* %?"))
-               ;; ("Interesting" :keys "i"
-               ;;  :icon ("eye" :set "faicon" :color "lcyan")
-               ;;  :file +org-capture-todo-file
-               ;;  :prepend t
-               ;;  :headline "Interesting"
-               ;;  :type entry
-               ;;  :template ("* [ ] %{desc}%? :%{i-type}:"
-               ;;             "%i %a")
-               ;;  :children (("Webpage" :keys "w"
-               ;;              :icon ("globe" :set "faicon" :color "green")
-               ;;              :desc "%(org-cliplink-capture) "
-               ;;              :i-type "read:web"
-               ;;              )
-               ;;             ("Article" :keys "a"
-               ;;              :icon ("file-text" :set "octicon" :color "yellow")
-               ;;              :desc ""
-               ;;              :i-type "read:reaserch"
-               ;;              )
-               ;;             ("Information" :keys "i"
-               ;;              :icon ("info-circle" :set "faicon" :color "blue")
-               ;;              :desc ""
-               ;;              :i-type "read:info"
-               ;;              )
-               ;;             ("Idea" :keys "I"
-               ;;              :icon ("bubble_chart" :set "material" :color "silver")
-               ;;              :desc ""
-               ;;              :i-type "idea"
-               ;;              )))
-               ;; ("Tasks" :keys "k"
-               ;;  :icon ("inbox" :set "octicon" :color "yellow")
-               ;;  :file +org-capture-todo-file
-               ;;  :prepend t
-               ;;  :headline "Tasks"
-               ;;  :type entry
-               ;;  :template ("* TODO %? %^G%{extra}"
-               ;;             "%i %a")
-               ;;  :children (("General Task" :keys "k"
-               ;;              :icon ("inbox" :set "octicon" :color "yellow")
-               ;;              :extra ""
-               ;;              )
-               ;;             ("Task with deadline" :keys "d"
-               ;;              :icon ("timer" :set "material" :color "orange" :v-adjust -0.1)
-               ;;              :extra "\nDEADLINE: %^{Deadline:}t"
-               ;;              )
-               ;;             ("Scheduled Task" :keys "s"
-               ;;              :icon ("calendar" :set "octicon" :color "orange")
-               ;;              :extra "\nSCHEDULED: %^{Start time:}t"
-               ;;              )
-               ;;             ))
-               ;; ("Project" :keys "p"
-               ;;  :icon ("repo" :set "octicon" :color "silver")
-               ;;    :prepend t
-               ;;    :type entry
-               ;;    :headline "Inbox"
-               ;;    :template ("* %{time-or-todo} %?"
-               ;;               "%i"
-               ;;               "%a")
-               ;;    :file ""
-               ;;    :custom (:time-or-todo "")
-               ;;    :children (("Project-local todo" :keys "t"
-               ;;                :icon ("checklist" :set "octicon" :color "green")
-               ;;                :time-or-todo "TODO"
-               ;;                :file +org-capture-project-todo-file)
-               ;;               ("Project-local note" :keys "n"
-               ;;                :icon ("sticky-note" :set "faicon" :color "yellow")
-               ;;                :time-or-todo "%U"
-               ;;                :file +org-capture-project-notes-file)
-               ;;               ("Project-local changelog" :keys "c"
-               ;;                :icon ("list" :set "faicon" :color "blue")
-               ;;                :time-or-todo "%U"
-               ;;                :heading "Unreleased"
-               ;;                :file +org-capture-project-changelog-file))
-               ;;    )
-               )))
+                :template ("* %?")))))
 
 (use-package! ox-extra
   :after org
@@ -472,151 +398,14 @@ is selected, only the bare key is returned."
        :vo "ar" #'evil-org-a-greater-element
        :vo "aR" #'evil-org-a-subtree
        :vo "iR" #'evil-org-inner-subtree
-       :vn "zn" #'+evil:narrow-buffer
-
-       ))
-
-(defvar +font-lock-icons-default-prefix-format "\\(%s\\)" "TODO")
-
-(defvar +font-lock-icons-default-icon-resolver #'identity
-  "TODO")
-
-(defun +prettify--compose (symbol)
-  "Compose a sequence of characters into a symbol.
-Regexp match data 0 specifies the characters to be composed."
-  ;; Check that the chars should really be composed into a symbol.
-  (let ((start (match-beginning 1))
-        (end (match-end 1))
-        (match (match-string 1)))
-    (if (and (not (equal prettify-symbols--current-symbol-bounds (list start end)))
-             (funcall prettify-symbols-compose-predicate start end match))
-        (with-silent-modifications
-          (when (= 1 (length symbol))
-            (compose-region start end symbol))
-
-          (add-text-properties
-           start end
-           `(prettify-symbols-start ,start
-                                    prettify-symbols-end ,end
-                                    display ,symbol)))
-      ;; No composition for you.  Let's actually remove any
-      ;; composition we may have added earlier and which is now
-      ;; incorrect.
-      (remove-list-of-text-properties start end
-                                      '(display
-                                        composition
-                                        prettify-symbols-start
-                                        prettify-symbols-end))))
-  ;; Return nil because we're not adding any face property.
-  nil)
-
-(defadvice! +prettify-symbols--extended--post-command-hook ()
-  ""
-  :override 'prettify-symbols--post-command-hook
-  (cl-labels ((get-prop-as-list
-               (prop)
-               (remove nil
-                       (list (get-text-property (point) prop)
-                             (when (and (eq prettify-symbols-unprettify-at-point 'right-edge)
-                                        (not (bobp)))
-                               (get-text-property (1- (point)) prop))))))
-    ;; Re-apply prettification to the previous symbol.
-    (when (and prettify-symbols--current-symbol-bounds
-               (or (< (point) (car prettify-symbols--current-symbol-bounds))
-                   (> (point) (cadr prettify-symbols--current-symbol-bounds))
-                   (and (not (eq prettify-symbols-unprettify-at-point 'right-edge))
-                        (= (point) (cadr prettify-symbols--current-symbol-bounds)))))
-      (apply #'font-lock-flush prettify-symbols--current-symbol-bounds)
-      (setq prettify-symbols--current-symbol-bounds nil))
-    ;; Unprettify the current symbol.
-    (when-let* ((c (or (get-prop-as-list 'display)
-                       (get-prop-as-list 'composition)))
-                (s (get-prop-as-list 'prettify-symbols-start))
-                (e (get-prop-as-list 'prettify-symbols-end))
-                (s (apply #'min s))
-                (e (apply #'max e)))
-      (with-silent-modifications
-        (setq prettify-symbols--current-symbol-bounds (list s e))
-        (remove-text-properties s e '(composition nil))
-        (remove-text-properties s e '(display nil))
-        ))))
-
-(defun +font-lock-icons--parse-args (args)
-  (let ((prefix-format +font-lock-icons-default-prefix-format)
-        (icon-resolver +font-lock-icons-default-icon-resolver)
-        (mode-font-lock-alist '((nil . nil)))
-        mode)
-
-    (while args
-      (let ((arg (pop args))
-            (next-arg (pop args)))
-
-        (pcase arg
-          (:prefix-format
-           (setq prefix-format
-                 (cond ((or (equal "" next-arg)
-                            (null next-arg))
-                        +font-lock-icons-default-prefix-format)
-                       ((stringp next-arg) next-arg)
-                       (t (error ":prefix-format must be a string or nil" next-arg)))))
-          (:icon-resolver
-           (if (functionp next-arg)
-               (setq icon-resolver next-arg)
-             (error ":icon-resolver must be a function")))
-          (:mode
-           (if (symbolp next-arg)
-               (progn
-                 (setq mode next-arg
-                       icon-resolver +font-lock-icons-default-icon-resolver)
-                 (unless (alist-get mode mode-font-lock-alist)
-                   (push `(,mode . nil) mode-font-lock-alist)))
-             (error ":mode must be a symbol for a mode")
-             ))
-
-          ;; Actual mapping
-          ((pred stringp)
-           (if (stringp next-arg)
-               (let ((resolved-pattern (format prefix-format arg))
-                     (resolved-icon `(funcall #',icon-resolver ,next-arg)))
-                 (setq mode-font-lock-alist (cons
-                                             (cons mode (cons
-                                                         (list resolved-pattern
-                                                               (list 1 `(progn (+prettify--compose (funcall #',icon-resolver ,next-arg)) nil) ))
-                                                         (cdr (assq mode mode-font-lock-alist))))
-                                             (assoc-delete-all mode mode-font-lock-alist))))
-             (error "Icon must be a string")))
-          (_ (error "Unsupported key or type: '%s'" arg)))))
-    mode-font-lock-alist))
-
-(defun +font-lock-icons! (&rest args)
-  (let ((mode-lock-list (+font-lock-icons--parse-args args)))
-    (dolist (mode-lock mode-lock-list)
-      (when (cdr mode-lock)
-        (font-lock-add-keywords (car mode-lock) (cdr mode-lock))))
-    mode-lock-list))
-
-(+font-lock-icons!
-   :mode 'org-mode
-   :prefix-format "^\\*+ \\(%s\\)"
-   "TODO" "⚑"
-   "STRT" "⚐"
-   "STARTED" "⚐"
-   "CANCELED" "✘"
-   "DONE" "✔"
+       :vn "zn" #'+evil:narrow-buffer)
+      (:localleader
+       :map org-mode-map
+       :desc "Set Name" "N" #'org-set-name
+       (:prefix ("L" . "Latex")
+        :desc "Preview" "p" (cmd! (org--latex-preview-region (point-min) (point-max))))))
 
 
-   :prefix-format (rx "#+" (or "begin" "BEGIN")
-                      "_" (or "src" "SRC" "example" "EXAMPLE")
-                      " " (group "%s"))
-   :icon-resolver #'all-the-icons-fileicon
-   "emacs-lisp" "emacs"
-   "elisp" "emacs"
-   "bash" "terminal"
-   "sh" "terminal"
-
-   :icon-resolver #'all-the-icons-alltheicon
-   "python" "python"
-   )
 
 ;;; Babel
 (defadvice! +org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
@@ -646,7 +435,7 @@ If :tangle-relative is
                          ((eq tangle-relative 'dir) dir)
                          (t ""))
                         tangle)))))
-  info))
+    info))
 
 
 (defadvice! +org-babel--buffer-arg (fn result &optional result-params info hash lang)
@@ -674,3 +463,125 @@ If :tangle-relative is
                               (buffer-substring (point) (line-end-position)))))
         (end-of-line)
         (insert (format "\n#+END_SRC\n\n%s\n" src-begin-line))))))
+
+(defun org-src-content-bounds (el)
+  (list
+   (save-mark-and-excursion
+     (goto-char (org-element-property :post-affiliated el))
+     (line-end-position))
+   (save-mark-and-excursion
+     (goto-char (1- (org-element-property :end el)))
+     (forward-line (- (org-element-property :post-blank el)))
+     (line-beginning-position))))
+
+(defun org-block-header (el)
+  (save-mark-and-excursion
+    (goto-char (org-element-property :post-affiliated el))
+    (buffer-substring (point) (line-end-position))))
+
+(defun org-ensure-noweb ()
+  (let* ((info (org-babel-get-src-block-info))
+         (noweb (alist-get :noweb (nth 2 info))))
+    (when (or (not noweb)
+              (equal noweb "no"))
+      (org-babel-insert-header-arg "noweb" "yes"))))
+
+(defun org-extract (beg end name)
+  "TODO"
+  (interactive
+   (list (region-beginning)
+         (region-end)
+         (read-string "Name: " (org-get-name))))
+
+  (when (and beg end)
+    (let ((el (org-element-at-point)))
+      (when (and (eq (car el) 'src-block))
+        (let* ((src-header (org-block-header el))
+               (content-bounds (org-src-content-bounds el))
+               (has-name (and name (not (equal name ""))))
+               (region-contents (buffer-substring beg end)))
+          (when (and (<= (car content-bounds) beg (cadr content-bounds))
+                     (<= (car content-bounds) end (cadr content-bounds)))
+            (setq deactivate-mark t)
+            (evil-exit-visual-state)
+            (delete-region beg end)
+            (when has-name
+              (save-excursion
+                (end-of-line)
+                (org-ensure-noweb)
+                (insert "<<" name ">>")))
+
+            (goto-char (cadr (org-src-content-bounds (org-element-at-point))))
+            (insert
+             (concat
+              (when (eq (forward-line) 1)
+                "\n")
+              "\n"
+              (when has-name
+                (concat "#+NAME: " name "\n"))
+              src-header
+              "\n"
+              region-contents)
+             )
+            (save-excursion
+              (insert "\n\n#+END_SRC\n"))
+
+            ))))))
+
+(defun test/x ()
+  (goto-char 3332))
+
+(defun org-rename ()
+  "TODO"
+  nil)
+
+
+(defun org-get-name ()
+  (let ((el (org-outer-element)))
+    (or (org-element-property :name el)
+        (and (equal (org-element-property :key el) "NAME")
+             (org-element-property :value el)))))
+
+(defun org-set-name (name)
+  (interactive
+   (list (read-string "Name: " (org-get-name))))
+  (let* ((el (org-outer-element))
+         (el-type (car el))
+         (existing-name (org-get-name)))
+    (when (and el-type
+               (or (not (memq el-type '(headline keyword)))
+                   (and (eq el-type 'keyword)
+                        (equal (org-element-property :key el) "NAME")))
+
+               (save-excursion
+                 (goto-char (org-element-property :begin el))
+
+                 (unless existing-name
+                   (beginning-of-line)
+                   (save-excursion
+                     (insert "#+NAME:\n")))
+
+                 (if (or (null name) (equal name ""))
+                     (delete-region (point) (1+ (line-end-position)))
+                   (save-match-data
+                     (re-search-forward (rx "#+NAME:"))
+                     (delete-region (match-end 0) (line-end-position)))
+                   (end-of-line)
+                   (insert (concat " " name))))))))
+
+(defun org-parent-property (property context)
+  (when-let ((parent (org-element-property :parent context)))
+    (org-element-property property parent)))
+
+(defun org-inherited-property (property context)
+  (or (org-element-property property context)
+      (org-parent-property property context)))
+
+(defun org-top-level-property (property context)
+  (or (org-parent-property property context)
+      (org-element-property property context)))
+
+(defun org-outer-element (&optional context)
+  (let* ((el (or context (org-element-at-point)))
+         (parent (org-element-property :parent el)))
+    (or parent el)))
