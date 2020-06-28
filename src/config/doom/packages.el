@@ -24,6 +24,7 @@
 
 (package! doct)
 (package! hl-line :disable t)
+(package! solaire-mode :disable t)
 
 (unpin! ivy)
 (unpin! swiper)
