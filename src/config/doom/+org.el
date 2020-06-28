@@ -39,6 +39,16 @@
         org-src-window-setup 'current-window
         org-list-allow-alphabetical t)
 
+  ;; http://bnbeckwith.com/blog/org-mode-tikz-previews-on-windows.html
+  (add-to-list 'org-latex-packages-alist
+               '("" "tikz" t))
+  (after! preview
+    (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+  ;; Note if you have issues w/ rendering might need to check your imagemagick policies
+  ;;      /etc/ImageMagick-{6,7}/policy.xml
+  ;;      It's possible that one of the policies is set to 'none' for something.
+  (setq org-preview-latex-default-process 'imagemagick)
+
   ;; A start, but I want to add a lot more rotations!
   ;; - block type
   ;; - option 'yes', 'no'
