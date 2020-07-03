@@ -401,6 +401,13 @@ is selected, only the bare key is returned."
        :vn "zn" #'+evil:narrow-buffer)
       (:localleader
        :map org-mode-map
+       "n" nil ;; clear this out first (otherwise we'll get a "not a prefix key warning")
+       (:prefix ("n" . "Narrow")
+        :desc "Next heading" "]" #'+org-forward-to-narrowed-heading
+        :desc "Next heading" "[" #'+org-backward-to-narrowed-heading
+        :desc "Subtree" "s" #'org-narrow-to-subtree
+        :desc "Block" "b" #'org-narrow-to-block
+        :desc "Element" "e" #'org-narrow-element)
        :desc "Set Name" "N" #'org-set-name
        (:prefix ("L" . "Latex")
         :desc "Preview" "p" (cmd! (org--latex-preview-region (point-min) (point-max))))))
@@ -585,3 +592,25 @@ If :tangle-relative is
   (let* ((el (or context (org-element-at-point)))
          (parent (org-element-property :parent el)))
     (or parent el)))
+
+(defun +org-forward-to-narrowed-heading (arg)
+  (interactive "p")
+  (when (buffer-narrowed-p)
+    (goto-char (point-min))
+    (org-forward-heading-same-level arg)
+    (widen))
+  (org-forward-heading-same-level p)
+  (org-narrow-to-subtree))
+
+(map!
+ :nivo "M-i" doom-localleader-key)
+
+(defun doom-send-localleader ()
+  (interactive)
+  (setq prefix-arg current-prefix-arg)
+  (setq unread-command-events (append (listify-key-sequence (kbd "SPC")) '(?m))))
+
+
+(defun +org-backward-to-narrowed-heading (arg)
+  (interactive "p")
+  (+org-forward-to-narrowed-heading (- arg)))
