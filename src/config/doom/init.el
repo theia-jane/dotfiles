@@ -138,9 +138,9 @@
         +pandoc               ; export-with-pandoc support
         +gnuplot
         +babel
-        +jupyter
+        ;; +jupyter
         ;;+pomodoro           ; be fruitful with the tomato technique
-        +roam
+        ;; +roam
         +present)             ; using org-mode for presentations
        ;; perl                ; write code no one else can comprehend
        (json +lsp)
