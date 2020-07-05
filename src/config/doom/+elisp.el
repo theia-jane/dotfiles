@@ -22,7 +22,7 @@
   ;; Don't ignore scan-error if we start at the wrong spot
   (up-list 1 escape-strings no-syntax-crossing)
   (ignore-error scan-error
-    (loop (up-list 1 escape-strings no-syntax-crossing))))
+    (cl-loop (up-list 1 escape-strings no-syntax-crossing))))
 
 (defun end-of-outermost-sexp ()
   (interactive)
