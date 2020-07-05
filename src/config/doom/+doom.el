@@ -2,9 +2,9 @@
 
 
 (setq doom-scratch-initial-major-mode 'org-mode
-      doom-font (font-spec :family "Source Code Pro" :size 30)
-      doom-variable-pitch-font (font-spec :family "Source Code Pro" :size 30)
-      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 30)
+      doom-font (font-spec :family "Source Code Pro" :size 24)
+      doom-variable-pitch-font (font-spec :family "Source Code Pro" :size 24)
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 24)
       doom-big-font (font-spec :family "Source Code Pro" :size 48))
 
 
