@@ -71,3 +71,26 @@
   `(seq-do #'(lambda (attributes)
             (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
           ',attributes-list))
+
+(defun dashboard-logo-header ()
+(let ((point (point)))
+  (insert (make-string 19 ?\n))
+    (when (display-graphic-p)
+      (let ((image (svg/as-image (doom/wayward-arcanist-logo :size "300"))))
+        (add-text-properties
+         point (point) `(display ,image rear-nonsticky (display)))
+        (save-excursion
+          (goto-char point)
+          (insert (make-string
+                   (truncate
+                    (max 0 (+ 1 (/ (- +doom-dashboard--width
+                                      (car (image-size image nil)))
+                                   2))))
+                   ? ))))
+      (insert "\n"))))
+
+(setq +doom-dashboard-functions
+      '(dashboard-logo-header
+        doom-dashboard-widget-shortmenu
+        doom-dashboard-widget-loaded
+        doom-dashboard-widget-footer))
