@@ -14,6 +14,7 @@
  ;; General
  "+reset"
  "+core"
+ "+svg"
  "+doom"
  "+ui"
  "+key"

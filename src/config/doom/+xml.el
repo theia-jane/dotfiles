@@ -1,5 +1,6 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+xml.el -*- lexical-binding: t; -*-
 
+(require 'xml)
 (defun xml:attributes (&rest args)
   "Produce xml attributes from ARGS which are plist-like.
 

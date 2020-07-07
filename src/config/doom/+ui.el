@@ -76,7 +76,7 @@
 (let ((point (point)))
   (insert (make-string 19 ?\n))
     (when (display-graphic-p)
-      (let ((image (svg/as-image (doom/wayward-arcanist-logo :size "300"))))
+      (let ((image (svg/as-image (doom/wayward-arcanist-logo :size 300))))
         (add-text-properties
          point (point) `(display ,image rear-nonsticky (display)))
         (save-excursion

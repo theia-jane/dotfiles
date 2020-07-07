@@ -1,5 +1,8 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+svg.el -*- lexical-binding: t; -*-
 
+(require 'dash-functional)
+(require 's)
+
 (load! "+xml.el")
 (load! "+color.el")
 
@@ -21,6 +24,18 @@ For valid definitions of ARGS see `xml:tag'.
    'svg
    args)))
 
+(defun svg:defs (&rest args)
+  (apply
+    #'xml:tag
+    'defs
+    args))
+
+(defun svg:path (&rest args)
+  (apply
+    #'xml:tag
+    'path
+    args))
+
 (defmacro comment (&rest _) nil)
 
 (defun svg/as-image (svg)
@@ -34,52 +49,65 @@ For valid definitions of ARGS see `xml:tag'.
       (insert-image (svg/as-image svg)))
     (+buffer-open-in-vertical-split-maybe buffer)))
 
-
 (cl-defun wayward-arcanist-logo (&key
                                  (outer-box "#3c3843")
                                  (inner-box "#efecca")
-                                 (size "500px"))
+                                 (size 500))
+  (let* ((canvas-offset (- (/ (float size) 2)))
+        (outer-side (* (/ (float 2) 5) size))
+        (outer-depth (* (/ (float 1) 10) size))
+        (inside-edge (- outer-side outer-depth))
+        (inner-side (* (/ (float 1) 10) size))
+        (dx (cos (/ pi 6)))
+        (dy (sin (/ pi 6))))
   (svg:
    :xmlns "http://www.w3.org/2000/svg"
    :xmlns:xlink "http://www.w3.org/1999/xlink"
-   :width size
-   :height size
-   :viewBox "0 0 2304 2304"
+   :width (number-to-string size)
+   :height (number-to-string size)
+   :viewBox (mapconcat
+             #'number-to-string
+             (list canvas-offset canvas-offset
+                   size size)
+             " ")
    :children
    (svg:defs)
-   (svg:path :id "outer-box-shell"
-             :transform "matrix(0 1.74762982835482 -1.74762982835482 0 2085.11981267341 72.5429140623223)"
-             :fill outer-box
-             :d "M308.718 0.120918L925.516 0L1234.26 533.348L925.363 1066.7L308.718 1066.7L0 533.348Z")
-   (svg:path :id "outer-box-edge-shadow"
-             :transform "matrix(2.96482102905814 0 0 2.96482102905814 1149.96359954899 611.433658908337)"
-             :fill (hex-darken outer-box 3)
-             :d "M314.859 0L0 183.6L4.54747e-13 546.295L315.222 363.614Z")
-   (svg:path :id "outer-box-cutout"
-             :transform "matrix(0 -1.47493865343202 1.47493865343202 0 366.36281618265 2062.6954133316)"
-             :fill outer-box
-             :d "M308.718 0.120918L925.516 0L1234.26 533.348L925.363 1066.7L308.718 1066.7L0 533.348Z")
-   (svg:path :id "outer-box-wall-shadow"
-             :transform "matrix(-2.50220559601143 0 0 -2.50220559601143 1155.60206087599 1607.89041020437)"
-             :fill (hex-darken outer-box 3)
-             :d "M314.859 0L0 183.6L4.54747e-13 546.295L315.222 363.614Z")
-   (svg:path :id "inner-box"
-             :transform "matrix(0 0.589455427231726 -0.589455427231726 0 1467.41744427774 786.638373243171)"
+   (svg:path :d (svg:path-hexagon outer-side)
+             :transform (svg:transform :rotate 90)
+             :fill outer-box)
+   (svg:path :fill (hex-darken outer-box 3)
+             :d (svg:path-define
+                   :move 0 (+ (/ (float inside-edge) 2) (* inside-edge dy))
+                   :line 0 outer-depth
+                   :line (* outer-side dx) (- (* outer-side dy))
+                   :line 0 (- outer-side)
+                   :line (- (* outer-depth dx)) (* outer-depth dy)
+                   :line 0 inside-edge
+                   :close))
+   (svg:path :fill (hex-darken outer-box 3)
+             :d (svg:path-define
+              :move 0 0
+              :line 0 (- inside-edge)
+              :line (- (* inside-edge dx)) (* inside-edge dy)
+              :line 0 inside-edge
+              :close))
+   (svg:path :d (svg:path-hexagon inner-side)
              :fill inner-box
-             :d "M308.718 0.120918L925.516 0L1234.26 533.348L925.363 1066.7L308.718 1066.7L0 533.348Z")
-   (svg:path :id "inner-box-shadow"
-             :transform "matrix(1.00000003993522 0 0 1.00000003993522 1152.00004600538 968.400057256455)"
+             :transform (svg:transform
+                         :rotate 90))
+   (svg:path :d (svg:path-define
+                 :move 0 0
+                 :line 0 inner-side
+                 :line (* inner-side dx) (- (* inner-side dy))
+                 :line 0 (- inner-side)
+                 :close)
              :fill (hex-desaturate
-                    (hex-darken inner-box 15)
-                    20)
-             :d "M314.859 0L0 183.6L4.54747e-13 546.295L315.222 363.614Z")))
+                    (hex-darken inner-box 15) 20)))))
 
-
-(cl-defun doom/wayward-arcanist-logo (&key (size "500"))
+(cl-defun doom/wayward-arcanist-logo (&key (size 500))
   (wayward-arcanist-logo :size size
                          :outer-box "#32302f"
                          :inner-box "#d3869b"))
-
 
 (defun svg:transform (&rest args)
   (let (arg
@@ -106,7 +134,6 @@ For valid definitions of ARGS see `xml:tag'.
           (setq transform nil))))
     (s-join "\n" (reverse transforms))))
 
-
 (defconst svg-path-define-commands
   '(:move "m"
     :Move "M"
@@ -128,7 +155,6 @@ For valid definitions of ARGS see `xml:tag'.
     :Arc "A"
     :close "z"
     :Close "Z"))
-
 
 (defun svg:path-define (&rest args)
   (let (arg
@@ -154,3 +180,17 @@ For valid definitions of ARGS see `xml:tag'.
                 transforms)
           (setq transform nil))))
     (s-join "\n" (reverse transforms))))
+
+(defun svg:path-hexagon (length)
+  (let ((dx (* length (sin (/ pi 6))))
+        (dy (* length (cos (/ pi 6)))))
+    (svg:path-define
+     :move (- (/ (float length) 2)) (- dy)
+     :line length 0
+     :line dx dy
+     :line (- dx) dy
+     :line (- length) 0
+     :line (- dx) (- dy)
+     :line dx (- dy)
+     :close)))
+

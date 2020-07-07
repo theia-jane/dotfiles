@@ -1,5 +1,7 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+color.el -*- lexical-binding: t; -*-
 
+(require 'color)
+
 ;;; Color stuff
 (defun hex-to-rgb (hex)
   (when (equal "#" (substring hex 0 1))
