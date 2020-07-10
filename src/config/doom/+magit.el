@@ -130,6 +130,22 @@ MVP would be a list of files, a pointer and methods for switching files being di
         (user-error "No next file"))
       (nth (1+ file-position) files))))
 
+(defun +magit-previous-changed-file ()
+  (interactive)
+  (find-file (f-join
+              (projectile-project-root)
+              (+magit-get-previous-file (magit-file-relative-name)))))
+
+(defun +magit-next-changed-file ()
+  (interactive)
+  (find-file (f-join
+              (projectile-project-root)
+              (+magit-get-next-file (magit-file-relative-name)))))
+
+(map! :leader
+      "g j" #'+magit-next-changed-file
+      "g k" #'+magit-previous-changed-file)
+
 ;; (let ((default-directory (substitute-env-vars "$ts_app")))
 ;;   ;; (+magit-all-commitable-files)
 ;;   ;; (+ediff-next-file "w")
