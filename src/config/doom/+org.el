@@ -79,7 +79,9 @@
          (file-in-directory-p dir org-directory)
          org-directory))
   (after! projectile
-    (add-to-list 'projectile-project-root-files-functions '+org-notes-root)))
+    (add-to-list 'projectile-project-root-files-functions '+org-notes-root))
+
+  (load! "+org-babel"))
 
 
 (after! org-capture
