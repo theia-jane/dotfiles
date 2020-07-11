@@ -31,6 +31,7 @@
  "+tmux"
  ;;lang
  "+c"
+ "+php"
  "+scheme"
  ;; Hacks
  "+hacks"
