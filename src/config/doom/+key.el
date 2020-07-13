@@ -60,6 +60,5 @@
                                        (insert "__hw")
                                        (yas-expand-from-trigger-key))))
   (:prefix ("p" . "Project")
-   :desc "Open config" "c"
-   )
- ))
+   :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
+                                   (magit))))))
