@@ -50,7 +50,7 @@
   (:prefix ("o" . "open")
    :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org"))))
   (:prefix ("f" . "files")
-   :desc "Find in private config" "p" (cmd! (doom-project-find-file personal/config-directory)))
+   :desc "Find in config" "p" (cmd! (doom-project-find-file personal/config-directory)))
   (:prefix ("n" . "new")
     :desc "Homework" "h" (lambda () (interactive)
                                      (let* ((homework-buffer (generate-new-buffer "homework")))
@@ -58,4 +58,8 @@
                                        (cd (expand-file-name "~/homework"))
                                        (org-mode)
                                        (insert "__hw")
-                                       (yas-expand-from-trigger-key))))))
+                                       (yas-expand-from-trigger-key))))
+  (:prefix ("p" . "Project")
+   :desc "Open config" "c"
+   )
+ ))
