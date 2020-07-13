@@ -19,8 +19,9 @@
                      ("spacemacs" . ((user-emacs-directory . ,(concat distro-dir "/spacemacs"))
                                      (env . (("SPACEMACSDIR" . ,(concat config-dir "/spacemacs"))))))
                      ,@(mapcar (lambda (variant)
-                                 `(,variant . ((user-emacs-directory . ,(concat distro-dir "/" variant))
-                                               (env . (("DOOMDIR" . ,(concat config-dir "/" variant)))))))
+                                 (let ((variant (concat "doom-" variant)))
+                                   `(,variant . ((user-emacs-directory . ,(concat distro-dir "/" variant))
+                                                 (env . (("DOOMDIR" . ,(concat config-dir "/" variant))))))))
                                variants))))
     (insert (pp-to-string profiles))
     (write-region (point-min) (point-max) "~/.emacs-profiles.el")))
@@ -28,34 +29,39 @@
 
 * Doom
 :PROPERTIES:
-:header-args: :var variants=doom-variants[,0]
+:header-args+: :var variants=doom-variants[,0]
 :END:
 ** Variants
 My main home in emacs is in doom and I often want to play around with different setups and see how doom+emacs behave in different circumstances. That can make my main doom a little unstable, so I'll carve out separate instances
 
 #+NAME: doom-variants
-| doom            | my daily driver                              |
-| doom-no-modules | no modules (just config)                     |
-| doom-no-config  | no config (just modules)                     |
-| doom-sandbox    | where I play around. Probably for bug repros |
+| default    | my daily driver                              |
+| no-modules | no modules (just config)                     |
+| no-config  | no config (just modules)                     |
+| sandbox    | where I play around. Probably for bug repros |
 
 ** Get it
-#+BEGIN_SRC bash :dir ~/.local/emacs/distros
+#+BEGIN_SRC bash :dir ~/.local/emacs/distros :mkdirp yes
+[ ! -d "/tmp/doom-emacs" ] \
+  && git clone "https://github.com/hlissner/doom-emacs" /tmp/doom-emacs
+
 for VARIANT in "${variants[@]}"; do
     [ ! -d $VARIANT ] \
-        && git clone "https://github.com/hlissner/doom-emacs" $VARIANT
+        && cp -r /tmp/doom-emacs "doom-${VARIANT}"
 done
 
 ls
 #+END_SRC
 
-** Setup configs
-#+BEGIN_SRC bash :dir ~/.local/emacs/configs
+** Sync
+This step takes a while. I should probably try to run these in parallel
+#+BEGIN_SRC bash
 for VARIANT in "${variants[@]}"; do
-    [ ! -d $VARIANT ] \
-        && mkdir $VARIANT
+    doom-profile $VARIANT sync
 done
 #+END_SRC
+
+#+RESULTS:
 
 * Spacemacs
 ** Get it
