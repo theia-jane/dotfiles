@@ -301,6 +301,7 @@ if specified, then:
       body)))
 
 (defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
+(defalias 'org-babel-expand-body:yaml 'org-babel-expand-body:conf)
 #+END_SRC
 * Var Tables
 Defining a bunch of vars can be a pain, so using a table is a great way to minimize that pain. This enables using =:var-table table-ref col1 col2=

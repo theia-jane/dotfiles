@@ -1,0 +1,5 @@
+#!/bin/bash
+# [[file:~/Projects/dotfiles/test.org::*Run test][Run test:1]]
+cd ~/.local/test/config-install
+docker-compose up
+# Run test:1 ends here

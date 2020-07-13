@@ -1,0 +1,68 @@
+#+TITLE: Test
+/Best to test!/
+
+* Config Install
+** Test setup
+:PROPERTIES:
+:header-args: :dir ${HOME}/.local/test/config-install :comments no
+:header-args:yaml: :var root=(shell-command-to-string "git rev-parse --show-toplevel | tr -d '\n'")
+:END:
+*** Image
+I require git as a dependency, so making sure I have it
+#+BEGIN_SRC text :tangle Dockerfile
+FROM silex/emacs:master
+
+RUN apt-get update && \
+    apt-get install -y \
+            git
+#+END_SRC
+
+*** Container
+#+BEGIN_SRC yaml :tangle docker-compose.yml
+version: '3'
+services:
+  server:
+    build: .
+    entrypoint: /root/test.sh
+    volumes:
+      - ${root}:/root/dotfiles
+      - ./test.sh:/root/test.sh
+#+END_SRC
+
+*** Test
+:PROPERTIES:
+:header-args:bash: :tangle test.sh :shebang #!/bin/bash
+:END:
+
+Start by testing the tangle (mostly spot checking)
+#+BEGIN_SRC bash
+cd ${HOME}/dotfiles
+
+ERROR_COUNT=0
+_error() {
+    echo "$1" > /dev/stderr
+    ERROR_COUNT=$((ERROR_COUNT + 1))
+}
+
+echo "Testing config-tangle..."
+./bin/config-tangle > /dev/null
+
+if [ -z "$(ls "${HOME}/bin")" ]; then
+    _error "Failed to tangle any scripts to ~/bin"
+fi
+
+if [ ! -f "${HOME}/.config/git/config" ]; then
+    _error "Failed to tangle ~/.config/git/config"
+fi
+
+if [ "0" = "${ERROR_COUNT}" ]; then
+    echo "Succeeded! No failures."
+else
+    _error "Failed ${ERROR_COUNT} tests"
+fi
+#+END_SRC
+** Run test
+#+BEGIN_SRC bash :tangle bin/config-test :shebang #!/bin/bash
+cd ~/.local/test/config-install
+docker-compose up
+#+END_SRC

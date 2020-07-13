@@ -1,9 +1,2 @@
-emacs/index.el
-/emacs/bootstrap.el
-node_tools/node_modules
 src/config/systemd/user/default.target.wants
-/src/config/doom/+profile.el
-src/home/xmonad/xmonad.errors
-src/home/xmonad/xmonad.hi
-src/home/xmonad/xmonad.o
-src/home/xmonad/xmonad-x86*
+.local

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
-;; [[file:../management-cli.org::*Tangle][Tangle:2]]
+;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:2]]
 (require 'ob-tangle)
 (defun org-babel-expand-body:conf (body params)
   "Expand BODY according to PARAMS, return the expanded body."
@@ -17,6 +17,7 @@
       body)))
 
 (defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
+(defalias 'org-babel-expand-body:yaml 'org-babel-expand-body:conf)
 (defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
   "Add :tangle-relative & :root-dir property to org babel header args.
 
@@ -62,6 +63,8 @@ if specified, then:
 (advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
 (require 'ob-lob)
 (require 'subr-x)
+
+
 
 (defmacro ob-with-lib (library &rest body)
   `(let ((org-babel-library-of-babel ,library))
@@ -208,7 +211,7 @@ if specified, then:
 (advice-add #'org-babel-get-src-block-info :around #'org-babel--var-table)
 ;; Tangle:2 ends here
 
-;; [[file:../management-cli.org::*Tangle][Tangle:3]]
+;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:3]]
 (defvar config-root (with-temp-buffer
                       (shell-command "git rev-parse --show-toplevel" (current-buffer))
                       (replace-string "\n" "")
@@ -224,12 +227,12 @@ if specified, then:
       org-confirm-babel-evaluate nil)
 ;; Tangle:3 ends here
 
-;; [[file:../management-cli.org::*Tangle][Tangle:4]]
+;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:4]]
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
 ;; Tangle:4 ends here
 
-;; [[file:../management-cli.org::*Tangle][Tangle:5]]
+;; [[file:~/Projects/dotfiles/management-cli.org::*Tangle][Tangle:5]]
 (defun config-file-filter (file)
   (string-match
    (rx line-start

@@ -1,0 +1,30 @@
+#+TITLE: Doom
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #/usr/bin/env bash
+:END:
+
+I keep a few different doom profiles at hand. Which means I need to have various doom CLIs I use. The provides a wrap around =doom= for each profile.
+#+BEGIN_SRC bash :tangle doom-profile
+DOOMPROFILE="doom-${1}"
+shift
+
+EMACSDIR="${HOME}/.local/emacs"
+
+export DOOMDIR="$EMACSDIR/configs/${DOOMPROFILE}"
+DOOMCLI="${EMACSDIR}/distros/${DOOMPROFILE}/bin/doom"
+
+if [ -d "$DOOMDIR" -a -f "$DOOMCLI" ]; then
+    $DOOMCLI "$@"
+else
+    echo "Invalid profile (${DOOMPROFILE}).
+Verify that both of these exists:
+    - \"${DOOMDIR}\"
+    - \"${DOOMCLI}\"
+" > 2
+exit 1
+fi
+
+exit 0
+#+END_SRC
