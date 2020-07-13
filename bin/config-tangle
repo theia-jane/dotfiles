@@ -18,6 +18,7 @@
 
 (defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
 (defalias 'org-babel-expand-body:yaml 'org-babel-expand-body:conf)
+(defalias 'org-babel-expand-body:text 'org-babel-expand-body:conf)
 (defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
   "Add :tangle-relative & :root-dir property to org babel header args.
 
