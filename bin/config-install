@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+(require 'org)
+(require 'org-element)
+(require 'ob-core)
+(require 'ob-shell)
+(setq org-confirm-babel-evaluate nil)
+(with-temp-buffer
+  (insert-file-contents (concat
+                         (shell-command-to-string
+                          "git rev-parse --show-toplevel | tr -d '\n'")
+                         "/tools/emacs/install.org"))
+  (org-mode)
+  (org-babel-execute-buffer))

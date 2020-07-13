@@ -1,0 +1,22 @@
+#+TITLE: Install CLI
+#+PROPERTY: header-args :tangle bin/config-install
+
+#+BEGIN_SRC sh :shebang #!/usr/bin/env sh :comments no
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+END_SRC
+
+I'll want to add more =install.org='s, but as a start =emacs/install.org= will do
+#+BEGIN_SRC elisp
+(require 'org)
+(require 'org-element)
+(require 'ob-core)
+(require 'ob-shell)
+(setq org-confirm-babel-evaluate nil)
+(with-temp-buffer
+  (insert-file-contents (concat
+                         (shell-command-to-string
+                          "git rev-parse --show-toplevel | tr -d '\n'")
+                         "/tools/emacs/install.org"))
+  (org-mode)
+  (org-babel-execute-buffer))
+#+END_SRC

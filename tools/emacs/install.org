@@ -69,4 +69,6 @@ ls
 #+BEGIN_SRC bash :dir ~/.local/emacs/configs
 [ ! -d "spacemacs" ] \
     && mkdir "spacemacs"
+
+ls
 #+END_SRC
