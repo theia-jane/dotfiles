@@ -47,7 +47,33 @@
   ;; Note if you have issues w/ rendering might need to check your imagemagick policies
   ;;      /etc/ImageMagick-{6,7}/policy.xml
   ;;      It's possible that one of the policies is set to 'none' for something.
-  (setq org-preview-latex-default-process 'imagemagick)
+  ;; (setq org-preview-latex-default-process 'imagemagick)
+
+  (setq org-preview-latex-default-process 'pdf2svg)
+  (add-to-list
+   'org-preview-latex-process-alist
+   '(pdf2svg :programs
+               ("latex" "pdf2svg" "rsvg-convert")
+               :description "pdf > svg" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "svg" :image-size-adjust
+               (1 . 1)
+               :latex-compiler
+               ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
+               :image-converter
+               ("pdf2svg %f %O-pre"
+                "rsvg-convert -d %D -p %D %O-pre -f svg -o %O"
+                "rm %O-pre"))
+   )
+  (defadvice! +org-svg-preview (fn &rest args)
+    :around 'org-create-formula-image
+    (let ((org-format-latex-header "\\documentclass{standalone}
+\\usepackage[usenames]{color}
+[PACKAGES]
+[DEFAULT-PACKAGES]")
+          (org-preview-latex-default-process 'pdf2svg))
+      (apply fn args)))
+
+
+
 
   ;; A start, but I want to add a lot more rotations!
   ;; - block type
