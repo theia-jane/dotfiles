@@ -1,3 +1,5 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+php.el -*- lexical-binding: t; -*-
 
-(add-hook #'php-mode-hook #'lsp-headerline-breadcrumb-mode)
+
+(after! lsp-mode
+  (add-hook #'php-mode-hook #'lsp-headerline-breadcrumb-mode))

@@ -38,6 +38,10 @@
  )
 
 
+(after! undo-fu
+  (remove-hook 'undo-fu-mode-hook #'global-undo-fu-session-mode))
+
+
 (setq
  find-function-C-source-directory (expand-file-name "~/src/emacs/src"))
 
