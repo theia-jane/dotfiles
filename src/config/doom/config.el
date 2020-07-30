@@ -48,6 +48,8 @@
 (use-package! howdoyou
   :defer-incrementally t)
 
+(remove-hook! '(org-mode-hook) #'flyspell-mode)
+
 (set-irc-server! "chat.freenode.net"
   `(:tls t
     :port 6697
