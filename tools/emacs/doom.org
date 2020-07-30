@@ -46,7 +46,8 @@ exit 0
 :END:
 #+BEGIN_SRC emacs-lisp :tangle init.el
 (doom! :completion
-       company           ; the ultimate code completion backend
+       (company
+        +childframe)     ; the ultimate code completion backend
        ivy               ; a search engine for love and life
 
        :ui

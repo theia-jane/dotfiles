@@ -1,7 +1,10 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+ui.el -*- lexical-binding: t; -*-
 
 ;;; General appearance
-(setq-default line-spacing 7)
+(defun +ui/code--display-hook ()
+  (setq line-spacing 7))
+(add-hook 'prog-mode-hook #'+ui/code--display-hook)
+
 (setq doom-font (font-spec :family "Source Code Pro" :size 30)
       doom-variable-pitch-font (font-spec :family "Source Code Pro" :size 30)
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 30)
@@ -19,7 +22,7 @@
    (org-document-info-keyword :height 1.0)))
 
 
-(defun +ui/non-code--display-hook()
+(defun +ui/non-code--display-hook ()
   (setq display-line-numbers nil
         left-margin-width 5
         right-margin-width 5
