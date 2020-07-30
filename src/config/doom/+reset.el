@@ -9,6 +9,9 @@
       "<C-return>"
       "<C-S-return>")
 
+(put 'erase-buffer 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+
 ;; (undefine-key! global-map
 ;;   "C-s"
 ;;   "C-h"

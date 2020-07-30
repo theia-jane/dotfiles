@@ -67,4 +67,3 @@
 
 ;; Allow local system configuration
 (load!? "~/.local.el")
-(put 'erase-buffer 'disabled nil)
