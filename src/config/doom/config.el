@@ -25,6 +25,7 @@
  "+evil"
  "+elisp"
  "+org"
+ "+notes"
  "+eshell"
  "+magit"
  "+pdf"

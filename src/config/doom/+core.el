@@ -310,3 +310,15 @@ TODO: Add some extra actions to specifiy where to pull the popup at
 (defmacro with-directory (directory &rest body)
   `(let ((default-directory ,directory))
     ,@body))
+
+(defmacro with-contents (contents &rest body)
+  `(with-temp-buffer
+     (insert ,contents)
+     ,@body))
+
+(defun trim-trailing-newline (string)
+  (with-contents string
+                 (goto-char (point-max))
+                 (when (= (char-before) ?\n)
+                   (delete-char -1))
+                 (buffer-string)))
