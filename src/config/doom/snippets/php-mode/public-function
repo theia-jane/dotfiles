@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: public function
+# key: pfn
+# condition: t
+# --
+public function $1(): $2 {
+    $0
+}
