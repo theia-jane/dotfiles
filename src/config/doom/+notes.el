@@ -3,35 +3,7 @@
 (use-package! doct
   :commands (doct))
 
-(after! org
-  (defvar notes/directory (substitute-env-in-file-name "$HOME/notes"))
-  (defvar notes/months-directory (concat notes/directory "/personal/todo"))
-
-  (defun notes/month-label (&optional timestamp)
-    (trim-trailing-newline
-     (shell-command-to-string
-      (concat "date "
-              (and timestamp (format "-d @%s " timestamp))
-              "+%Y-%m"))))
-
-  (defun notes/list-month-notes ()
-    (directory-files notes/months-directory nil (rx (= 4 num) "-" (= 2 num) ".org")))
-
-  (defun notes/month-file (&optional month-label)
-    (format "%s/%s.org"
-            notes/months-directory
-            (or month-label
-                (notes/month-label))))
-
-  (defun notes/month (&optional month-label)
-    (interactive)
-    (find-file (notes/month-file month-label))))
-
-(map! :personal-leader
-      :desc "Monthly notes" "n m" #'notes/month)
-
 (after! org-capture
-
   (setf (alist-get 'height +org-capture-frame-parameters) 15)
   (setq +org-capture-fn
         (lambda ()
@@ -217,3 +189,42 @@ is selected, only the bare key is returned."
                             :type entry
                             :template "* %?")))
                )))
+
+;;; Keymap
+(map! :personal-leader
+      (:prefix ("n" . "new")
+       :desc "Homework" "h" #'+notes/homework
+       :desc "Monthly notes" "m" #'+notes/month))
+
+;;; Functions
+(defun +notes/homework ()
+    (interactive)
+  (let* ((homework-buffer (generate-new-buffer "homework")))
+    (switch-to-buffer homework-buffer)
+    (cd (expand-file-name "~/homework"))
+    (org-mode)
+    (insert "__hw")
+    (yas-expand-from-trigger-key)))
+
+(defvar notes/directory (substitute-env-in-file-name "$HOME/notes"))
+  (defvar notes/months-directory (concat notes/directory "/personal/todo"))
+
+  (defun notes/month-label (&optional timestamp)
+    (trim-trailing-newline
+     (shell-command-to-string
+      (concat "date "
+              (and timestamp (format "-d @%s " timestamp))
+              "+%Y-%m"))))
+
+  (defun notes/list-month-notes ()
+    (directory-files notes/months-directory nil (rx (= 4 num) "-" (= 2 num) ".org")))
+
+  (defun notes/month-file (&optional month-label)
+    (format "%s/%s.org"
+            notes/months-directory
+            (or month-label
+                (notes/month-label))))
+
+  (defun notes/month (&optional month-label)
+    (interactive)
+    (find-file (notes/month-file month-label)))
