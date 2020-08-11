@@ -26,14 +26,6 @@
   :desc "Toggle Highlight" "t h" #'evil-ex-nohighlight
   :desc "Diff file" "g d" #'+magit-review-this-file
   :desc "Messages" "h C-m" #'+open-messages
-  (:prefix ("S" . "snippets")
-   :desc "New snippet" "n" #'yas-new-snippet ;; #'+snippets/new
-   :desc "Edit snippet" "e" #'+snippets/edit
-   :desc "Make alias snippet" "a" #'+snippets/new-alias
-   (:prefix ("f" . "find")
-    :desc "Find" "f" #'+snippets/find-for-current-mode
-    :desc "Find mine" "m" #'+snippets/find-private
-    :desc "Find all" "a" #'+snippets/find))
   (:prefix ("b" . "Buffer")
     :desc "Erase buffer" "e" #'erase-buffer
     :desc "Rename buffer" "R" #'+rename-buffer

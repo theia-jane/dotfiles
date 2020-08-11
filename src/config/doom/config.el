@@ -29,6 +29,7 @@
  "+eshell"
  "+magit"
  "+pdf"
+ "+snippets"
  "+tmux"
  ;;lang
  "+c"
