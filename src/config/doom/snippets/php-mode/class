@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: class
+# key: :cl
+# condition: t         
+# --
+class $1${2: extends $3} {
+    $0
+}

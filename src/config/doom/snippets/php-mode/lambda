@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: lambda
+# key: :lam
+# condition: t
+# --
+function ($1) ${2:use ($3)} {
+$0
+}
