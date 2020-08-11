@@ -25,7 +25,7 @@
  (:leader
   :desc "Toggle Highlight" "t h" #'evil-ex-nohighlight
   :desc "Diff file" "g d" #'+magit-review-this-file
-  :desc "Messages" "h C-m" #'+open-messages
+  :desc "Messages" "h e" #'+open-messages
   (:prefix ("b" . "Buffer")
     :desc "Erase buffer" "e" #'erase-buffer
     :desc "Rename buffer" "R" #'+rename-buffer
