@@ -9,7 +9,7 @@
         org-crypt-key nil))
 
 (after! org
-  (setq org-directory "~/notes"
+  (setq org-directory "~/notes/"
         org-agenda-files `(,(f-join org-directory "projects"))
         org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
         org-refile-targets '((nil :maxlevel . 7)
