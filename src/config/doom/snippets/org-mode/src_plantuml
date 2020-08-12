@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: src_plantuml
+# uuid: src_plantuml
+# key: <puml
+# condition: t
+# --
+#+BEGIN_SRC plantuml
+@startuml
+$0
+@enduml
+#+END_SRC

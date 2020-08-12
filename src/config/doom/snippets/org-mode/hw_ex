@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: hw_ex
+# uuid: hw_ex
+# key: hw.ex
+# condition: t
+# --
+* $1
+** Statement :noexport:
+$0
+** Solution :ignore:

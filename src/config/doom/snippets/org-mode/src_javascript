@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_javascript
+# uuid: src_javascript
+# key: <js
+# condition: t
+# --
+#+BEGIN_SRC javascript
+$0
+#+END_SRC

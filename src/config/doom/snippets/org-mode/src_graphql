@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_graphql
+# uuid: src_graphql
+# key: <gql
+# condition: t
+# --
+#+BEGIN_SRC graphql
+$0
+#+END_SRC

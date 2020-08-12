@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_php
+# uuid: src_php
+# key: <php
+# condition: t
+# --
+#+BEGIN_SRC php
+$0
+#+END_SRC

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_json
+# uuid: src_json
+# key: <json
+# condition: t
+# --
+#+BEGIN_SRC json
+$0
+#+END_SRC

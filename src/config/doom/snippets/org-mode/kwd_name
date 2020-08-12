@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: kwd_name
+# uuid: kwd_name
+# key: +n
+# condition: t
+# --
+#+NAME: $0

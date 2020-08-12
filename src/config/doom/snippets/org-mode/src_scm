@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_scm
+# uuid: src_scm
+# key: <scm
+# condition: t
+# --
+#+BEGIN_SRC scheme :scheme ${1:guile}
+$0
+#+END_SRC

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: drw_attribute
+# uuid: drw_attribute
+# key: :a
+# condition: t
+# --
+:$1: $0

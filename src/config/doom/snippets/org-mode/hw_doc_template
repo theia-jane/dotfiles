@@ -1,5 +1,8 @@
+# -*- mode: snippet -*-
+# name: hw_doc_template
+# uuid: hw_doc_template
 # key: __hw
-# name: homework assignment
+# condition: t
 # --
 #+TITLE: ${1:`(if-let ((file-name (buffer-file-name))) (file-name-base file-name) "Homework")`}
 #+AUTHOR: Tyler Ware

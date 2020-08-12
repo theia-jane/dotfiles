@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: plantuml-src
-# key: puml
-# --
-#+BEGIN_SRC plantuml
-@startuml
-$0
-@enduml
-#+END_SRC

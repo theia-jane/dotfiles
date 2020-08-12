@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: java-src
-# key: java
+# name: src_java
+# uuid: src_java
+# key: <java
 # condition: t
 # --
 #+BEGIN_SRC java :classname $1

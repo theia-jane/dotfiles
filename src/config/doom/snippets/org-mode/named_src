@@ -1,8 +1,9 @@
 # -*- mode: snippet -*-
-# name: #+NAME: ... #+BEGIN_SRC block
+# name: named_src
+# uuid: named_src
 # key: <ns
 # --
 #+NAME: $1
 #+BEGIN_SRC $2
-`%`$0
+$0
 #+END_SRC

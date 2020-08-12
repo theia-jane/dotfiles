@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
-# name: property
+# name: kwd_property
+# uuid: kwd_property
 # key: +p
 # condition: t
 # --

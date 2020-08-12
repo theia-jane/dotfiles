@@ -1,6 +1,0 @@
-# key: \b
-# name: \begin ... \end
-# --
-\begin{${1:align*}}
-    $0
-\end{$1}

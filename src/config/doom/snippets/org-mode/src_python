@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_python
+# uuid: src_python
+# key: <py
+# condition: t
+# --
+#+BEGIN_SRC python
+$0
+#+END_SRC

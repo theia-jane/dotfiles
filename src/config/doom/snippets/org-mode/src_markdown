@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_markdown
+# uuid: src_markdown
+# key: <md
+# condition: t
+# --
+#+BEGIN_SRC markdown
+$0
+#+END_SRC

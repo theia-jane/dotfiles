@@ -1,6 +1,8 @@
 # -*- mode: snippet -*-
-# name: tex-abc
-# key: tex-abc
+# name: tex_abc
+# uuid: tex_abc
+# key: \abc
+# condition: t
 # --
 \begin{enumerate}[label=\alph*)]
     \item $0

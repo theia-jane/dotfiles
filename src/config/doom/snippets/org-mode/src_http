@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_http
+# uuid: src_http
+# key: <http
+# condition: t
+# --
+#+BEGIN_SRC http
+$0
+#+END_SRC

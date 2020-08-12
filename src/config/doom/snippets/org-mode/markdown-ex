@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: markdown-ex
-# key: md
-# --
-#+BEGIN_EXAMPLE markdown
-$0
-#+END_EXAMPLE

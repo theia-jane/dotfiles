@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_yaml
+# uuid: src_yaml
+# key: <yaml
+# condition: t
+# --
+#+BEGIN_SRC yaml
+$0
+#+END_SRC

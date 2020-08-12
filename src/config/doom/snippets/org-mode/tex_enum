@@ -1,6 +1,8 @@
 # -*- mode: snippet -*-
-# name: enumerate
+# name: tex_enum
+# uuid: tex_enum
 # key: \enum
+# condition: t
 # --
 \begin{enumerate}
     \item $0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: drw_property
+# uuid: drw_property
+# key: :p
+# condition: t
+# --
+:PROPERTIES:
+:$1: $0
+:END:

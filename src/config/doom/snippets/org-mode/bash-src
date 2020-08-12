@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: bash-src
-# key: bash
-# condition: t
-# --
-#+BEGIN_SRC bash
-$0
-#+END_SRC

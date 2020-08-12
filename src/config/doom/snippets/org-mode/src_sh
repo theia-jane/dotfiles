@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_sh
+# uuid: src_sh
+# key: <sh
+# condition: t
+# --
+#+BEGIN_SRC ${1:bash}
+$0
+#+END_SRC

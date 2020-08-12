@@ -1,7 +1,0 @@
-# key: hwex
-# name: homework excercise
-# --
-* $1
-** Statement :noexport:
-$0
-** Solution :ignore:
