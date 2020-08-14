@@ -23,15 +23,27 @@
   "M-SPC" #'ivy-mark)
  ;; Leader bindings
  (:leader
-  :desc "Toggle Highlight" "t h" #'evil-ex-nohighlight
-  :desc "Diff file" "g d" #'+magit-review-this-file
-  :desc "Messages" "h e" #'+open-messages
-  (:prefix ("b" . "Buffer")
-    :desc "Erase buffer" "e" #'erase-buffer
-    :desc "Rename buffer" "R" #'+rename-buffer
-    :desc "Clone buffer" "C" #'+clone-buffer)
-  :desc "How do you..." "s h" #'howdoyou-query
-  :desc "Re-Builder" "o b" #'re-builder)
+  :desc "Highlight" "t h" #'evil-ex-nohighlight
+  :desc "Modeline" "t m" #'doom-modeline-mode
+  :desc "Present" "t p" #'(lambda () (interactive)
+                            (let ((not-presenting? (or doom-modeline-mode
+                                                       (not doom-big-font-mode)
+                                                       (not hl-line-mode)
+                                                       global-company-mode)))
+                            (doom-modeline-mode (when not-presenting? -1))
+                            (doom-big-font-mode (unless not-presenting? -1))
+                            (hl-line-mode (unless not-presenting? -1))
+                            (global-company-mode (when not-presenting? -1))))
+  :desc "Org Mode" "t o" #'(lambda () (interactive)
+                             (if (eq major-mode 'org-mode) (fundamental-mode) (org-mode)))
+ :desc "Diff file" "g d" #'+magit-review-this-file
+ :desc "Messages" "h e" #'+open-messages
+ (:prefix ("b" . "Buffer")
+  :desc "Erase buffer" "e" #'erase-buffer
+  :desc "Rename buffer" "R" #'+rename-buffer
+  :desc "Clone buffer" "C" #'+clone-buffer)
+ :desc "How do you..." "s h" #'howdoyou-query
+ :desc "Re-Builder" "o b" #'re-builder)
 
  ;; Global bindings
  (:desc "Jump forward" "C->" 'better-jumper-jump-forward
