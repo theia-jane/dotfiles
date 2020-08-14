@@ -139,6 +139,7 @@
         +pandoc               ; export-with-pandoc support
         +gnuplot
         +babel
+        +pretty
         ;; +jupyter
         ;;+pomodoro           ; be fruitful with the tomato technique
         ;; +roam
