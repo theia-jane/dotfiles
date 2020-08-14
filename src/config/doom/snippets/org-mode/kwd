@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: kwd
+# uuid: kwd
+# key: +k
+# condition: t
+# --
+${1:#+$2: }$0
