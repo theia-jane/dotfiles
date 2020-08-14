@@ -44,3 +44,6 @@
   :execute (lambda (body params)
              (format body))
   :lang "text")
+
+
+(require 'ob-async)
