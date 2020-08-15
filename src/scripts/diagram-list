@@ -1,6 +1,0 @@
-#!/bin/bash
-
-extension="${1:-puml}"
-
-cd "$notes/diagrams" \
-   && fd -e "$extension"
