@@ -29,6 +29,7 @@
  "+eshell"
  "+magit"
  "+pdf"
+ "+filtering"
  "+snippets"
  "+tmux"
  ;;lang

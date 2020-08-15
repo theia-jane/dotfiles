@@ -23,6 +23,8 @@
   :recipe (:host github :repo "tylerware/ob-graphql"))
 
 (package! doct)
+;; narrowing dired buffers
+(package! dired-narrow)
 (package! hl-line :disable t)
 (package! saveplace :disable t)
 (package! solaire-mode :disable t)
