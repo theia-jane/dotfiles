@@ -1,8 +1,0 @@
-#!/bin/bash
-
-echo "Stopping emacs daemon..." >> /tmp/emacsd.log
-
-(emacsdclient -e "(kill-emacs)"; \
-  pkill ^emacs$) >> /tmp/emacsd.log 2>&1
-
-# vim: ft=sh

@@ -1,0 +1,187 @@
+#+TITLE: General
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :dir ${HOME}/bin :shebang #!/bin/bash
+:END:
+
+** Daemon
+#+BEGIN_SRC bash :tangle emacsd.start
+echo "Starting emacs daemon..." >> /tmp/emacsd.log
+emacs --daemon >> /tmp/emacsd.log 2>&1 &
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsd.stop
+echo "Stopping emacs daemon..." >> /tmp/emacsd.log
+
+(emacsdclient -e "(kill-emacs)"; \
+  pkill ^emacs$) >> /tmp/emacsd.log 2>&1
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsd.restart
+emacsd.stop
+emacsd.start
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsdclient
+# Wait a max of 100s
+sleep_length="0.1s"
+max_tries=1000
+
+# If there is no daemon.. let's try to get it started and then launch the client
+if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
+  emacsd.start
+fi
+
+succeeded_in_launching=false
+for try_n in $(seq $max_tries); do
+  if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
+    sleep $sleep_length
+    continue
+  fi
+
+  (emacsclient "$@" > /dev/null) && succeeded_in_launching=true
+  break
+done
+
+if ! $succeeded_in_launching; then
+  echo 'Error: emacs daemon had an issue starting up.' 1>&2
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsdclient-bg
+run.background --no-log emacsdclient "$@"
+#+END_SRC
+** Lauch
+#+BEGIN_SRC bash :tangle i3.dd.emacs
+# Toggle floating emacs frame in i3, or start if non-existing.
+
+name='Dropdown: Emacs'
+if [ ! -z "$@" ]; then
+  name="${name} ($(echo "$@" | md5sum | cut -f1 -d' '))"
+fi
+
+if xwininfo -tree -root | grep "\"${name}\": (";
+then
+	echo "Window detected."
+	i3-msg "[title=\"^${name}\"] scratchpad show"
+else
+	echo "Window not detected... spawning."
+  emacsdclient -c -F '((width . 120) (height . 40) (name . "'"$name"'"))' "$@"
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle dired
+DIR="${1:-$(pwd)}"
+emacsdclient-bg -ce \
+"
+(progn
+ (dired \"$DIR\"))
+"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle magit :shebang #!/usr/bin/env emacs-frame-eval
+# -*- mode: emacs-lisp -*-
+(magit)
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.f :shebang #!/usr/bin/env emacs-frame-eval
+# -*- mode: emacs-lisp -*-
+(counsel-find-file)
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.emacs
+files_to_edit="$@"
+if [ -z "$files_to_edit" ]; then
+  files_to_edit="."
+fi
+
+dir=""
+lisp=""
+for file_name in $files_to_edit; do
+  # Resolve file name (expand env vars and deal with tilda)
+  file_name="$(expand-vars "$file_name")"
+  file_name="$(resolve.home "$file_name")"
+
+  if [ -d "$file_name" ]; then
+    dir="$file_name"
+    lisp="
+(if (projectile-project-p)
+  (+ivy/projectile-find-file)
+  (counsel-find-file))) "
+    break;
+  fi
+
+  lisp+='(find-file "'$file_name'")'
+done
+
+lisp="(progn ${lisp})"
+
+if [ ! -z "$dir" ]; then
+  cd "$dir"
+fi
+emacsdclient-bg -c -e "$lisp"
+#+END_SRC
+** Eval
+#+BEGIN_SRC bash :tangle emacs-eval
+EXTRA_PARAMS=""
+while true; do
+  case "$1" in
+    -c)
+      EXTRA_PARAMS="$1 "
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+SCRIPT_NAME="$1"
+shift
+ARGS=("${@/#/\"}")
+ARGS=("${ARGS[@]/%/\"}")
+
+emacsdclient-bg $EXTRA_PARAMS -e "
+(let ((argv '(${ARGS[@]})))
+  $(script-contents "$SCRIPT_NAME")
+)"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacs-frame-eval
+emacs-eval -c "$@"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle el
+ELISP="$@"
+EXTRA_PARAMS=""
+NO_FRAME="false"
+CALL_INTERACTIVELY="false"
+while true; do
+  case "$1" in
+    -nf|--no-frame)
+      NO_FRAME="true"
+      shift 1
+      ;;
+    -mx)
+      CALL_INTERACTIVELY="true"
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [ "${CALL_INTERACTIVELY}" = "true" ]; then
+  ELISP="(funcall-interactively #'${1})"
+fi
+
+
+if [ "${NO_FRAME}" = "false" ]; then
+  EXTRA_PARAMS+="-c "
+fi
+
+emacsdclient-bg $EXTRA_PARAMS -e "${ELISP}"
+#+END_SRC

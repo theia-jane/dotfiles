@@ -1,6 +1,0 @@
-#!/bin/bash
-
-echo "Starting emacs daemon..." >> /tmp/emacsd.log
-emacs --daemon >> /tmp/emacsd.log 2>&1 &
-
-# vim: ft=sh
