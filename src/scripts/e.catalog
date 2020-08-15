@@ -1,8 +1,0 @@
-#!/bin/bash
-
-SELECTED_CATALOG=$(catalog-select)
-
-if [ ! -z "${SELECTED_CATALOG}" ]; then
-  e.emacs "${SELECTED_CATALOG}"
-fi
-
