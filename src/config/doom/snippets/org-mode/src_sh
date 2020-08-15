@@ -4,6 +4,6 @@
 # key: <sh
 # condition: t
 # --
-#+BEGIN_SRC ${1:bash}
+#+BEGIN_SRC ${1:bash} ${2::tangle $3}
 $0
 #+END_SRC
