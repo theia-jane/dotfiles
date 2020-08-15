@@ -4,4 +4,4 @@
 # key: +p
 # condition: t
 # --
-#+PROPERTY: $0
+#+PROPERTY: ${1:header-args} $0

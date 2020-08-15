@@ -4,4 +4,4 @@
 # key: +s
 # condition: t
 # --
-#+STARTUP: $0
+#+STARTUP: ${1:overview }$0
