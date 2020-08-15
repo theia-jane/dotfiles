@@ -11,9 +11,6 @@
 (package! command-log-mode)
 (package! ob-sagemath)
 
-;; A curiosity
-(package! howdoyou)
-
 ;; Package I made.. not sure if it's worth anything
 (package! rextract
   :recipe (:host github :repo "tylerware/rextract.el"))
@@ -22,6 +19,7 @@
 (package! ob-graphql
   :recipe (:host github :repo "tylerware/ob-graphql"))
 
+;; declarative org capture templates
 (package! doct)
 ;; narrowing dired buffers
 (package! dired-narrow)
