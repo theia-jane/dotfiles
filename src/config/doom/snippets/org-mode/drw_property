@@ -5,5 +5,5 @@
 # condition: t
 # --
 :PROPERTIES:
-:$1: $0
+:${1:header-args$2}: $0
 :END:
