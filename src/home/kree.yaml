@@ -35,21 +35,7 @@ global:
 
     i: # Insert
       i: gui-paste
-      Shift+c: gui-paste-command catalog-get-listing-value
       g: gui-paste-command guid
-      r: # Random
-        n: # Number
-          # TODO: kree can't handle numbers alone as mappings... hacking around this limitation by 'casting' to a string
-          "1": gui-paste-command random-number 9
-          "2": gui-paste-command random-number 99
-          "3": gui-paste-command random-number 999
-          "4": gui-paste-command random-number 9999
-          "5": gui-paste-command random-number 99999
-          "6": gui-paste-command random-number 999999
-          "7": gui-paste-command random-number 9999999
-          "8": gui-paste-command random-number 99999999
-          "9": gui-paste-command random-number 999999999
-          "0": gui-paste-command random-number 9999999999
 
     n: # Notes
       n: org-capture
@@ -57,38 +43,22 @@ global:
       Shift+f: e.emacs ~/notes/fruit-basket.org
       d: e.emacs ~/notes/personal/dotfiles.org
 
-    Shift+n:
-      c:
-        s: new-script-from-clipboard bash
-
-    r: # Run
-      s: run.s
-      b: run.b
-      x: run.x
-
     c: # Capture
       o: org-capture
       k: capture-org ~/notes/ideas/kree.org
       w: capture-org ~/notes/ideas/workflow.org
       b: capture-org ~/notes/read-lists/blog-posts.org
       Shift+b: capture-org ~/notes/read-lists/books.org
-      c: capture-catalog-entry
       s: screenshot
 
     e: # Edit
       # TODO: Need to add a generic 'clipboard editting script'
       c: clipboard-transform e.stdin
-      # Shift+c:
-      #   # Using my hacked version of gimp
-      #   g: clipboard.edit.image
-      #   t: e.clipboard
-      Shift+c: e.catalog
       d: e.emacs $dot
       s: i3.dd e.script
       k: e.emacs $dot/src/home/kree.yaml
       n: 
         s: new.script
-        Shift+c: new.catalog
     # Dropdown / quick actions
     d:
       Enter: tmux.scratch
@@ -119,7 +89,6 @@ global:
         g: gui-transform-selection git-transform-repo-to-ssh
     Ctrl+c:
       t:
-        j: clipboard-transform format-json
         g: clipboard-transform git-transform-repo-to-ssh
 
   Cmd+z: i3-msg fullscreen toggle
