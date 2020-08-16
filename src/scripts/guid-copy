@@ -1,9 +1,0 @@
-#!/bin/bash
-
-
-VALUE="$(guid)"
-if [ ! -z "${VALUE}" ]; then
-    echo "${VALUE}" | c
-fi
-
-# vim: ft=sh

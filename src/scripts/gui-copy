@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [ "$OS" = "linux" ]; then
-  xdotool key ctrl+c
-fi
-
-# vim: ft=sh
