@@ -1,5 +1,66 @@
-#!/sbin/env bash
+#+TITLE: i3
 
+* Scripts
+:PROPERTIES:
+:header-args:bash: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle i3.dd
+# Toggle floating dropdown terminal in i3, or start if non-existing.
+# $1 is	the script run in the terminal.
+# All other args are terminal settings.
+# Terminal names are in dropdown_* to allow easily setting i3 settings.
+
+[ -z "$1" ] && exit
+
+USE_FULL=false
+while true; do
+  case "$1" in
+    --use-full)
+      USE_FULL=true
+      shift
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+NAME="$1"
+if $USE_FULL; then
+  NAME=$(echo "$@" | sed 's/\s/_/g')
+fi
+NAME="dropdown_${NAME}"
+
+XWIN_MATCH="$(xwininfo -tree -root | fgrep "(\"${NAME}\"" | awk '{print $1}' | head -1)"
+
+if [ ! -z "$XWIN_MATCH" ]; then
+	echo "Window detected."
+  i3-msg "[instance=\"$NAME\"] scratchpad show" \
+    || x-kill-by-win-id "${XWIN_MATCH}"
+else
+	echo "Window not detected... spawning."
+	tilix --new-process --name "${NAME}" -e "$@"
+fi
+
+# vim: ft=sh
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle i3.ipc :shebang #/usr/bin/env python3
+i3 = i3ipc.Connection()
+
+def border_float_change(i3, e):
+    c = e.container
+    # c.command('border none')
+
+i3.on('window::floating', border_float_change)
+
+i3.main()
+
+# vim: ft=python
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle i3-get-window-criteria
 # i3-get-window-criteria - Get criteria for use with i3 config commands
 
 # To use, run this script, then click on a window.
@@ -38,3 +99,4 @@ match_qstring='"[^"\\]*(\\.[^"\\]*)*"' # NOTE: Adds 1 backreference
             -e "/^_NET_WM_NAME\(UTF8_STRING\) = ($match_qstring)$/{s//title=\1/; h}" \
             -e '${g; p}'
 } | sort | tr "\n" " " | sed -r 's/^(.*) $/[\1]\n/'
+#+END_SRC
