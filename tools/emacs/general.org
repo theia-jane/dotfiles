@@ -101,8 +101,7 @@ dir=""
 lisp=""
 for file_name in $files_to_edit; do
   # Resolve file name (expand env vars and deal with tilda)
-  file_name="$(expand-vars "$file_name")"
-  file_name="$(resolve.home "$file_name")"
+  file_name="$(expand-file-name "$file_name")"
 
   if [ -d "$file_name" ]; then
     dir="$file_name"

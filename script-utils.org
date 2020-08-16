@@ -1,0 +1,82 @@
+#+TITLE: Utils
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+
+#+BEGIN_SRC bash :tangle bash-ui-eval
+
+IS_DROPDOWN=false
+
+while true; do
+  case "$1" in
+    --is-dropdown)
+      IS_DROPDOWN=true
+      shift
+      ;;
+      ,*)
+      break
+      ;;
+  esac
+done
+
+if [ "$(test.in_terminal)" = "true" ]; then
+  COMMAND="bash"
+elif $IS_DROPDOWN; then
+  COMMAND="i3.dd"
+else
+  COMMAND="gui-terminal-eval"
+fi
+
+$COMMAND $@
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle bash-ui-exec
+IS_DROPDOWN=false
+
+while true; do
+  case "$1" in
+    --is-dropdown)
+      IS_DROPDOWN=true
+      shift
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [ "$(test.in_terminal)" = "true" ]; then
+  COMMAND=""
+elif $IS_DROPDOWN; then
+  COMMAND="i3.dd"
+else
+  COMMAND="gui-terminal-eval"
+fi
+
+$COMMAND $@
+
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle script-contents
+cat "$1" | grep -v '^#!'
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle expand-file-name
+resolve-home "$(expand-vars "$1")"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle expand-vars :shebang #!/usr/bin/env python3
+import os
+import sys
+print(os.path.expandvars(sys.argv[1]))
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle resolve-home
+echo -n "$1" \
+  | sed "s%^~/%${HOME}/%"
+#+END_SRC
+

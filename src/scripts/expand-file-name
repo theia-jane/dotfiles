@@ -1,3 +1,0 @@
-#!/bin/bash
-
-resolve.home "$(expand-vars "$1")"
