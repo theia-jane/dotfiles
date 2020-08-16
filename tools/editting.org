@@ -1,0 +1,66 @@
+#+TITLE: Editting
+
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle e :shebang #!/usr/bin/env bash-ui-eval
+# -*- mode: sh -*-
+non_blocking=true
+while true; do
+  case "$1" in
+    -w|--wait)
+      non_blocking=false
+      shift
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [[ "$1" == "-" ]]; then
+  command="e.stdin"
+else
+  command="${EDITOR:-vim} $@"
+fi
+
+if $non_blocking; then
+  d "${command}" < /dev/stdin
+else
+  $command
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.stdin
+OUTPUT_FORMAT="cat"
+while true; do
+  case "$1" in
+    --file-type | -T)
+      FILE_TYPE=".$2"
+      shift 2
+      ;;
+    --output | -o)
+      OUTPUT_FORMAT="$2"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+
+TMP=$(mktemp --suffix="$FILE_TYPE");
+echo -En "$(< /dev/stdin)" > $TMP
+
+e -w $TMP > /dev/tty
+
+if [ $OUTPUT_FORMAT = "filename" ]; then
+  echo $TMP
+else
+  cat $TMP
+  rm -rf $TMP
+fi
+#+END_SRC
