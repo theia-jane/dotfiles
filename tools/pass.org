@@ -1,5 +1,11 @@
-#!/usr/bin/env bash
+#+TITLE: Pass
 
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle pass-menu
 shopt -s nullglob globstar
 
 typeit=0
@@ -23,6 +29,4 @@ else
 	pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } |
 		xdotool type --clearmodifiers --file -
 fi
-
-
-# vim: ft=sh
+#+END_SRC
