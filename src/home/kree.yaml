@@ -1,40 +1,12 @@
 global:
   Super+x: rofi -show run -modi run
-  # Super+e: i3.dd.emacs
-  # Super+c: i3.dd calc
-  # Super+q: i3-msg kill
-  Super+Enter: tmux.scratch
-  # TODO: why doesn't this work? :
-  # Super+Tab: i3-msg "workspace back_and_forth"
+  Super+Enter: tmux-scratch
   Super+Space:
     Space: rofi -show run -modi run
     Enter: tilix
 
-    # dashboard
-    Super+d: i3.dd watch date
-
-    a: # Applications
-      e: emacsdclient -c
-      h: tilix -e htop
-      f: firefox.light
-      c: chromium
-      p: pass-menu
-      Shift+p: phpstorm
-      t: tilix
-      i: inkscape
-      z: zeal
-      g: tilix -e gotop
-
     o: # Open
       shift+p: +open pdf
-      b: o.books
-      l: firefox http://lfs
-      h: e.emacs ~/homework
-      s: o.screenshot
-
-    i: # Insert
-      i: gui-paste
-      g: gui-paste-command guid
 
     n: # Notes
       n: org-capture
@@ -45,85 +17,9 @@ global:
       o: org-capture
       s: screenshot
 
-    e: # Edit
-      # TODO: Need to add a generic 'clipboard editting script'
-      c: clipboard-transform e.stdin
-      d: e.emacs $dot
-      s: i3.dd e.script
-      k: e.emacs $dot/src/home/kree.yaml
-      n: 
-        s: new.script
-    # Dropdown / quick actions
-    d:
-      Enter: tmux.scratch
-      r: rofi.i3.repl
-    # Screenshot
-    # Window
-    w:
-      r: i3-msg mode "resize"
-      h: i3-msg focus left
-      j: i3-msg focus down 
-      k: i3-msg focus up 
-      l: i3-msg focus right
-      c: i3-msg move position center
-      t: xdotool getactivewindow windowmove x 0
-      Shift+h: i3-msg move left
-      Shift+j: i3-msg move down 
-      Shift+k: i3-msg move up 
-      Shift+l: i3-msg move right
-      w: i3-msg kill
-      f: i3-msg fullscreen toggle
-      # Split
-      s: 
-        h: i3-msg split h
-        v: i3-msg split v
-    s:
-      t:
-        j: gui-transform-selection format-json
-        g: gui-transform-selection git-transform-repo-to-ssh
-    Ctrl+c:
-      t:
-        g: clipboard-transform git-transform-repo-to-ssh
-
-  Cmd+z: i3-msg fullscreen toggle
-  # layout
-  # Cmd+Shift+l:
-  #   t: i3-msg layout tabbed
-  #   s: i3-msg layout toggle split
-  #   Shift+s: i3-msg layout stacking
-  # Safety... kill kree if it's broken
   Cmd+Shift+q:
     Cmd+Shift+q: 
       Cmd+Shift+q: pkill kree
   Cmd+Shift+d:
     k: kree.restart
     e: emacsd.restart
-    i: i3-msg restart
-    m: xmonad --restart
-
-  # Cmd+Ctrl+h: i3-msg focus left
-  # Cmd+Ctrl+j: i3-msg focus down
-  # Cmd+Ctrl+k: i3-msg focus up
-  # Cmd+Ctrl+l: i3-msg focus right
-
-  # Cmd+Ctrl+Shift+h: i3-msg move left 30px
-  # Cmd+Ctrl+Shift+j: i3-msg move down 30px
-  # Cmd+Ctrl+Shift+k: i3-msg move up 30px
-  # Cmd+Ctrl+Shift+l: i3-msg move right 30px
-
-  # Cmd+s: i3-msg "resize shrink width 20 px or 20 ppt; resize shrink height 20 px or 20 ppt"
-  # Cmd+Alt+s: i3-msg resize shrink width 20 px or 20 ppt
-  # Cmd+Shift+s: i3-msg resize shrink height 20 px or 20 ppt
-
-  # Cmd+g: i3-msg "resize grow width 20 px or 20 ppt; resize grow height 20px or 20 ppt"
-  # Cmd+Alt+g: i3-msg resize grow width 20 px or 20 ppt
-  # Cmd+Shift+g: i3-msg resize grow height 20 px or 20 ppt
-
-## NOTES:
-#  1. Add transient 'modes' basically modes that allow for a keymap to be sticky
-#  2. Add prefix keys (something that will modify the following keys behavior)
-
-conditional:
-  - trigger: { class: 'firefox' }
-    map:
-      Alt+x: firefox https://ddg.gg
