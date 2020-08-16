@@ -1,3 +1,12 @@
+#+TITLE: PHPStorm
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Scripts
+:PROPERTIES:
+:header-args: :dir ${HOME}
+:END:
+
+#+BEGIN_SRC conf :tangle .ideavimrc
 set surround
 
 nnoremap ]c :action VcsShowNextChangeMarker<CR>
@@ -6,7 +15,7 @@ nnoremap [c :action VcsShowPrevChangeMarker<CR>
 nnoremap ]<Space> mqo<C-c>`q
 nnoremap [<Space> mqO<C-c>`q
 
-nnoremap ]e :action MoveLineDown<CR> 
+nnoremap ]e :action MoveLineDown<CR>
 nnoremap [e :action MoveLineUp<CR>
 
 nnoremap <space><space> :action GotoAction<CR>
@@ -25,5 +34,4 @@ vnoremap <space>rr :action Tool_External Tools_ReRun PHP Last Test<CR>
 vnoremap <space>oe :action Tool_External Tools_Open In Emacs<CR>
 vnoremap <space>ov :action Tool_External Tools_Open in nvim<CR>
 vnoremap <space>ud :action Tool_External Tools_Update dev<CR>
-
-
+#+END_SRC
