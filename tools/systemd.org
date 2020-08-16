@@ -1,0 +1,9 @@
+#+TITLE: SystemD
+
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+#+BEGIN_SRC bash :tangle userctl
+systemctl --user $@
+#+END_SRC
