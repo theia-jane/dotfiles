@@ -1,11 +1,16 @@
-#!/bin/bash
+#+TITLE: Processes
 
-should_log=true
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+#+BEGIN_SRC bash :tangle d
+should_log=false
 while true; do
   case "$1" in
-    --no-log)
-      should_log=false
-      shift 1 
+    --log|-l)
+      should_log=true
+      shift 1
       ;;
     "")
       shift 1
@@ -31,5 +36,4 @@ fi
 echo "Starting ${EXEC_NAME}..." >> "$LOG_FILE"
 
 nohup "${@}" < /dev/stdin >> $LOG_FILE 2>&1 &
-
-# vim: ft=sh
+#+END_SRC
