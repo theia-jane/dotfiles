@@ -21,7 +21,7 @@ else
 fi
 
 if $non_blocking; then
-    command="d ${command} < /dev/stdin"
+  d "${command}" < /dev/stdin
+else
+  $command
 fi
-
-$command
