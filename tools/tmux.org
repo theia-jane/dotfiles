@@ -1,5 +1,15 @@
-#!/bin/bash
+#+TITLE: tmux
 
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle tmux-scratch
+bash-ui-exec --is-dropdown tmux new -s scratch -A
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle ssh-tmux
 COLOR=""
 SESSION_NAME='$(whoami)'
 TMUX_COMMAND=""
@@ -38,3 +48,4 @@ done
         tmux new -s "$tmux_session_name" '"${COLOR}"' '"${TMUX_COMMAND}"'
     fi
 )'
+#+END_SRC

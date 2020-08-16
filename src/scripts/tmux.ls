@@ -1,3 +1,0 @@
-#!/bin/bash
-
-tmux list-sessions $@
