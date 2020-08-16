@@ -27,5 +27,7 @@
 (package! saveplace :disable t)
 (package! solaire-mode :disable t)
 
+(package! vimrc-mode)
+
 (unpin! ivy)
 (unpin! swiper)
