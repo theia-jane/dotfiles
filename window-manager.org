@@ -1,0 +1,23 @@
+#+TITLE: Window Manager
+
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+#+BEGIN_SRC bash :tangle wm-set-background
+image="${1:-"${HOME}/.wallpaper"}"
+d -l feh --bg-scale "$image"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle init-post-wm
+d -l nextcloud --background
+d -l mail-sync
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle init-pre-wm
+wm-set-background
+d kree.start
+d emacsd.start
+d -l deadd-notification-center
+d udiskie
+#+END_SRC

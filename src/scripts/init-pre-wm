@@ -1,9 +1,0 @@
-#!/bin/bash
-wm-set-background
-# key-init
-kree.start &
-emacsd.start &
-run.background deadd-notification-center &
-udiskie &
-
-# vim: ft=sh
