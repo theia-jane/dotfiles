@@ -1,6 +1,0 @@
-#!/bin/bash
-
-echo "Stopping kree..." >> /tmp/kree.log
-pkill "^kree$" >> /tmp/kree.log 2>&1
-
-# vim: ft=sh

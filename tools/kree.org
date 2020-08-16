@@ -1,0 +1,33 @@
+#+TITLE: Kree
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle kree.start
+OPTIONS=""
+
+if [ ! -z "${KREE_CONFIGS}" ]; then
+  OPTIONS+=" --config ${KREE_CONFIGS}"
+fi
+
+echo "Starting kree..." >> /tmp/kree.log
+
+# Set TERM to nothing.
+# If I start kree from a terminal then TERM is set.
+# I'm using TERM in test.in_terminal, which is used for ui choices.. (rofi vs fzf, run program in terminal or in tilix)
+TERM="" kree ${OPTIONS} >> /tmp/kree.log 2>&1 &
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle kree.stop
+echo "Stopping kree..." >> /tmp/kree.log
+pkill "^kree$" >> /tmp/kree.log 2>&1
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle kree.restart
+kree.stop
+kree.start
+#+END_SRC
+
