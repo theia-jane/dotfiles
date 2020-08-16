@@ -31,3 +31,27 @@ kree.stop
 kree.start
 #+END_SRC
 
+
+* Keymap
+:PROPERTIES:
+:header-args:yaml: :dir ${HOME} :tangle .kree.yaml
+:END:
+
+#+BEGIN_SRC yaml
+global:
+  Super+x: rofi -show run -modi run
+  Super+Enter: tmux-scratch
+  Super+Space:
+    Enter: tilix
+    n:
+      n: org-capture
+    c:
+      o: org-capture
+      s: screenshot
+  Cmd+Shift+q:
+    Cmd+Shift+q:
+      Cmd+Shift+q: pkill kree
+  Cmd+Shift+d:
+    k: kree.restart
+    e: emacsd.restart
+#+END_SRC
