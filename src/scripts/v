@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [ "$OS" = "linux" ]; then
-	xsel -o -b $@
-elif [ "$OS" = "darwin" ]; then
-	pbcopy
-fi

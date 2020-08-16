@@ -1,0 +1,30 @@
+#+TITLE: Clipboard
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Scripts
+:PROPERTIES:
+:header-args: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+#+BEGIN_SRC bash :tangle c :shebang #!/usr/bin/env -S param-or-pipe-eval --prefix-command ifne
+if [ "$OS" = "linux" ]; then
+  tee >(xsel -i -b $@)
+elif [ "$OS" = "darwin" ]; then
+	pbpaste
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.clipboard :shebang !/usr/bin/env bash-ui-eval
+v | e.stdin | c
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle clipboard-transform
+v | $@ | c
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle v
+if [ "$OS" = "linux" ]; then
+    xsel -o -b $@
+elif [ "$OS" = "darwin" ]; then
+    pbcopy
+fi
+#+END_SRC

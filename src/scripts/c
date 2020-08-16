@@ -1,7 +1,0 @@
-#!/usr/bin/env -S param-or-pipe-eval --prefix-command ifne
-
-if [ "$OS" = "linux" ]; then
-  tee >(xsel -i -b $@)
-elif [ "$OS" = "darwin" ]; then
-	pbpaste
-fi
