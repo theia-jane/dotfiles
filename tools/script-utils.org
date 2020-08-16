@@ -3,12 +3,10 @@
 
 * Scripts
 :PROPERTIES:
-:header-args:bash: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:header-args+: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
 
-
 #+BEGIN_SRC bash :tangle bash-ui-eval
-
 IS_DROPDOWN=false
 
 while true; do

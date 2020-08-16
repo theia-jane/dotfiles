@@ -1,9 +1,28 @@
 #+TITLE: SystemD
+#+PROPERTY: header-args :tangle-relative 'dir
+
 
 * Scripts
 :PROPERTIES:
-:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:header-args: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
 #+BEGIN_SRC bash :tangle userctl
 systemctl --user $@
+#+END_SRC
+* Services
+:PROPERTIES:
+:header-args: :dir ${HOME}/.config/systemd
+:END:
+
+#+BEGIN_SRC conf :tangle user/ssh-agent.service
+[Unit]
+Description=SSH key agent
+
+[Service]
+Type=simple
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
+
+[Install]
+WantedBy=default.target
 #+END_SRC

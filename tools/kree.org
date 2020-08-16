@@ -34,7 +34,7 @@ kree.start
 
 * Keymap
 :PROPERTIES:
-:header-args:yaml: :dir ${HOME} :tangle .kree.yaml
+:header-args:yaml: :dir ${HOME} :tangle .kree.yaml :comments no
 :END:
 
 #+BEGIN_SRC yaml
