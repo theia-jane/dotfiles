@@ -1,9 +1,0 @@
-#!/bin/bash
-
-while true; do
-    mbsync -Va
-    mu index --maildir=~/.mail/
-    sleep "$((5 * 60))"
-done
-
-# vim: ft=sh

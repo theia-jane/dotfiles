@@ -1,0 +1,14 @@
+#+TITLE: Mail
+
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle mail-sync
+while true; do
+    mbsync -Va
+    mu index --maildir=~/.mail/
+    sleep "$((5 * 60))"
+done
+#+END_SRC
