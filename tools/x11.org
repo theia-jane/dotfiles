@@ -1,0 +1,18 @@
+#+TITLE: X11
+
+* Scripts
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle x-kill-by-win-id
+if [ -z "$1" ]; then
+   echo "Must specify a window id."
+   exit 1
+fi
+
+window_pid=$(xprop -id "${1}" | grep _NET_WM_PID | awk '{print $(NF)}')
+kill "$window_pid"
+
+exit 0
+#+END_SRC
