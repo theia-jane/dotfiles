@@ -1,5 +1,0 @@
-#!/bin/bash
-
-uuidgen | tr -d '\n'
-
-# vim: ft=sh

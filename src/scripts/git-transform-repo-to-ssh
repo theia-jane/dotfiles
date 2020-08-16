@@ -1,6 +1,0 @@
-#!/usr/bin/env param-or-pipe-eval
-
-sed -e 's%https://%git@%' \
-    -e 's%/%:%'
-
-# vim: ft=sh

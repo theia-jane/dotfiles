@@ -1,5 +1,0 @@
-#!/bin/bash
-
-env GTK_THEME=Adwaita:light firefox
-
-# vim: ft=sh

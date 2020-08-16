@@ -1,3 +1,0 @@
-#!/bin/bash
-
-cd $notes && fd -t f -e org -e org.gpg
