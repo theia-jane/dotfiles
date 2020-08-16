@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_conf
+# uuid: src_conf
+# key: <conf
+# condition: t 
+# --
+#+BEGIN_SRC conf
+$0
+#+END_SRC
