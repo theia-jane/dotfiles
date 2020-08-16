@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo -e "tabbed\nstacking\nsplit\ndefault" \
-  | rofi -dmenu -p "Layout:" \
-  | xargs -I{} -r i3-msg layout {}
-
-# vim: ft=sh

@@ -28,7 +28,6 @@ global:
     o: # Open
       shift+p: +open pdf
       b: o.books
-      p: e.project
       l: firefox http://lfs
       h: e.emacs ~/homework
       s: o.screenshot
@@ -39,7 +38,6 @@ global:
 
     n: # Notes
       n: org-capture
-      f: e.notef
       Shift+f: e.emacs ~/notes/fruit-basket.org
       d: e.emacs ~/notes/personal/dotfiles.org
 

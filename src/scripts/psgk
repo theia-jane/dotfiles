@@ -1,6 +1,0 @@
-#!/bin/bash
-
-psg "${1}" \
-  | $(fuzzy-ui-provider -m) \
-  | awk '{print $2}' \
-  | xargs -r kill  

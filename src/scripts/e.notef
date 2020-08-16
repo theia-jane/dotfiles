@@ -1,9 +1,0 @@
-#!/bin/bash
-
-file="${notes}/$(sel note-list)"
-if [ -z "$file" ]; then
-  echo "No file found"
-  exit 1
-fi
-
-e.emacs "${file}"

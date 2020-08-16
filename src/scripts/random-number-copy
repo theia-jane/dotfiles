@@ -1,8 +1,0 @@
-#!/bin/bash
-
-VALUE="$(random-number $@)"
-if [ ! -z "${VALUE}" ]; then
-    echo "${VALUE}" | c
-fi
-
-# vim: ft=sh

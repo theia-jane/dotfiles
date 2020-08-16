@@ -1,7 +1,0 @@
-#!/bin/bash
-
-MAX="${1:-10}"
-
-shuf -i "1-${MAX}" -n 1
-
-# vim: ft=sh

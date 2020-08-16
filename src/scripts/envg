@@ -1,5 +1,0 @@
-#!/bin/bash
-
-printenv | grep "$1"
-
-# vim: ft=sh

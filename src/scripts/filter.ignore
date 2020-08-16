@@ -1,3 +1,0 @@
-#!/bin/bash
-
-grep -Ev '\/{0,1}(\.git|node_modules|\.idea)\/{0,1}'

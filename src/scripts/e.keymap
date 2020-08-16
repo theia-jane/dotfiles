@@ -1,5 +1,0 @@
-#!/bin/bash
-
-e.emacs ~/.kree.yaml
-
-# vim: ft=sh

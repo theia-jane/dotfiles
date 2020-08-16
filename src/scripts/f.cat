@@ -1,3 +1,0 @@
-#!/bin/bash
-
-fzf -m --preview 'cat {}'
