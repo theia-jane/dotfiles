@@ -80,3 +80,132 @@ echo -n "$1" \
   | sed "s%^~/%${HOME}/%"
 #+END_SRC
 
+#+BEGIN_SRC bash :tangle sel
+MULTIPLE=""
+DEFAULT_VALUE=""
+while true; do
+    case "$1" in
+        -m)
+            MULTIPLE="-m"
+            shift
+            ;;
+        -d|--default)
+            DEFAULT_VALUE="$2"
+            shift 2
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [[ -z "$DEFAULT_VALUE" ]] && [[ -z "$1" ]]; then
+   exit
+fi
+
+if [[ ! -z "$DEFAULT_VALUE" ]]; then
+  SELECTED="${DEFAULT_VALUE}"
+else
+  SELECTED="$($@ | $(fuzzy-ui-provider "${MULTIPLE}"))"
+fi
+
+
+echo -n "$SELECTED"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle fuzzy-ui-provider
+COMMAND=""
+ROFI_ARGS=""
+FZF_ARGS="--height 10 --reverse"
+MULTIPLE=false
+
+while true; do
+  case "$1" in
+    --multiple | -m)
+      MULTIPLE=true
+      shift
+      ;;
+    --rofi-args | -r)
+      ROFI_ARGS="$2"
+      shift 2
+      ;;
+    --fzf-args | -f)
+      FZF_ARGS="$2"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [ "$(test.in_terminal)" = "true" ]; then
+  COMMAND="fzf ${FZF_ARGS}"
+  $MULTIPLE && COMMAND+=' -m'
+else
+  COMMAND="rofi -dmenu ${ROFI_ARGS}"
+  $MULTIPLE && COMMAND+=' -multi-select'
+fi
+
+echo "${COMMAND}"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle test.in_terminal
+# These don't work in pipes..
+# if [[ -t 0 ]] || [[ ! $(tty) =~ "not a tty" ]]; then
+
+# If TERM is set to anything other than 'linux' we will consider it 'in the terminal'
+# This isn't super reliable, but gives the best behavior. Depending on what TERM is set
+# to at the time this is called more might need to added to this condition.
+if [[ -z "${TERM}" ]] || [[ "${TERM}" = "linux" ]]; then
+  echo 'false'
+else
+  echo 'true'
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle urlencode :shebang #!/usr/bin/env python3
+import urllib.parse
+import sys
+
+if len(sys.argv) > 1:
+    to_encode=sys.argv[1]
+else:
+    to_encode=sys.stdin.read()
+
+print(urllib.parse.quote(to_encode))
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle param-or-pipe-eval
+# NOTE: Using this script eval makes it so you cannot pass parameters to the
+# script we are calling. This can likely be remedied, but I don't need it yet
+
+PREFIX_COMMAND=""
+
+while true; do
+  case "$1" in
+    --prefix-command)
+      PREFIX_COMMAND="$2"
+      shift 2
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+
+COMMAND="$PREFIX_COMMAND bash $1"
+shift
+
+
+if [ -z "$1" ]; then
+    { timeout --foreground 0.5 dd bs=1 count=1 2>/dev/null && cat; } | $COMMAND
+else
+    echo -n "$@" | $COMMAND
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle gui-terminal-eval
+tilix --new-process -e "$@"
+#+END_SRC

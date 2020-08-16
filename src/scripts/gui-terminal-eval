@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-tilix --new-process -e "$@"
