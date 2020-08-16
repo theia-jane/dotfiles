@@ -51,7 +51,7 @@ fi
 #+END_SRC
 
 #+BEGIN_SRC bash :tangle emacsdclient-bg
-run.background --no-log emacsdclient "$@"
+d emacsdclient "$@"
 #+END_SRC
 ** Lauch
 #+BEGIN_SRC bash :tangle i3.dd.emacs
@@ -183,4 +183,21 @@ if [ "${NO_FRAME}" = "false" ]; then
 fi
 
 emacsdclient-bg $EXTRA_PARAMS -e "${ELISP}"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle mx
+FORWARD_ARGS=""
+while true; do
+  case "$1" in
+    -nf|--no-frame)
+      FORWARD_ARGS+="$1 "
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+el $FORWARD_ARGS -mx "$1"
 #+END_SRC
