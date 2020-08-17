@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: src_snip
+# uuid: src_snip
+# key: <snip
+# condition: t
+# --
+#+BEGIN_SRC snippet $1
+$0
+#+END_SRC
