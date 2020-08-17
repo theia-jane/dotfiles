@@ -1,4 +1,0 @@
-i3 -> $cfg/i3
-
-vim/init.vim -> $HOME/.vimrc
-vim/init.vim -> $cfg/nvim/init.vim

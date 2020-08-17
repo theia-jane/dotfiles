@@ -1,0 +1,744 @@
+#+TITLE: Vim
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.config/vim :comments no
+#+STARTUP: overview
+
+* Init
+#+BEGIN_SRC vimrc :tangle init.vim
+let g:plugins = 1
+let g:rootConfigPath = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+
+let utilityFile = g:rootConfigPath.'/utility.vim'
+
+if !filereadable(expand(utilityFile))
+  throw 'Dotfiles are''t set up on this machine.'
+endif
+
+execute 'source '.utilityFile
+call SourceListFromFile(g:rootConfigPath.'/source-list.json')
+call SourceListFromFile(g:rootConfigPath.'/local/source-list.json')
+#+END_SRC
+* Source List
+#+BEGIN_SRC json :tangle source-list.json
+[
+  "plugins.vim",
+  "builtin-settings.vim",
+  "key-maps.vim",
+  "autocmd.vim"
+]
+#+END_SRC
+* Autocmd
+#+BEGIN_SRC vimrc :tangle autocmd.vim
+autocmd InsertEnter * let w:last_fdm=&foldmethod | setlocal foldmethod=manual
+autocmd InsertLeave * let &l:foldmethod=w:last_fdm
+#+END_SRC
+* Functions
+
+#+BEGIN_SRC vimrc :tangle functions.vim
+function! DevDocsSearch(searchTerm, context)
+  let query = a:searchTerm
+  if a:context != ''
+    let query = a:context . '+' . query
+  endif
+  let cmd = 'silent ! xdg-open "devdocs://search/'.query.'"'
+
+  execute cmd
+endfunction
+
+function! DevDocsWord()
+  let context = DevDocsGetContext()
+  let query = expand('<cword>')
+  call DevDocsSearch(query, context)
+endfunction
+
+function! DevDocsGetContext()
+  let availableFiletypes = {}
+  let context = &ft
+
+  return context
+endfunction
+#+END_SRC
+* Utility
+#+BEGIN_SRC vimrc :tangle utility.vim
+" Loads and decodes a json file, allowing vim escape sequences to be preserved
+function! JsonDecodeFile(fileName, flag)
+  let fileName = expand(a:fileName)
+
+  if !filereadable(fileName)
+    return []
+  endif
+
+  if exists("*json_decode")
+    let file = readfile(fileName)
+
+    if a:flag == 'extra'
+      let file = map(file, {key, val -> substitute(val, '\\\([^\"]\)', '\\\\\1', 'g')})
+    endif
+
+    if !has('nvim')
+      let file = join(file, '')
+    endif
+
+    let decode = json_decode(file)
+  else
+  " convert json file to vimscript
+  " 1. cut out new lines
+  " 2. slim whitespace down
+  " 3. escape existing ' (map ' -> '')
+  " 4. replace json string delimter (") with vim's string delimter ('), not including json escaped " (\") (map " -> ')
+  " 5. remove escaping from remaining " (map \" -> ")
+  "
+  " escaped:
+  " cat -v <file> | tr "\n" " "| sed -e "s/[ ]\+/ /g" -e "s/'/''/g" -e "s/\([^\]\)\"/\1'/g" -e 's/[\]"/"/g'
+  let decodestr = system('cat -v '.path.' | tr "\n" " "| sed -e "s/[ ]\+/ /g" -e "s/''/''''/g" -e "s/\([^\]\)\"/\1''/g" -e ''s/[\]"/"/g''')
+    execute 'let decode = '.decodeStr
+  endif
+
+  return decode
+endfunction
+
+function! RunForList(list, Callback)
+  for item in a:list
+    call a:Callback(item)
+  endfor
+endfunction
+
+function! RunForJsonConfigFile(fileName, Callback)
+  let config = JsonDecodeFile(a:fileName, '')
+
+  if type(config) == v:t_dict
+    if has_key(config, 'vim')
+      call RunForList(config.vim, a:Callback)
+    endif
+
+    if has_key(config, 'nvim') && has('nvim')
+      call RunForList(config.nvim, a:Callback)
+    endif
+  elseif type(config) == v:t_list
+      call RunForList(config, a:Callback)
+  endif
+endfunction
+
+function! SourceFile(fileRoot, sourceFile)
+  execute 'source 'a:fileRoot.'/'.a:sourceFile
+endfunction
+
+function! SourceListFromFile(fileName)
+  let fileRoot = fnamemodify(a:fileName, ':p:h')
+  call RunForJsonConfigFile(a:fileName, function('SourceFile', [fileRoot]))
+endfunction
+#+END_SRC
+* Builtin Settings
+#+BEGIN_SRC vimrc :tangle builtin-settings.vim
+" TODO split up like plugins?
+
+let mapleader=" "
+
+filetype plugin on
+
+" SUPER SLOW on big files :(
+" filetype indent on
+
+" TODO: Backup could use some love.. vim just saves the file with the same name
+" (no path info)
+"
+" It would be nice to store some more info like filepath
+" and /or date
+"
+" Reference Post:
+" https://stackoverflow.com/questions/6698316/restore-vim-backups#9528517
+" Also might look into a git based solution / alternative for backing up files
+" on save
+"
+" Other Posts:
+" http://vim.wikia.com/wiki/Keep_incremental_backups_of_edited_files
+  " https://www.gmarks.org/vi_backups.html
+"
+" Set the backup directory, so my filesystem doesn't get littered with backups
+silent !mkdir -p ~/.local/share/nvim/backup
+set backupdir=~/.local/share/nvim/backup//
+set backup
+
+" Saves
+set undofile
+set ruler
+
+set shiftround
+set relativenumber
+set number
+
+" no extra new lines at the end of the file
+set noeol
+
+set background=dark
+set signcolumn=yes
+
+" line numbers for :Explore
+let g:netrw_bufsettings = 'noma nomod rnu nobl nowrap ro'
+
+set noshowmode " this hides vim's 'insert message'
+set shortmess+=I " this hides the start message
+
+set hidden
+set nowrap
+set wildmenu
+set wildmode=full
+set formatprg=par\ -er
+
+"would be great to be able to use shell functions & commands in here
+"set shellcmdflag=-i\ -c
+"set shell=zsh\ -i\ -c
+
+set expandtab
+set smarttab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+
+syntax enable
+
+set gdefault " set global as default
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+if has('nvim')
+  set inccommand=split
+endif
+
+set foldenable
+
+"" SLOW on large files
+"set foldlevelstart=10
+"set foldmethod=syntax
+
+" let javaScript_fold=1
+" let perl_fold=1
+" let php_folding=1
+" let r_syntax_folding=1
+" let ruby_fold=1
+" let sh_fold_enabled=1
+" let vimsyn_folding='af'
+" let xml_syntax_folding=1
+
+set listchars=tab:▸\ ,eol:¬
+
+if g:plugins == 1
+  colorscheme gruvbox
+endif
+
+set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+set laststatus=2 " always show status line
+set guifont=Hack:s12
+set guitablabel=%t
+
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor\ --hidden
+  let g:ag_prg="ag --vimgrep --smart-case -W 150"
+endif
+
+autocmd filetype crontab setlocal nobackup nowritebackup
+
+let g:tex_flavor = "latex"
+#+END_SRC
+* Keymap
+#+BEGIN_SRC vimrc :tangle key-maps.vim
+" Split this into a plugin?
+" mapr.vim?
+
+let g:mode_map_prefixes = {
+\ 'command': 'cnoremap',
+\ 'insert': 'inoremap',
+\ 'langarg': 'lnoremap',
+\ 'normal': 'nnoremap',
+\ 'operator': 'onoremap',
+\ 'select': 'snoremap',
+\ 'terminal': 'tnoremap',
+\ 'visual': 'xnoremap'
+\}
+
+" Mapping Tree
+function! EscapePipe(text)
+  " TODO: Change to be a generic exec escape I think this includes ' and "
+  " single quotes get doubled and double quotes get escaped once (unless
+  " nested)
+  let text = a:text
+
+  let match_index = match(text, '|')
+  if match_index >= 0
+    let text = substitute(text, '|', '\\|', 'g')
+  endif
+
+  return text
+endfunction
+
+
+""""
+" Takes a name and mapping, it recursively maps
+"   name (string)            hopefully a meaningful name, from which the actual
+"                            keybinding is derived
+"
+"   mapping (dict|str)       if it's a a dictionary, it's a parent only
+"                            A string indicates a final mapping
+""""
+function! CreateMap(name, mapping)
+
+endfunction
+
+function! MapNode(mapping, prefix, modes)
+  let keys = a:prefix.a:mapping['key']
+  let modes = a:modes
+
+  if has_key(a:mapping, 'modes')
+    for mode in a:mapping['modes']
+      let modes[mode] = 'true'
+    endfor
+  endif
+
+  if has_key(a:mapping, 'submap')
+    for mapping in a:mapping['submap']
+      call MapNode(mapping, keys, modes)
+    endfor
+  elseif has_key(a:mapping, 'map_to')
+    let map_params = EscapePipe(keys.' '.a:mapping['map_to'])
+    for mode in keys(modes)
+      if has_key(g:mode_map_prefixes, mode)
+        exec g:mode_map_prefixes[mode].' '.map_params
+      endif
+    endfor
+  endif
+endfunction
+
+function! MapList(mappings)
+  for mapping in a:mappings
+    call MapNode(mapping, '', {})
+  endfor
+endfunction
+
+function! LoadMapFile(path)
+  let mappings = JsonDecodeFile(a:path, 'extra')
+  call MapList(mappings)
+endfunction
+
+" Get down to business
+call LoadMapFile(g:rootConfigPath.'/key-map.json')
+
+noremap n nzz
+cnoremap <expr> %%  getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+
+if (g:plugins == 1)
+  if has('nvim')
+  " Denite:
+  noremap <m-d>o :Denite outline<cr>
+  noremap <m-d>s :Denite file_rec/svn<cr>
+  noremap <m-d>t :Denite tag<cr>
+  noremap <m-d>l :Denite line<cr>
+  noremap <m-d>j :Denite jump<cr>
+
+  call denite#custom#map(
+        \ 'insert',
+        \ '<C-j>',
+        \ '<denite:move_to_next_line>',
+        \ 'noremap'
+        \)
+  call denite#custom#map(
+        \ 'insert',
+        \ '<C-k>',
+        \ '<denite:move_to_previous_line>',
+        \ 'noremap'
+        \)
+  endif
+
+  let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+  " JK motions: Line motions
+  map <Leader>j <Plug>(easymotion-j)
+  map <Leader>k <Plug>(easymotion-k)
+endif
+
+
+
+augroup filetype_js
+    autocmd!
+    autocmd FileType javascript nnoremap <buffer> <leader>lv "gyiwoconsole.log('',);<ESC>F'"gPf,"gp
+    autocmd FileType javascript nnoremap <buffer> <leader>li oconsole.log();<ESC>T(
+    autocmd FileType javascript nnoremap <buffer> <leader>id odebugger;<ESC>
+augroup END
+#+END_SRC
+
+#+BEGIN_SRC json :tangle key-map.json
+[
+  {
+    "key": "<leader>",
+    "modes": ["normal"],
+    "submap": [
+      {
+        "key": "e",
+        "submap": [
+            {"key": "p", "map_to": ":silent !pdflatex % > /dev/null<CR>"}
+        ]
+      },
+      {"key": "<leader>", "modes": ["visual", "select"], "map_to": ":Commands<CR>"},
+      {
+        "name": "narrow",
+        "key": "n",
+        "submap": [
+            {"key": "r", "modes": ["visual", "select"], "map_to": ":NR!<CR>"},
+            {"key": "w", "map_to": ":WidenRegion!<CR>"},
+            {"key": "v", "map_to": ":NW!<CR>"},
+            {"key": "h", "map_to": "$?<<<\w?e<CR>\"tywjV/^<C-R>t/-1<CR>:NR!<CR>:set ft=<C-R>t<CR>"}
+        ]
+      },
+      {
+        "key": "f",
+        "modes": ["visual", "select"],
+        "submap": [
+          {"key": "f", "map_to": ":Files<CR>"},
+          {"key": "r", "map_to": ":History<CR>"},
+          {"key": "t", "map_to": ":Filetypes<CR>"},
+          {"key": "d", "map_to": ":GFiles?<CR>"},
+          {"key": "s", "map_to": ":write<CR>"},
+          {
+            "key": "e",
+            "submap": [
+              {"key": "d", "map_to": ":tabnew | FZF $cfg/vim<CR>"},
+              {"key": "R", "map_to": ":source $MYVIMRC<CR>"}
+            ]
+          }
+        ]
+      },
+      {
+        "key": "b",
+        "submap": [
+          {"key": "b", "map_to": ":Buffers<CR>", "map_to_denite": ":Denite buffer<CR>"},
+          {"key": "d", "map_to": ":bdelete<CR>"},
+          {"key": "D", "map_to": ":bdelete!<CR>"},
+          {"key": "n", "map_to": ":bnext<CR>"},
+          {"key": "p", "map_to": ":bprev<CR>"}
+        ]
+      },
+      {
+        "key": "s",
+        "modes": ["visual", "select"],
+        "submap": [
+          {"key": "b", "map_to": "/"},
+          {"key": "r", "map_to": ":s/"},
+          {"key": "c", "map_to": ":noh <CR>"},
+          {"key": "p", "map_to": ":Ag "},
+          {"key": "d", "map_to": ":execute 'silent ! xdg-open \"devdocs://search/' . &ft . ' <cword>'\"<CR>"},
+          {"key": "l", "map_to": ":BLines<CR>"},
+          {"key": "L", "map_to": ":Lines<CR>"}
+        ]
+      },
+      {
+        "key": "g",
+        "modes": ["visual", "select"],
+        "submap": [
+          {"key": "d", "map_to": ":Gvdiff<CR>"},
+          {"key": "s", "map_to": ":Gstat<CR>"},
+          {"key": "b", "map_to": ":Gblame<CR>"},
+          {"key": "l", "map_to": ":BCommits<CR>"},
+          {"key": "L", "map_to": ":Commits<CR>"}
+        ]
+      },
+      {
+        "key": "w",
+        "submap": [
+          {"key": "h", "map_to": "<c-w>h"},
+          {"key": "j", "map_to": "<c-w>j"},
+          {"key": "k", "map_to": "<c-w>k"},
+          {"key": "l", "map_to": "<c-w>l"},
+          {"key": "d", "map_to": ":close<CR>"},
+          {"key": "o", "map_to": ":only<CR>"},
+          {"key": "s", "map_to": ":split<CR>"},
+          {"key": "v", "map_to": ":vsplit<CR>"},
+          {"key": "_", "map_to": "<c-w>_"},
+          {"key": "|", "map_to": "<c-w>|"},
+          {"key": "=", "map_to": "<c-w>="}
+        ]
+      },
+      {"key": "h", "map_to": ":Helptags<CR>"},
+      {"key": "q", "submap": [
+        {"key": "q", "map_to": ":q<CR>"},
+        {"key": "Q", "map_to": ":q!<CR>"},
+        {"key": "a", "map_to": ":qa<CR>"},
+        {"key": "A", "map_to": ":qa!<CR>"}
+      ]
+      },
+      {
+        "key": "<C-t>", "map_to": ":terminal<CR>"
+      },
+      {
+        "key": "t",
+        "submap": [
+          {"key": "t", "map_to": ":tabnew<CR>"},
+          {"key": "d", "map_to": ":tabclose<CR>"},
+          {"key": "n", "map_to": ":tabnext<CR>"},
+          {"key": "p", "map_to": ":tabprevious<CR>"}
+        ]
+      }
+    ]
+  },
+  {
+    "key": "<c-space>",
+    "modes": ["command"],
+    "map_to": "<C-u>History:<CR>"
+  },
+  {
+    "key": "<c-x>",
+    "modes": ["command"],
+    "submap": [
+      {"key": ",", "map_to": "\<\><Left><Left>"},
+      {"key": "g", "map_to": "\(\)<Left><Left>"}
+    ]
+  }
+]
+#+END_SRC
+*
+* Plugins
+** Init
+#+BEGIN_SRC vimrc :tangle plugins.vim
+function! LoadPlugin(plugin)
+  if (type(a:plugin) == v:t_list)
+    Plug a:plugin[0], a:plugin[1]
+  else
+    Plug a:plugin
+  endif
+endfunction
+
+
+if (g:plugins == 1)
+  if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+
+  call plug#begin('~/.local/share/nvim/plugged')
+    call RunForJsonConfigFile(g:rootConfigPath.'/plugin-lists.json', function('LoadPlugin'))
+  call plug#end()
+
+  call SourceListFromFile(g:rootConfigPath.'/plugins/source-list.json')
+endif
+#+END_SRC
+
+** List
+#+BEGIN_SRC json :tangle plugin-lists.json
+{
+ "vim": [
+    "chemzqm/vim-easygit",
+    "chrisbra/csv.vim",
+    "chrisbra/NrrwRgn",
+    "critiqjo/lldb.nvim",
+    "easymotion/vim-easymotion",
+    "Houl/vim-repmo",
+    "itchyny/lightline.vim",
+    "jceb/vim-orgmode",
+    "jez/vim-superman",
+    "junegunn/fzf.vim",
+    "junegunn/goyo.vim",
+    "junegunn/limelight.vim",
+    "lervag/vimtex",
+    "morhetz/gruvbox",
+    "nathanaelkane/vim-indent-guides",
+    "PeterRincker/vim-argumentative",
+    "Raimondi/delimitMate",
+    "rust-lang/rust.vim",
+    "scrooloose/nerdtree",
+    "Shougo/neco-vim",
+    "sjl/vitality.vim",
+    "tkhren/vim-fake",
+    "lvht/phpcd.vim",
+    "tomtom/tcomment_vim",
+    "tpope/vim-eunuch",
+    "tpope/vim-fugitive",
+    "tpope/vim-git",
+    "tpope/vim-repeat",
+    "tpope/vim-speeddating",
+    "tpope/vim-surround",
+    "tpope/vim-unimpaired",
+    "wincent/terminus",
+    "w0rp/ale",
+    "mhinz/vim-signify",
+    "metakirby5/codi.vim",
+    "wellle/targets.vim",
+    "~/.fzf",
+    "editorconfig/editorconfig-vim",
+    ["autozimu/LanguageClient-neovim", {"branch": "next", "do": "bash install.sh"}]
+  ],
+  "nvim": [
+    "Shougo/deoplete.nvim",
+    "zchee/deoplete-zsh",
+    "Shougo/neoinclude.vim",
+    "mklabs/split-term.vim",
+    "chemzqm/denite-git",
+    "Shougo/dein.vim",
+    "Shougo/denite.nvim",
+    "beeender/Comrade"
+  ],
+  "ignored": [
+    "vim-scripts/taglist.vim",
+    "whatot/gtags-cscope.vim",
+    "SirVer/ultisnips"
+  ]
+}
+#+END_SRC
+** Config
+*** ALE
+#+BEGIN_SRC vimrc :tangle plugins/ale.vim
+" let g:ale_fixers = {
+" \   'javascript': ['prettier'],
+" \   'markdown': ['prettier'],
+" \}
+
+" Set this setting in vimrc if you want to fix files automatically on save.
+" let g:ale_fix_on_save = 1
+
+let g:ale_sign_error = "✖"
+let g:ale_sign_warn = "⚑"
+let g:ale_sign_info = '◉'
+#+END_SRC
+*** denite
+#+BEGIN_SRC vimrc :tangle plugins/denite.vim
+call denite#custom#option('default', 'prompt', '>>>')
+call denite#custom#alias('source', 'file_rec/svn', 'file_rec')
+call denite#custom#alias('source', 'file_rec/git-svn', 'file_rec')
+call denite#custom#var('file_rec/svn', 'command', ['svn_list'])
+call denite#custom#var('file_rec/git-svn', 'command', ['git_svn_diff_ls'])
+call denite#custom#var('file_rec', 'command',
+\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+
+call denite#custom#alias('source', 'file_rec/git', 'file_rec')
+call denite#custom#var('file_rec/git', 'command',
+\ ['git', 'ls-files', '-co', '--exclude-standard'])
+
+#+END_SRC
+*** deoplete
+#+BEGIN_SRC vimrc :tangle plugins/deoplete.vim
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#file#enable_buffer_path = 1
+
+let g:deoplete#sources = {}
+let g:deoplete#sources._ = ['ultisnips', 'buffer']
+let g:deoplete#sources.php = ['buffer', 'tag']
+let g:deoplete#sources.js = ['buffer', 'tag']
+
+" let g:min_pattern_length = 1
+" inoremap <expr> <CR>
+"     \ pumvisible() ? deoplete#mappings#close_popup() :
+"     \ "\<CR>"
+
+" Use tab instead
+" inoremap <silent><expr> <Tab>
+"     \ pumvisible() ? "\<C-n>" :
+"     \ deoplete#mappings#manual_complete()
+" inoremap <silent><expr> <S-Tab>
+"     \ pumvisible() ? "\<C-p>" :
+"     \ deoplete#mappings#manual_complete()
+#+END_SRC
+*** editorconfig
+#+BEGIN_SRC vimrc :tangle plugins/editorconfig.vim
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+#+END_SRC
+*** fzf
+#+BEGIN_SRC vimrc :tangle plugins/fzf.vim
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 '--hidden --ignore .git --ignore .idea',
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
+#+END_SRC
+*** gitgutter
+#+BEGIN_SRC vimrc :tangle plugins/gitgutter.vim
+" TODO: Look at using hl-SignColumn for a better yet, UI
+
+
+let g:gitgutter_sign_added = '█'
+let g:gitgutter_sign_modified = '█'
+let g:gitgutter_sign_removed = '█'
+let g:gitgutter_sign_modified_removed = '█'
+
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
+#+END_SRC
+*** gtags
+#+BEGIN_SRC vimrc :tangle plugins/gtags.vim
+let GtagsCscope_Auto_Load = 1
+let GtagsCscope_Auto_Map = 1
+let GtagsCscope_Quiet = 1
+set cscopetag
+#+END_SRC
+*** lightline
+#+BEGIN_SRC vimrc :tangle plugins/lightline.vim
+let g:lightline = {
+    \ 'colorscheme': 'jellybeans',
+    \ }
+#+END_SRC
+*** limelight
+#+BEGIN_SRC vimrc :tangle plugins/limelight.vim
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+#+END_SRC
+*** LSP
+#+BEGIN_SRC vimrc :tangle plugins/lsp.vim
+call LanguageClient#registerServerCommands({'php':[ 'php', expand('$HOME/.composer/vendor/felixfbecker/language-server/bin/php-language-server.php')]})
+#+END_SRC
+*** nrrw
+#+BEGIN_SRC vimrc :tangle plugins/nrrw.vim
+let g:nrrw_rgn_nomap_nr = 1
+let g:nrrw_rgn_nomap_Nr = 1
+#+END_SRC
+*** phpcd
+#+BEGIN_SRC vimrc :tangle plugins/phpcd.vim
+let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
+let g:deoplete#ignore_sources.php = ['omni']
+#+END_SRC
+*** signify
+#+BEGIN_SRC vimrc :tangle plugins/signify.vim
+let g:signify_vcs_list = [ 'git', 'svn' ]
+
+let g:signify_sign_add               = '██'
+let g:signify_sign_delete            = '██'
+let g:signify_sign_delete_first_line = g:signify_sign_delete
+let g:signify_sign_change            = '██'
+let g:signify_sign_changedelete      = g:signify_sign_change
+
+let g:signify_realtime = 1
+
+omap ic <plug>(signify-motion-inner-pending)
+xmap ic <plug>(signify-motion-inner-visual)
+omap ac <plug>(signify-motion-outer-pending)
+xmap ac <plug>(signify-motion-outer-visual)
+#+END_SRC
+*** ultisnips
+#+BEGIN_SRC vimrc :tangle plugins/ultisnips.vim
+let g:UltiSnipsSnippetDirectories=["snips", "docs"]
+#+END_SRC
+** Source List
+#+BEGIN_SRC json :tangle plugins/source-list.json
+{
+  "vim": [
+    "fzf.vim",
+    "gtags.vim",
+    "lightline.vim",
+    "limelight.vim",
+    "nrrw.vim",
+    "signify.vim",
+    "ultisnips.vim",
+    "ale.vim",
+    "phpcd.vim",
+    "editorconfig.vim",
+    "lsp.vim"
+  ],
+  "nvim": [
+    "denite.vim",
+    "deoplete.vim"
+  ]
+}
+#+END_SRC

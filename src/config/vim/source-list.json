@@ -1,6 +1,0 @@
-[
-  "plugins.vim",
-  "builtin-settings.vim",
-  "key-maps.vim",
-  "autocmd.vim"
-]
