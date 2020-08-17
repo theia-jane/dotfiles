@@ -4,6 +4,6 @@
 # key: <yaml
 # condition: t
 # --
-#+BEGIN_SRC yaml
+#+BEGIN_SRC yaml $1
 $0
 #+END_SRC

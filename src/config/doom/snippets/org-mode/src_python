@@ -4,6 +4,6 @@
 # key: <py
 # condition: t
 # --
-#+BEGIN_SRC python
+#+BEGIN_SRC python $1
 $0
 #+END_SRC

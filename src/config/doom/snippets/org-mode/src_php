@@ -4,6 +4,6 @@
 # key: <php
 # condition: t
 # --
-#+BEGIN_SRC php
+#+BEGIN_SRC php $1
 $0
 #+END_SRC

@@ -4,6 +4,6 @@
 # key: <gql
 # condition: t
 # --
-#+BEGIN_SRC graphql
+#+BEGIN_SRC graphql $1
 $0
 #+END_SRC

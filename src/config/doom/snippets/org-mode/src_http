@@ -4,6 +4,6 @@
 # key: <http
 # condition: t
 # --
-#+BEGIN_SRC http
+#+BEGIN_SRC http $1
 $0
 #+END_SRC

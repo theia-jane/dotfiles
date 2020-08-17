@@ -4,6 +4,6 @@
 # key: <md
 # condition: t
 # --
-#+BEGIN_SRC markdown
+#+BEGIN_SRC markdown $1
 $0
 #+END_SRC

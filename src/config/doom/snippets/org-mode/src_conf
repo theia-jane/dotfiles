@@ -4,6 +4,6 @@
 # key: <conf
 # condition: t 
 # --
-#+BEGIN_SRC conf
+#+BEGIN_SRC conf $1
 $0
 #+END_SRC

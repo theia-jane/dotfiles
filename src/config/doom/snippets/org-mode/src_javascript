@@ -4,6 +4,6 @@
 # key: <js
 # condition: t
 # --
-#+BEGIN_SRC javascript
+#+BEGIN_SRC javascript $1
 $0
 #+END_SRC

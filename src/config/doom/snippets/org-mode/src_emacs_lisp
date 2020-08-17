@@ -4,6 +4,6 @@
 # key: <el
 # condition: t
 # --
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp $1
 $0
 #+END_SRC
