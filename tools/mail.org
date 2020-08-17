@@ -1,4 +1,133 @@
 #+TITLE: Mail
+#+STARTUP: overview
+
+* Installation
+#+NAME: Dependencies
+- mbsync
+- mu
+- pass
+
+#+BEGIN_SRC bash :var dependencies=Dependencies()
+yay -S ${dependencies[@]}
+#+END_SRC
+
+* Setting up Gmail IMAP
+** Enable IMAP
+1. From the inbox: Navigate to the gear icon > Settings > Forwarding and POP/IMAP
+2. Click "Enable IMAP"
+** Get my email
+Grab my email address from =pass=
+#+NAME: email-address
+#+BEGIN_SRC elisp
+(+pass-get-user "mail/mail.google.com")
+#+END_SRC
+
+** App Password
+Rather than using my user password for Gmail I'm using my app password for
+increased security, which I stored under =mail/imap.gmail.com=. To set that up you
+can follow the follwing steps:
+
+1. Go to your [[https://myaccount.google.com][Google Account]].
+2. On the left navigation panel, choose Security.
+3. On the "Signing in to Google" panel, choose App Passwords. If you don’t see this option:
+   1. 2-Step Verification is not set up for your account.
+   2. 2-Step Verification is set up for security keys only.
+   3. Your account is through work, school, or other organization.
+   4. You’ve turned on Advanced Protection for your account.
+4. At the bottom, choose Select app and choose the app you’re using.
+5. Choose Select device and choose the device you’re using.
+6. Choose Generate.
+7. Follow the instructions to enter the App Password. The App Password is the 16-character code in the yellow bar on your device.
+8. Choose Done.
+
+* Configure IMAP Syncing
+:PROPERTIES:
+:header-args:conf: :noweb yes :comments link :tangle ~/.mbsyncrc
+:END:
+
+** Account information
+#+BEGIN_SRC conf
+IMAPAccount gmail-personal
+Host imap.gmail.com
+User <<email-address()>>
+PassCmd "pass mail/imap.gmail.com | head -1"
+SSLType IMAPS
+#+END_SRC
+
+** Remote storage
+#+BEGIN_SRC conf
+IMAPStore gmail-personal-remote
+Account gmail-personal
+#+END_SRC
+
+** Local storage
+#+NAME: emailDir
+#+BEGIN_SRC txt
+~/.mail/gmail/
+#+END_SRC
+
+#+BEGIN_SRC conf
+MaildirStore gmail-personal-local
+Subfolders Verbatim
+Path <<emailDir>>
+Inbox <<emailDir>>Inbox
+#+END_SRC
+
+** Channel
+#+BEGIN_SRC conf
+Channel gmail-personal-channel
+Master :gmail-personal-remote:
+Slave :gmail-personal-local:
+Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
+Create Both
+SyncState *
+#+END_SRC
+* Auto-syncing
+** Sync service
+Create the service which will sync email and then index it:
+#+BEGIN_SRC conf :tangle ~/.config/systemd/user/mbsync.service :comments link
+[Unit]
+Description=Mailbox synchronization service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mbsync -Va
+ExecStartPost=/usr/bin/mu index --maildir ~/.mail/
+#+END_SRC
+** Sync timer
+#+BEGIN_SRC conf :tangle ~/.config/systemd/user/mbsync.timer :comments link
+[Unit]
+Description=Mailbox synchronization timer
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=5m
+Unit=mbsync.service
+
+[Install]
+WantedBy=timers.target
+#+END_SRC
+* Initialize
+1. With =mbsync= sufficiently configured we can now tangle the file
+#+BEGIN_SRC elisp
+(org-babel-tangle)
+#+END_SRC
+
+   #+RESULTS:
+   | ~/.config/systemd/user/mbsync.tiimer | ~/.config/systemd/user/mbsync.service | ~/.mbsyncrc |
+
+2. Make the directory where we'll store the email
+#+BEGIN_SRC bash
+mkdir -p ~/.mail/gmail/
+#+END_SRC
+3. Sync all =mbsync= channels
+#+BEGIN_SRC bash
+mbsync -Va
+#+END_SRC
+4. Index with =mu=
+#+BEGIN_SRC bash
+mu index --maildir=~/.mail/
+#+END_SRC
 
 * Scripts
 :PROPERTIES:
@@ -12,3 +141,6 @@ while true; do
     sleep "$((5 * 60))"
 done
 #+END_SRC
+
+To handle my mail I'll =mbsync=, =mu=, and =pass= to handle fetching emails, indexing
+and storing my passwords.
