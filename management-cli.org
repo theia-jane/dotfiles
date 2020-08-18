@@ -17,11 +17,16 @@ To start we need to setup of the script to run using emacs-lisp.
 #+END_SRC
 
 
-We need to pull in the org babel library for tangling and Im adding extension to tangling, which enable choosing where relative tangle is based.
+We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
 #+BEGIN_SRC elisp
+(add-to-list 'load-path
+             (replace-regexp-in-string "bin/[^/]+$"
+                                       "tools/emacs/packages/"
+                                       load-file-name))
+
 (require 'ob-tangle)
+(require 'ob-extended-args)
 <<conf-expand>>
-<<org-babel/resolve-tangle-path>>
 <<org-babel/load-namespaced-libraries>>
 <<org-babel/tangle-dir>>
 <<org-babel/var-table>>
@@ -59,13 +64,15 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
 #+BEGIN_SRC elisp
 
 (defun config-file-filter (file)
-  (string-match
-   (rx line-start
-       (eval (file-name-as-directory config-root))
-       (or "literate/"
-           "tools/"
-           (and (+ (not "/")) ".org")))
-   file))
+  (and
+   (not (string-match (rx "mail.org" line-end) file))
+   (string-match
+    (rx line-start
+        (eval (file-name-as-directory config-root))
+        (or "literate/"
+            "tools/"
+            (and (+ (not "/")) ".org")))
+    file)))
 
 (defun config-files ()
   (seq-filter
@@ -223,55 +230,6 @@ Some additions I've made to org-babel
 : ob-library-for-current-buffer
 
 ** Tangle
-#+NAME: org-babel/resolve-tangle-path
-#+BEGIN_SRC elisp
-(defun org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
-  "Add :tangle-relative & :root-dir property to org babel header args.
-
-The :tangle-relative property will make the :tangle files relative to
-the :dir or to the value of :tangle-relative.
-
-If :tangle-relative is
-- equal to 'dir, then it uses :dir
-- a string it uses the value passed
-
-The :root-dir property can be used in conjunction with :tangle-relative.
-if specified, then:
-- if :dir has no value, the file is tangled relative to :root-dir
-- if :dir has a value, but is an absolute path (unix), then :root-dir is ignored and the :dir is used for tangling
-- if :dir has a value, but is not an absolute path (unix), then :root-dir and :dir are combined and the file is tangled to that path"
-  (let ((info (funcall fn light datum)))
-    (unless light
-      (let* ((prop-alist (nth 2 info))
-             (dir (substitute-env-vars (or (alist-get :dir prop-alist) "")))
-             (root-dir (substitute-env-vars (or (alist-get :root-dir prop-alist) "")))
-             (tangle (alist-get :tangle prop-alist))
-             (tangle-relative (alist-get :tangle-relative prop-alist)))
-        (when (and (stringp tangle)
-                   (not (equal tangle "yes"))
-                   (not (equal tangle "no"))
-                   (not (string-prefix-p "/" tangle))
-                   tangle-relative)
-          (setf (alist-get :tangle prop-alist)
-                (let ((directory (if (eq tangle-relative 'dir) dir "")))
-                  (unless (null root-dir)
-                    (setq directory (cond
-                                     ((null directory) root-dir)
-                                     ((string-prefix-p "/" directory) directory)
-                                     (t (concat (file-name-as-directory root-dir) directory)))))
-
-                  (let ((tangle-path (concat
-                                      (file-name-as-directory directory)
-                                      tangle)))
-                    tangle-path))))))
-
-    info))
-
-(advice-add #'org-babel-get-src-block-info :around #'org-babel--resolve-tangle-path-to-dir-a)
-#+END_SRC
-
-#+RESULTS: org-babel/resolve-tangle-path
-
 #+NAME: org-babel/tangle-dir
 #+BEGIN_SRC elisp
 (defun ob-tangle-files (files)
