@@ -26,7 +26,7 @@ We need to pull in the org babel library for tangling and an extension to tangli
 
 (require 'ob-tangle)
 (require 'ob-extended-args)
-<<conf-expand>>
+(require 'ob-text-var-expansion)
 <<org-babel/load-namespaced-libraries>>
 <<org-babel/tangle-dir>>
 <<org-babel/var-table>>
@@ -242,26 +242,6 @@ Some additions I've made to org-babel
 
 #+RESULTS: org-babel/tangle-dir
 : ob-tangle-files
-* Conf var expand
-#+NAME: conf-expand
-#+BEGIN_SRC elisp
-(defun org-babel-expand-body:conf (body params)
-  "Expand BODY according to PARAMS, return the expanded body."
-  (let ((vars (org-babel--get-vars params)))
-    (message "%s" (pp-to-string vars))
-    (if (null vars) (concat body "\n")
-      (cl-loop for var in vars
-               do
-               (setq body (replace-regexp-in-string
-                           (rx "${" (eval (prin1-to-string (car var))) "}")
-                           (format "%s" (cdr var))
-                           body)))
-      body)))
-
-(defalias 'org-babel-expand-body:json 'org-babel-expand-body:conf)
-(defalias 'org-babel-expand-body:yaml 'org-babel-expand-body:conf)
-(defalias 'org-babel-expand-body:text 'org-babel-expand-body:conf)
-#+END_SRC
 * Var Tables
 Defining a bunch of vars can be a pain, so using a table is a great way to minimize that pain. This enables using =:var-table table-ref col1 col2=
 
