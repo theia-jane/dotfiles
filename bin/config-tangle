@@ -2,10 +2,8 @@
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 ;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:2]]
-(add-to-list 'load-path
-             (replace-regexp-in-string "bin/[^/]+$"
-                                       "tools/emacs/packages/"
-                                       load-file-name))
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+(add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
 
 (require 'ob-tangle)
 (require 'ob-extended-tangle)
@@ -15,11 +13,6 @@
 ;; No heading:2 ends here
 
 ;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:3]]
-(defvar config-root (with-temp-buffer
-                      (shell-command "git rev-parse --show-toplevel" (current-buffer))
-                      (replace-string "\n" "")
-                      (buffer-string)))
-
 (setq org-babel-default-header-args `((:session         . "none")
                                       (:noweb           . "yes")
                                       (:root-dir        . ,config-root)

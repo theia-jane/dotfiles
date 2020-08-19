@@ -11,10 +11,8 @@ To start we need to setup of the script to run using emacs-lisp.
 
 We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
 #+BEGIN_SRC elisp
-(add-to-list 'load-path
-             (replace-regexp-in-string "bin/[^/]+$"
-                                       "tools/emacs/packages/"
-                                       load-file-name))
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+(add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
 
 (require 'ob-tangle)
 (require 'ob-extended-tangle)
@@ -27,11 +25,6 @@ Now we can tangle! The default behavior tangles files relatively to the org file
 
 For my literate config I want to have the default tangle directory to from the to be the root of this repository, which this will set up.
 #+BEGIN_SRC elisp
-(defvar config-root (with-temp-buffer
-                      (shell-command "git rev-parse --show-toplevel" (current-buffer))
-                      (replace-string "\n" "")
-                      (buffer-string)))
-
 (setq org-babel-default-header-args `((:session         . "none")
                                       (:noweb           . "yes")
                                       (:root-dir        . ,config-root)
