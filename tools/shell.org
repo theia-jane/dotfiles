@@ -256,7 +256,8 @@ export org="${HOME}/org"
 
 export p="${HOME}/Projects"
 export dot="$p/dotfiles"
-export DOOMDIR="${cfg}/doom"
+export EMACSDIR="${dot}/tools/emacs"
+export DOOMDIR="${EMACSDIR}/doom"
 export scripts="$dot/src/scripts"
 export s=$scripts
 export CLICOLOR=1
