@@ -1,4 +1,4 @@
-#+TITLE: Install CLI
+#+TITLE: Config Install
 #+PROPERTY: header-args :tangle bin/config-install
 
 #+BEGIN_SRC sh :shebang #!/usr/bin/env sh :comments no

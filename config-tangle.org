@@ -1,6 +1,5 @@
 #+TITLE: Config Tangle
-#+PROPERTY: header-args :tangle bin/config-tangle :tangle-relative 'dir :noweb yes :comments yes
-#+STARTUP: overview
+#+PROPERTY: header-args :tangle bin/config-tangle
 
 This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
 
