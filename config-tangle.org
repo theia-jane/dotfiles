@@ -1,7 +1,17 @@
-#!/usr/bin/env sh
-":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+TITLE: Config Tangle
+#+PROPERTY: header-args :tangle bin/config-tangle :tangle-relative 'dir :noweb yes :comments yes
+#+STARTUP: overview
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:2]]
+This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
+
+To start we need to setup of the script to run using emacs-lisp.
+#+BEGIN_SRC sh :shebang #!/usr/bin/env sh :comments no
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+END_SRC
+
+
+We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
+#+BEGIN_SRC elisp
 (add-to-list 'load-path
              (replace-regexp-in-string "bin/[^/]+$"
                                        "tools/emacs/packages/"
@@ -12,9 +22,12 @@
 (require 'ob-text-var-expansion)
 (require 'ob-load-namespaced-libraries)
 (require 'ob-var-table)
-;; No heading:2 ends here
+#+END_SRC
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:3]]
+Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
+
+For my literate config I want to have the default tangle directory to from the to be the root of this repository, which this will set up.
+#+BEGIN_SRC elisp
 (defvar config-root (with-temp-buffer
                       (shell-command "git rev-parse --show-toplevel" (current-buffer))
                       (replace-string "\n" "")
@@ -28,14 +41,18 @@
                                       (:tangle          . "no")
                                       (:comments        . "yes"))
       org-confirm-babel-evaluate nil)
-;; No heading:3 ends here
+#+END_SRC
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:4]]
+#+RESULTS:
+
+I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
+#+begin_src elisp
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
-;; No heading:4 ends here
+#+end_src
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:5]]
+Finally, actually tangle the files that in the =literate/= & =tools/=
+#+BEGIN_SRC elisp
 (defun config-file-filter (file)
   (and
    (not (string-match (rx "mail.org" line-end) file))
@@ -64,4 +81,4 @@
 (config-tangle)
 
 (kill-emacs 0)
-;; No heading:5 ends here
+#+END_SRC

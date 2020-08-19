@@ -1,4 +1,4 @@
-;;; ob-extended-args.el --- extend ob header args -*- lexical-binding: t; -*-
+;;; ob-extended-tangle.el --- extend ob header args -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2020 Tyler Ware
 ;;
@@ -20,7 +20,14 @@
 ;;
 ;;; Code:
 
-(defun ob-extended-args-a (fn &optional light datum)
+(defun ob-tangle-files (files)
+  "Tangle multiple files."
+  (cl-loop for file
+           in files
+           do
+           (org-babel-tangle-file file)))
+
+(defun ob-extended-tangle-args-a (fn &optional light datum)
   "Add :tangle-relative & :root-dir property to org babel header args.
 
 The :tangle-relative property will make the :tangle files relative to
@@ -61,8 +68,7 @@ if specified, then:
                     tangle-path))))))
     info))
 
+(advice-add #'org-babel-get-src-block-info :around #'ob-extended-tangle-args-a)
 
-(advice-add #'org-babel-get-src-block-info :around #'ob-extended-args-a)
-
-(provide 'ob-extended-args)
-;;; ob-extended-args.el ends here
+(provide 'ob-extended-tangle)
+;;; ob-extended-tangle.el ends here
