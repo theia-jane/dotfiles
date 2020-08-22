@@ -91,6 +91,7 @@ fi
 
 export PATH
 
+source "$cfg/sh/env.sh"
 ENV_DIR="$cfg/env"
 if [ -d "${ENV_DIR}" ]; then
   for env_file in $(ls "${ENV_DIR}"); do
@@ -256,8 +257,8 @@ export org="${HOME}/org"
 
 export p="${HOME}/Projects"
 export dot="$p/dotfiles"
-export EMACSDIR="${dot}/tools/emacs"
-export DOOMDIR="${EMACSDIR}/doom"
+export cfg_emacs="${dot}/tools/emacs"
+export DOOMDIR="${cfg_emacs}/doom"
 export scripts="$dot/src/scripts"
 export s=$scripts
 export CLICOLOR=1
