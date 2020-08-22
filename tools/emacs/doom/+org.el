@@ -103,7 +103,31 @@
   (after! projectile
     (add-to-list 'projectile-project-root-files-functions '+org-notes-root))
 
-  (load! "+org-babel"))
+  (load! "+org-babel")
+
+  (setq +ligatures-extra-symbols (append
+                                  `(:title ,(propertize "" 'display '(raise 1))
+                                    :author ,(propertize "" 'display '(raise 0.1))
+                                    :setting ,(propertize "" 'display '(raise 0.1))
+                                    :latex ,(all-the-icons-fileicon "tex")
+                                    :property ,(all-the-icons-octicon "chevron-right"))
+                                  +ligatures-extra-symbols))
+
+  (set-ligatures! 'org-mode
+  ;; :name "#+name:"
+  ;; :src_block "#+begin_src"
+  ;; :src_block_end "#+end_src"
+  :src_block "#+begin_example"
+  :src_block_end "#+end_example"
+  :src_block "#+BEGIN_EXAMPLE"
+  :src_block_end "#+END_EXAMPLE"
+  :title "#+TITLE:"
+  :setting "#+PROPERTY:"
+  :author "#+AUTHOR:"
+  :latex "#+LATEX_HEADER:"
+  :latex "#+LATEX_HEADER_EXTRA:"
+  :property  "#+STARTUP:"
+  :property "#+RESULTS:"))
 
 
 
@@ -119,29 +143,9 @@
   :trigger "__hw"
   :mode 'org-mode)
 
-(setq +pretty-code-symbols (append
-                            `(:title ,(propertize "" 'display '(raise 1))
-                              :author ,(propertize "" 'display '(raise 0.1))
-                              :setting ,(propertize "" 'display '(raise 0.1))
-                              :latex ,(all-the-icons-fileicon "tex")
-                              :property ,(all-the-icons-octicon "chevron-right"))
-                            +pretty-code-symbols))
 
-(set-pretty-symbols! 'org-mode
-  :name "#+name:"
-  :src_block "#+begin_src"
-  :src_block_end "#+end_src"
-  :src_block "#+begin_example"
-  :src_block_end "#+end_example"
-  :src_block "#+BEGIN_EXAMPLE"
-  :src_block_end "#+END_EXAMPLE"
-  :title "#+TITLE:"
-  :setting "#+PROPERTY:"
-  :author "#+AUTHOR:"
-  :latex "#+LATEX_HEADER:"
-  :latex "#+LATEX_HEADER_EXTRA:"
-  :property  "#+STARTUP:"
-  :property "#+RESULTS:")
+
+
 
 (defun +org/goto-next-src-block ()
   (interactive)
