@@ -1,120 +1,96 @@
 #+TITLE: Shell
-#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.config/sh
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}
 #+STARTUP: overview
 
-* Init
-#+BEGIN_SRC bash :tangle init.sh
-append_path() {
-  if [ -d "$1" ]; then
-    append_to_var PATH $1
-  fi
-}
-
-prepend_path() {
-  if [ -d "$1" ]; then
-    prepend_to_var PATH $1
-  fi
-}
-
-append_to_var() {
-  local var=$1
-  local var_val="$(eval echo "\$$var")"
-  local val=$2
-  [ ! -z "$var_val" ] && var_val=":$var_val"
-  eval $var="${val}${var_val}"
-}
-
-prepend_to_var() {
-  local var=$1
-  local var_val="$(eval echo "\$$var")"
-  local val=$2
-  [ ! -z "$var_val" ] && var_val=":$var_val"
-  eval $var="${val}${var_val}"
-}
-
-source_file() {
-  if [ -f "$1" ]; then
-    source "$1"
-  fi
-}
-
-get_script_dir() {
-  if [ "$SHELL_NAME" = "bash" ]; then
-    SCRIPT_PATH="$(caller 0 | awk '{print $(NF)}')"
-  else
-    SCRIPT_PATH="$(echo "$funcstack[2]")"
-  fi
-
-  if [ "$OS" = "darwin" ]; then
-    echo "$(dirname "$(stat -f "$SCRIPT_PATH")")"
-  else
-    echo "$(dirname "$(readlink -f "$SCRIPT_PATH")")"
-  fi
-}
-
-export SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
+* Profile
+:PROPERTIES:
+:header-args+: :tangle .profile
+:END:
+#+BEGIN_SRC bash
 export OS="$(uname | tr "[A-Z]" "[a-z]")"
+export notes="${HOME}/notes"
+export docs="${HOME}/Documents"
+export org="${HOME}/org"
+export p="${HOME}/Projects"
+
+export dot="$p/dotfiles"
 export cfg="${HOME}/.config"
+export cfg_sh="${cfg}/sh"
+export cfg_emacs="${dot}/tools/emacs"
+export DOOMDIR="${cfg_emacs}/doom"
 
-PATH=""
+export CLICOLOR=1
+export GTAGSLABEL="pygments"
 
-append_path "/usr/local/bin"
-append_path "/usr/bin"
-append_path "/bin"
-append_path "/usr/sbin"
-append_path "/sbin"
-append_path "${HOME}/.local/bin"
-append_path "${HOME}/miniconda3/bin"
-append_path "${HOME}/bin"
-append_path "${HOME}/.config/emacs/bin"
-append_path "${HOME}/.scriptr-bin"
-append_path "${scripts}/utils"
-append_path "${HOME}/go/bin"
-append_path "${HOME}/node_tools/node_modules/.bin"
-append_path "${HOME}/.cargo/bin"
-append_path "/usr/bin/vendor_perl"
+PATHS=(
+    "${HOME}/bin"
+    "${HOME}/.local/bin"
+    "${dot}/bin"
+    "/usr/local/bin"
+    "/usr/bin"
+    "/bin"
+    "/usr/sbin"
+    "/sbin"
+    "${HOME}/miniconda3/bin"
+    "${cfg}/emacs/bin"
+    "${HOME}/.cargo/bin"
+    "/usr/bin/vendor_perl"
+)
+export PATH="$(IFS=':'; echo "${PATHS[*]}")"
 
-export GOBIN="${HOME}/go/bin"
-append_path "${GOBIN}"
-
-export N_PREFIX="$HOME/n";
-append_path "$N_PREFIX/bin"
-
-[ ! -z "$(which yarn 2>/dev/null)" ] && append_path "$(yarn global bin)"
-
-PATH_DIR="$cfg/path"
-if [ -d "${PATH_DIR}" ]; then
-  for dir in $(ls "${PATH_DIR}"); do
-		prepend_path "${PATH_DIR}/${dir}"
-	done
+if [ ! -z "$(which emacsdclient)" ]; then
+  EDITOR="emacsdclient -c"
 fi
 
-export PATH
+if [ ! -z "$(which nvim)" ]; then
+  EDITOR="${EDITOR:-nvim}"
+  export MANPAGER="nvim -c 'set ft=man' -"
+fi
 
-source "$cfg/sh/env.sh"
+export EDITOR="${EDITOR:-vim}"
+
 ENV_DIR="$cfg/env"
 if [ -d "${ENV_DIR}" ]; then
   for env_file in $(ls "${ENV_DIR}"); do
 		source "${ENV_DIR}/${env_file}"
 	done
 fi
-
-
+#+END_SRC
+** Tools
+*** go
+#+BEGIN_SRC bash
+export GOBIN="${HOME}/go/bin"
+export PATH="${PATH}:${GOBIN}"
+#+END_SRC
+*** perl
+#+BEGIN_SRC bash
 if [ -d "${HOME}/perl5" ]; then
-  PATH="${HOME}/perl5/bin${PATH:+:${PATH}}"; export PATH;
-  PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-  PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-  PERL_MB_OPT="--install_base \"${HOME}/perl5\""; export PERL_MB_OPT;
-  PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"; export PERL_MM_OPT;
+  export PATH="${HOME}/perl5/bin${PATH:+:${PATH}}"
+  export PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
+  export PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
+  export PERL_MB_OPT="--install_base \"${HOME}/perl5\""
+  export PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"
 fi
-
+#+END_SRC
+*** rust
+#+BEGIN_SRC bash
+if [ ! -z "$(which rustc)" ]; then
+  # rustup component add rust-src
+  export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+fi
+#+END_SRC
+*** ruby
+#+BEGIN_SRC bash
 if [ -d "${HOME}/.rbenv" ]; then
   export PATH="${HOME}/.rbenv/bin:${PATH}"
   eval "$(rbenv init -)"
 fi
 
 [ -d "${HOME}/.rbenv/plugins/ruby-build" ] && export PATH="${HOME}/.rbenv/plugins/ruby-builder/bin:${PATH}"
-
+#+END_SRC
+*** fzf
+#+BEGIN_SRC bash
+SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
 [ ! -d "${HOME}/.fzf" ] \
   && git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 
@@ -123,101 +99,23 @@ fi
 
 source ${HOME}/.fzf.${SHELL_NAME}
 
-export NVM_DIR="${HOME}/.nvm"
-[ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
-
 if [ ! -z "$(which ag)" ]; then
   export FZF_DEFAULT_COMMAND='(ag --hidden --ignore node_modules --ignore .git --ignore .idea --ignore .DS_Store -f -g "") 2> /dev/null'
 fi
 
 export FZF_DEFAULT_OPTS='--bind="ctrl-alt-a:select-all+accept,alt-a:select-all,alt-u:deselect-all,alt-u:deselect-all+accept,alt-enter:print-query"'
-
-if [ "${SHELL_NAME}" = "zsh" ]; then
-
-  fzf_choose_script() {
-    local script_to_run=$(ssel)
-    LBUFFER="${LBUFFER}${script_to_run}"
-    local ret=$?
-    zle redisplay
-    typeset -f zle-line-init >/dev/null && zle zle-line-init
-    return $ret
-  }
-
-
-  zle     -N    fzf_choose_script
-  bindkey '\er' fzf_choose_script
-
-  fzf_choose_command() {
-    local command_to_run=$((for dir in $path; do
-    ls $dir
-    done && (alias | cut -d = -f 1)) | \
-      sort | \
-      fzf --preview '(man {} 2>/dev/null) || (cat $(which {}) 2>/dev/null) || echo "No clue about: {}"')
-      LBUFFER="${LBUFFER}${command_to_run}"
-      local ret=$?
-      zle redisplay
-      typeset -f zle-line-init >/dev/null && zle zle-line-init
-      return $ret
-  }
-
-  zle     -N    fzf_choose_command
-  bindkey '\ee' fzf_choose_command
-
-  fzf-git-show() {
-    local out shas sha q k
-
-    if [[ -d .git ]] || git rev-parse --git-dir > /dev/null 2>&1; then
-      while out=$(
-          git log --graph --color=always \
-              --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-          fzf --ansi --multi --no-sort --reverse --query="$q" \
-              --print-query \
-              --expect=ctrl-d,ctrl-l,ctrl-n \
-              --toggle-sort=\`); do
-
-        q=$(head -1 <<< "$out")
-        k=$(head -2 <<< "$out" | tail -1)
-        shas=$(sed '1,2d;s/^[^a-z0-9]*//;/^$/d' <<< "$out" | awk '{print $1}')
-
-        [[ -z "$shas" ]] && continue
-
-        case "$k" in
-          ctrl-d)
-            git diff --color=always $shas | less -R;;
-          ctrl-l)
-            git log -p --color=always ${shas}.. | less -R;;
-          ctrl-n)
-            git show --name-status --color=always ${shas} | less -R;;
-          *)
-            for sha in $shas; do
-              git show --color=always $sha | less -R
-            done
-            ;;
-        esac
-      done
-    else
-      echo -e "Not a git repo"
-    fi
-
-    zle accept-line
-  }
-
-  zle     -N    fzf-git-show
-  bindkey '\eq' fzf-git-show
-fi
-
-c2s() {
-  DIR="$(command -v "${1}" | sed -r 's%/[^/]+$%%')"
-  cd "${DIR:-$PWD}"
-}
-
-
-alias cd.p='cdf -d $p --fd-provider fd_project_dirs'
-alias cd.f='dir="$(fd -t d | fzf --height=20%)"; [ -d "$dir"] && cd "$dir"'
-alias .so="source '${HOME}/.${SHELL_NAME}rc'"
-alias new-script-from-last="fc -l -1 | cut -f 2- | c && new-script-from-clipboard"
-alias new-script-from-history="fc -lr 1 | cut -f 2- | fzf | c && new-script-from-clipboard"
-
+#+END_SRC
+*** node
+#+BEGIN_SRC bash
+export NVM_DIR="${HOME}/.nvm"
+[ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
+#+END_SRC
+*** ocaml
+#+BEGIN_SRC bash
+test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+#+END_SRC
+*** vterm
+#+BEGIN_SRC bash
 function vterm_printf(){
     if [ -n "$TMUX" ]; then
         # Tell tmux to pass the escape sequences through
@@ -230,64 +128,10 @@ function vterm_printf(){
         printf "\e]%s\e\\" "$1"
     fi
 }
-
-#set emacs mode
-# set -o emacs
-
-if [ "$SHELL_NAME" = "bash" -o "$SHELL_NAME" = "zsh" ] ; then
-  for source_file in $(ls "$cfg_sh/$SHELL_NAME"); do
-    source "$cfg_sh/$SHELL_NAME/$source_file"
-  done
-fi
-
-LOCAL_DIR="${cfg_sh}/local"
-if [ -d "${LOCAL_DIR}" ]; then
-  for extra_config in $(ls "${LOCAL_DIR}"); do
-		source "${LOCAL_DIR}/${extra_config}"
-	done
-fi
 #+END_SRC
-* Environment Variables
-#+BEGIN_SRC bash :tangle env.sh
-export notes="${HOME}/notes"
-export cfg_sh="${cfg}/sh"
-export docs="${HOME}/Documents"
-export dbox="${HOME}/Nextcloud"
-export org="${HOME}/org"
-
-export p="${HOME}/Projects"
-export dot="$p/dotfiles"
-export cfg_emacs="${dot}/tools/emacs"
-export DOOMDIR="${cfg_emacs}/doom"
-export scripts="$dot/src/scripts"
-export s=$scripts
-export CLICOLOR=1
-export GTAGSLABEL="pygments"
-
-if [ ! -z "$(which rustc)" ]; then
-  # rustup component add rust-src
-  export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-fi
-
-if [ ! -z "$(which emacsdclient)" ]; then
-  EDITOR="emacsdclient -c"
-fi
-
-if [ ! -z "$(which nvim)" ]; then
-  EDITOR="${EDITOR:-nvim}"
-  export MANPAGER="nvim -c 'set ft=man' -"
-fi
-
-test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-
-export EDITOR="${EDITOR:-vim}"
-#+END_SRC
-* bash
-:PROPERTIES:
-:header-args+: :dir ${HOME}/.config/sh/bash
-:END:
-
-#+BEGIN_SRC bash :tangle options.sh
+* Shells
+** bash
+#+BEGIN_SRC bash :tangle .bashrc
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
@@ -297,23 +141,14 @@ shopt -s histappend                      # append to history, don't overwrite it
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 #+END_SRC
 
-* zsh
+** zsh
 :PROPERTIES:
-:header-args+: :dir ${HOME}/.config/sh/zsh
+:header-args+: .zshrc
 :END:
-#+BEGIN_SRC bash :tangle init.sh
+*** Options
+#+BEGIN_SRC bash
 autoload -U compinit
 compinit
-
-bindkey "\C-f" history-incremental-search-forward
-bindkey "\C-r" history-incremental-search-backward
-
-bindkey "\C-n" down-line-or-history
-bindkey "\C-p" up-line-or-history
-
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey "\C-x\C-e" edit-command-line
 
 HISTSIZE=10000
 SAVEHIST=10000
@@ -324,12 +159,21 @@ setopt INC_APPEND_HISTORY # Add immediately
 setopt HIST_SAVE_NO_DUPS # Don't save any duplicates
 setopt NO_HIST_BEEP # Don't beep
 setopt SHARE_HISTORY # Share history between session/terminals
-
-SCRIPT_DIR="$(get_script_dir "$0")"
-source "${SCRIPT_DIR}/plugins.sh"
 #+END_SRC
+*** Keybinds
+#+BEGIN_SRC bash
+bindkey "\C-f" history-incremental-search-forward
+bindkey "\C-r" history-incremental-search-backward
 
-#+BEGIN_SRC bash :tangle plugins.sh
+bindkey "\C-n" down-line-or-history
+bindkey "\C-p" up-line-or-history
+
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey "\C-x\C-e" edit-command-line
+#+END_SRC
+*** Plugins
+#+BEGIN_SRC bash
 [ ! -f ~/.antigen.zsh ] && curl -L git.io/antigen > ~/.antigen.zsh
 source ~/.antigen.zsh
 antigen bundle cusxio/delta-prompt > /dev/null
