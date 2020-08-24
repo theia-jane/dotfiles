@@ -55,6 +55,9 @@ if [ -d "${ENV_DIR}" ]; then
 		source "${ENV_DIR}/${env_file}"
 	done
 fi
+
+SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
+source "${HOME}/.${SHELL_NAME}rc"
 #+END_SRC
 ** Tools
 *** go
@@ -90,7 +93,6 @@ fi
 #+END_SRC
 *** fzf
 #+BEGIN_SRC bash
-SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
 [ ! -d "${HOME}/.fzf" ] \
   && git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 
