@@ -53,7 +53,7 @@ fi
 #+BEGIN_SRC bash :tangle emacsdclient-bg
 d emacsdclient "$@"
 #+END_SRC
-** Lauch
+** Launch
 #+BEGIN_SRC bash :tangle i3.dd.emacs
 # Toggle floating emacs frame in i3, or start if non-existing.
 
