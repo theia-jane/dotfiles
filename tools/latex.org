@@ -1,0 +1,84 @@
+#+TITLE: Latex
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Packages
+** Homework
+:PROPERTIES:
+:header-args:latex: :dir ${HOME}/.config/texmf/tex/latex
+:END:
+#+BEGIN_SRC latex :tangle homework/homework.sty
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{homework}[Tyler Ware's Homework Package]
+
+\RequirePackage[usenames]{color}
+\RequirePackage{
+ amssymb,
+ stmaryrd,
+ amsthm,
+ amsmath,
+ mathtools,
+ enumitem,
+ caption,
+ changepage,
+ subcaption,
+ graphicx,
+ array,
+ float,
+ tikz,
+ calc,
+ hyperref
+}
+
+\makeatletter%
+\@ifclassloaded{standalone}%
+  { }%
+  {
+    % Don't mess with geometry when using standalone
+    \RequirePackage[margin=0.75in]{geometry}
+  }%
+\makeatother%
+
+
+
+\ProcessOptions\relax
+\setlength{\parindent}{0pt}
+
+\newcommand{\parspace}{\setlength{\parskip}{\baselineskip}}
+\newcommand{\parspacex}{\setlength{\parskip}{0mm}}
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\newcommand{\problem}[1]{\hspace{-4 ex}\large\textbf{Problem #1}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Dairy}{\Leftrightarrow}
+\newcommand{\RE}[1]{\operatorname{Re}(#1)}
+\newcommand{\IM}[1]{\operatorname{Im}(#1)}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\lrangle}[1]{\langle #1 \rangle}
+\newcommand{\f}[2]{\text{#1}(#2)}
+\newcommand{\dom}[1]{\text{dom}(#1)}
+\newcommand{\ran}[1]{\text{ran}(#1)}
+\newcommand{\type}[1]{\text{type}(#1)}
+
+% Text Formatting
+\newcommand{\C}[1]{\mathcal{#1}}
+\newcommand{\B}[1]{\mathbb{#1}}
+
+
+
+\def\utilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+#+END_SRC

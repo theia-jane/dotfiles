@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: kwd_latex
+# uuid: kwd_latex
+# key: +l
+# condition: t
+# --
+#+LATEX_HEADER: ${1:\\${2:usepackage{$3}}}$0

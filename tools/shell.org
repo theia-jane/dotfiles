@@ -131,6 +131,10 @@ function vterm_printf(){
     fi
 }
 #+END_SRC
+*** latex
+#+BEGIN_SRC bash
+export TEXMFHOME="${cfg}/texmf"
+#+END_SRC
 * Shells
 ** bash
 #+BEGIN_SRC bash :tangle .bashrc

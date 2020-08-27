@@ -1,5 +1,5 @@
 #+TITLE: i3
-#+PROPERTY: header-args :tangle-relative 'dir :dir
+#+PROPERTY: header-args :tangle-relative 'dir
 
 * Scripts
 :PROPERTIES:

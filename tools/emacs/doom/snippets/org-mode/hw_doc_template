@@ -2,10 +2,10 @@
 # name: hw_doc_template
 # uuid: hw_doc_template
 # key: __hw
-# condition: t
+# condition: t                   
 # --
 #+TITLE: ${1:`(if-let ((file-name (buffer-file-name))) (file-name-base file-name) "Homework")`}
 #+AUTHOR: Tyler Ware
-#+LATEX_HEADER: \input{header.tex}
+#+LATEX_HEADER: \usepackage{homework}
 
 $0
