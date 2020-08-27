@@ -190,24 +190,26 @@ is selected, only the bare key is returned."
                             :template "* %?")))
                )))
 
+
 ;;; Keymap
 (map! :personal-leader
       (:prefix ("n" . "new")
-       :desc "Homework" "h" #'+notes/homework
+       :desc "Homework" "h" #'notes/new-homework
        :desc "Monthly notes" "m" #'+notes/month))
 
 ;;; Functions
-(defun +notes/homework ()
+(defvar notes/homework-directory (expand-file-name "~/homework"))
+(defun notes/new-homework ()
     (interactive)
   (let* ((homework-buffer (generate-new-buffer "homework")))
     (switch-to-buffer homework-buffer)
-    (cd (expand-file-name "~/homework"))
+    (cd notes/homework-directory)
     (org-mode)
     (insert "__hw")
     (yas-expand-from-trigger-key)))
 
 (defvar notes/directory (substitute-env-in-file-name "$HOME/notes"))
-  (defvar notes/months-directory (concat notes/directory "/personal/todo"))
+(defvar notes/months-directory (concat notes/directory "/personal/todo"))
 
   (defun notes/month-label (&optional timestamp)
     (trim-trailing-newline
