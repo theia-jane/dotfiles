@@ -30,6 +30,10 @@
         evil-respect-visual-line-mode nil
         line-spacing 14
         fill-column 80)
+  (pcase major-mode
+    (org-mode (+org-pretty-mode 1)
+              (org--latex-preview-region (point-min) (point-max))
+              (org-overview)))
   (if (> (line-number-at-pos (point-max)) 1500)
       (pcase major-mode
         ;; Is there an earlier point I can set this up at? Seems like it isn't as effective as #+STARTUP: overview
