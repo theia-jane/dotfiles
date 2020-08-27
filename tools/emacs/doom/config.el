@@ -51,7 +51,10 @@
 (use-package! howdoyou
   :defer-incrementally t)
 
-(remove-hook! '(org-mode-hook) #'flyspell-mode)
+(add-hook! '(org-mode-hook) #'disable-spelling)
+
+(defun disable-spelling ()
+  (spell-fu-mode -1))
 
 (set-irc-server! "chat.freenode.net"
   `(:tls t
