@@ -235,9 +235,9 @@
        "<M-S-return>" '+org/M-S-Return
        :ni "<C-S-return>" '+org/eval-src-block-then-next
        :n "M-i" #'org-edit-special
+       :ni "M-o" #'org-cleave
        "<normal-state> <M-return>" '+tw/org-ctrl-c-ret)
       (:map evil-org-mode-map
-       :ni "M-o" #'org-cleave
        :ni "<C-S-return>" '+org/eval-src-block-then-next
        ;; evil-org text objects
        :vo "ae" #'evil-org-an-object
