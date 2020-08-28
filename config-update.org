@@ -1,0 +1,21 @@
+#+TITLE: Config Update
+#+PROPERTY: header-args :tangle bin/config-update
+
+#+BEGIN_SRC sh :shebang #!/usr/bin/env sh :comments no
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+END_SRC
+
+I'll want to add more =install.org='s, but as a start =emacs/install.org= will do
+#+BEGIN_SRC elisp
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+
+(require 'notifications)
+(let* ((default-directory config-root)
+       (clean? (equal "\n" (shell-command-to-string "git status -u --porcelain=v2 | awk '{print $(NF)}'"))))
+       (if clean?
+             (shell-command-to-string "git pull && config-tangle")
+           (notifications-notify
+            :title "Skipping update"
+            :body "Config not clean"
+            :timeout 1500)))
+#+END_SRC

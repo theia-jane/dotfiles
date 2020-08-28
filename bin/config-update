@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+;; [[file:~/Projects/dotfiles/config-update.org][No heading:2]]
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+
+(require 'notifications)
+(let* ((default-directory config-root)
+       (clean? (equal "\n" (shell-command-to-string "git status -u --porcelain=v2 | awk '{print $(NF)}'"))))
+       (if clean?
+             (shell-command-to-string "git pull && config-tangle")
+           (notifications-notify
+            :title "Skipping update"
+            :body "Config not clean"
+            :timeout 1500)))
+;; No heading:2 ends here
