@@ -1,0 +1,30 @@
+#+TITLE: Documents
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle djvu2pdf
+if [ ! -f "$1" ]; then
+    echo "Must provide a file."
+    exit 1
+fi
+
+check-deps sed \
+    realpath \
+    ddjvu \
+    tiff2pdf \
+    || exit 1
+
+DJVUFILE="$(realpath "$1")"
+BASENAME="$(echo "${DJVUFILE}" | sed -r 's/\.[^.]+$//')"
+TIFFFILE="${BASENAME}.tiff"
+PDFFILE="${BASENAME}.pdf"
+
+ddjvu -format=tiff "$DJVUFILE" "$TIFFFILE"
+tiff2pdf -j -o "$PDFFILE" "$TIFFFILE"
+rm "$TIFFFILE"
+
+exit 0
+#+END_SRC
