@@ -10,6 +10,7 @@
 (require 'ob-text-var-expansion)
 (require 'ob-load-namespaced-libraries)
 (require 'ob-var-table)
+(require 'notifications)
 ;; No heading:2 ends here
 
 ;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:3]]
@@ -52,7 +53,9 @@
      (ob-make-lib-from-files files t (lambda (file)
                                   (setq file (string-remove-prefix (file-name-as-directory config-root) file))
                                   (string-remove-suffix ".org" file)))
-     (ob-tangle-files files))))
+     (ob-tangle-files files))
+    (notifications-notify :title "Config tangled"
+                          :timeout 1500)))
 
 (config-tangle)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
+;; [[file:~/Projects/dotfiles/config-install.org][No heading:2]]
 (require 'org)
 (require 'org-element)
 (require 'ob-core)
@@ -13,3 +14,4 @@
                          "/tools/emacs/install.org"))
   (org-mode)
   (org-babel-execute-buffer))
+;; No heading:2 ends here

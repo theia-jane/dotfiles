@@ -48,6 +48,7 @@ global:
     c:
       o: org-capture
       s: screenshot
+      t: d config-tangle
   Cmd+Shift+q:
     Cmd+Shift+q:
       Cmd+Shift+q: pkill kree

@@ -19,6 +19,7 @@ We need to pull in the org babel library for tangling and an extension to tangli
 (require 'ob-text-var-expansion)
 (require 'ob-load-namespaced-libraries)
 (require 'ob-var-table)
+(require 'notifications)
 #+END_SRC
 
 Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
@@ -68,7 +69,9 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
      (ob-make-lib-from-files files t (lambda (file)
                                   (setq file (string-remove-prefix (file-name-as-directory config-root) file))
                                   (string-remove-suffix ".org" file)))
-     (ob-tangle-files files))))
+     (ob-tangle-files files))
+    (notifications-notify :title "Config tangled"
+                          :timeout 1500)))
 
 (config-tangle)
 
