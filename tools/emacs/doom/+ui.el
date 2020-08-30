@@ -32,7 +32,7 @@
         fill-column 80)
   (pcase major-mode
     (org-mode (+org-pretty-mode 1)
-              (org--latex-preview-region (point-min) (point-max))
+              (org-latex-preview-buffer)
               (org-overview)))
   (if (> (line-number-at-pos (point-max)) 1500)
       (pcase major-mode

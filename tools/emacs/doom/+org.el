@@ -262,9 +262,17 @@
         :desc "Element" "e" #'org-narrow-element)
        :desc "Set Name" "N" #'org-set-name
        (:prefix ("L" . "Latex")
-        :desc "Preview" "p" (cmd! (org--latex-preview-region (point-min) (point-max))))))
+        :desc "Preview" "p" #'org-latex-preview-buffer)))
 
+(defun org-latex-preview-buffer ()
+  (interactive)
+  (org--latex-preview-region (point-min) (point-max)))
 
+(defun org-latex-preview-buffer-h ()
+  (add-hook 'after-save-hook
+            #'org-latex-preview-buffer))
+
+(add-hook 'org-mode-hook #'org-latex-preview-buffer-h)
 
 ;;; Babel
 (defadvice! +org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
