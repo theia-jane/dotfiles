@@ -61,10 +61,12 @@
    )
   (defadvice! +org-svg-preview (fn &rest args)
     :around 'org-create-formula-image
-    (let ((org-format-latex-header "\\documentclass{standalone}
+    (let ((org-format-latex-header "\\documentclass[varwidth]{standalone}
 \\usepackage[usenames]{color}
 [PACKAGES]
-[DEFAULT-PACKAGES]")
+[DEFAULT-PACKAGES]
+\\addtolength{\\textwidth}{-1cm}
+")
           (org-preview-latex-default-process 'pdf2svg))
       (apply fn args)))
 
