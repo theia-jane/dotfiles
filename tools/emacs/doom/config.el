@@ -35,6 +35,7 @@
  ;;lang
  "+c"
  "+php"
+ "+sage"
  "+scheme"
  ;; Hacks
  "+hacks"
