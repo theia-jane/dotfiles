@@ -90,6 +90,10 @@ if [ -d "${HOME}/.rbenv" ]; then
 fi
 
 [ -d "${HOME}/.rbenv/plugins/ruby-build" ] && export PATH="${HOME}/.rbenv/plugins/ruby-builder/bin:${PATH}"
+
+if [ -d "${HOME}/.gem/ruby" ]; then
+    export PATH="${PATH}$(printf ':%s' ${HOME}/.gem/ruby/*/bin)"
+fi
 #+END_SRC
 *** fzf
 #+BEGIN_SRC bash
