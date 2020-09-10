@@ -6,6 +6,7 @@
 :END:
 
 #+BEGIN_SRC bash :tangle djvu2pdf
+# Check that we have a file
 if [ ! -f "$1" ]; then
     echo "Must provide a file."
     exit 1
@@ -14,17 +15,71 @@ fi
 check-deps sed \
     realpath \
     ddjvu \
+    djvused \
     tiff2pdf \
+    djvu2hocr \
+    pdfbeads \
+    pdftk \
     || exit 1
 
 DJVUFILE="$(realpath "$1")"
-BASENAME="$(echo "${DJVUFILE}" | sed -r 's/\.[^.]+$//')"
-TIFFFILE="${BASENAME}.tiff"
-PDFFILE="${BASENAME}.pdf"
+BASENAME="$(basename -- "${DJVUFILE}" | sed -r 's/\.[^.]+$//')"
+TMPPDF="tmp.pdf"
+FINALPDF="$BASENAME.pdf"
 
-ddjvu -format=tiff "$DJVUFILE" "$TIFFFILE"
-tiff2pdf -j -o "$PDFFILE" "$TIFFFILE"
-rm "$TIFFFILE"
+convert_page() {
+    PAGE_NO="$1"
+    PAGE_NAME="pg$(printf %0${COUNT_DIGITS}d $PAGE_NO)"
+    djvu2hocr -p $PAGE_NO "$DJVUFILE" | sed 's/ocrx/ocr/g' > "$PAGE_NAME.html"
+    ddjvu -format=tiff -page=$PAGE_NO "$DJVUFILE" "$PAGE_NAME.tiff"
+}
+
+PAGE_COUNT=$(djvused -e n "$DJVUFILE")
+COUNT_DIGITS=${#PAGE_COUNT}
+
+TEMP_DIR="$(mktemp -d)"
+cd $TEMP_DIR
+
+for PAGE_NO in $(seq 1 $PAGE_COUNT); do
+    convert_page "$PAGE_NO"
+done
+
+pdfbeads -o "$TMPPDF"
+pdftk "$TMPPDF" dump_data | sed '/^Bookmark/d' > meta.info
+
+OUTLINE="$(djvused -e 'print-outline' "$DJVUFILE")"
+emacs --batch \
+    --eval "
+(progn
+(require 'cl-extra)
+(defun parse-outline (outline level)
+  (cond
+   ((listp (car outline))
+    (mapconcat (lambda (x) (parse-outline x level))
+               outline
+               \"\"))
+   ((eq (length outline) 2)
+    (format \"BookmarkBegin
+BookmarkTitle: %s
+BookmarkPageNumber: %s
+BookmarkLevel: %s
+\"
+            (car outline)
+            (substring (cadr outline) 1)
+            level))
+   ((> (length outline) 2)
+    (concat (parse-outline (cl-subseq outline 0 2) level)
+            (parse-outline (cl-subseq outline 2) (1+ level))))
+   (t \"\")))
+
+(princ (parse-outline (cdr '$OUTLINE) 1)))
+" >> meta.info
+
+pdftk "$TMPPDF" update_info meta.info output "$FINALPDF"
+
+cd -
+cp "$TEMP_DIR/$FINALPDF" ./
+rm -rf "$TEMP_DIR"
 
 exit 0
 #+END_SRC
