@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: tex_cmd
+# uuid: tex_cmd
+# key: \
+# --
+\\$1{$2}$0
