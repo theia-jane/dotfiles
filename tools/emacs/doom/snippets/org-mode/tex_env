@@ -2,8 +2,7 @@
 # name: tex_env
 # uuid: tex_env
 # key: \b
-# condition: t
 # --
-\begin{${1:align*}}
+\begin{${1:align*}}${2:[$3]}
     $0
 \end{$1}
