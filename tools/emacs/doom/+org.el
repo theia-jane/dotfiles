@@ -266,11 +266,11 @@
 
 (defun org-latex-preview-buffer ()
   (interactive)
-  (org--latex-preview-region (point-min) (point-max)))
+  (when (eq major-mode 'org-mode)
+        (org--latex-preview-region (point-min) (point-max))))
 
 (defun org-latex-preview-buffer-h ()
-  (add-hook 'after-save-hook
-            #'org-latex-preview-buffer))
+  (add-hook 'after-save-hook #'org-latex-preview-buffer))
 
 (add-hook 'org-mode-hook #'org-latex-preview-buffer-h)
 
