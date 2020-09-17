@@ -84,6 +84,10 @@
 \newcommand{\C}[1]{\mathcal{#1}}
 \newcommand{\B}[1]{\mathbb{#1}}
 
+% Topology
+\newcommand{\cl}[1]{\text{Cl}(#1)}
+\newcommand{\intor}[1]{\text{Int}(#1)}
+\newcommand{\bdry}[1]{\partial(#1)}
 
 
 \def\utilde#1{\mathord{\vtop{\ialign{##\crcr
