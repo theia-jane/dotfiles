@@ -8,6 +8,113 @@
   (setq org-tags-exclude-from-inheritance (quote ("crypt"))
         org-crypt-key nil))
 
+(defun sp-insert-newline-inside-pair (_id action _context)
+  "ID, ACTION, CONTEXT."
+  (when (eq action 'insert)
+    (insert "\n\n")
+    (backward-char 1)
+    (insert-tab nil)))
+
+(use-package! smartparens-latex
+  :after org
+  :defer-incrementally t
+  :config
+  (sp-with-modes '(org-mode)
+    (sp-local-pair "`" "'"
+                   :actions '(:rem autoskip)
+                   :skip-match 'sp-latex-skip-match-apostrophe
+                   :unless '(sp-latex-point-after-backslash sp-in-math-p))
+    ;; math modes, yay.  The :actions are provided automatically if
+    ;; these pairs do not have global definitions.
+    (sp-local-pair "$" "$")
+    (sp-local-pair "\\[" "\\]"
+                   :unless '(sp-latex-point-after-backslash)
+                   :post-handlers '(sp-insert-newline-inside-pair))
+
+    ;; disable useless pairs.
+    (sp-local-pair "\\\\(" nil :actions nil)
+    (sp-local-pair "'" nil :actions nil)
+    (sp-local-pair "\\\"" nil :actions nil)
+
+    ;; quote should insert ``'' instead of double quotes.  If we ever
+    ;; need to insert ", C-q is our friend.
+    (sp-local-pair "``" "''"
+                   :trigger "\""
+                   :unless '(sp-latex-point-after-backslash sp-in-math-p)
+                   :post-handlers '(sp-latex-skip-double-quote))
+
+    ;; add the prefix function sticking to {} pair
+    (sp-local-pair "{" nil :prefix "\\\\\\(\\sw\\|\\s_\\)*")
+
+    ;; do not add more space when slurping
+    (sp-local-pair "{" "}")
+    (sp-local-pair "(" ")")
+    (sp-local-pair "[" "]")
+
+    ;; pairs for big brackets.  Needs more research on what pairs are
+    ;; useful to add here.  Post suggestions if you know some.
+    (sp-local-pair "\\left(" "\\right)"
+                   :trigger "\\l("
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left[" "\\right]"
+                   :trigger "\\l["
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left\\{" "\\right\\}"
+                   :trigger "\\l{"
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\left|" "\\right|"
+                   :trigger "\\l|"
+                   :when '(sp-in-math-p)
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl(" "\\bigr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl(" "\\biggr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl(" "\\Bigr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl(" "\\Biggr)"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl[" "\\bigr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl[" "\\biggr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl[" "\\Bigr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl[" "\\Biggr]"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\bigl\\{" "\\bigr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\biggl\\{" "\\biggr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Bigl\\{" "\\Bigr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\Biggl\\{" "\\Biggr\\}"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\lfloor" "\\rfloor"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\lceil" "\\rceil"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair "\\langle" "\\rangle"
+                   :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair  "\\lVert" "\\rVert"
+                    :when '(sp-in-math-p)
+                    :trigger "\\lVert"
+                    :post-handlers '(sp-latex-insert-spaces-inside-pair))
+    (sp-local-pair  "\\lvert" "\\rvert"
+                    :when '(sp-in-math-p)
+                    :trigger "\\lvert"
+                    :post-handlers '(sp-latex-insert-spaces-inside-pair))
+
+    ;; some common wrappings
+    (sp-local-tag "\"" "``" "''" :actions '(wrap))
+    (sp-local-tag "\\b" "\\begin{_}" "\\end{_}")
+    (sp-local-tag "bi" "\\begin{itemize}" "\\end{itemize}")
+    (sp-local-tag "be" "\\begin{enumerate}" "\\end{enumerate}")))
+
+
 (after! org
   (setq org-directory "~/notes/"
         org-agenda-files `(,(f-join org-directory "projects"))
