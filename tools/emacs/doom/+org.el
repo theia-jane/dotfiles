@@ -236,7 +236,10 @@
   :latex "#+LATEX_HEADER:"
   :latex "#+LATEX_HEADER_EXTRA:"
   :property  "#+STARTUP:"
-  :property "#+RESULTS:"))
+  :property "#+RESULTS:")
+
+  (add-hook 'org-mode-hook
+            #'(lambda () (yas-activate-extra-mode 'latex-mode))))
 
 
 
