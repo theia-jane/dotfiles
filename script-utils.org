@@ -27,3 +27,21 @@ fi
 
 exit 0
 #+END_SRC
+
+#+BEGIN_SRC bash :tangle check-args
+ACTION="$1"; shift;
+
+[ -z "$ACTION" ] \
+    && echo "No check-arg action provided" \
+    && exit 1
+
+[ ! "$ACTION" = "not-empty" ] \
+    && echo "Invalid check-arg action provided: '$ACTION'" \
+    && exit 1
+
+[ -z "$@" ] \
+    && echo "Must provide an argument." \
+    && exit 1
+
+exit 0
+#+END_SRC
