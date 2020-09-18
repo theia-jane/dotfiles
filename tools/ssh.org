@@ -1,0 +1,28 @@
+#+TITLE: SSH
+#+PROPERTY: header-args :tangle-relative 'dir :mkdirp t
+
+* SystemD Service
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.config/systemd
+:END:
+
+#+BEGIN_SRC conf :tangle user/ssh-agent.service
+[Unit]
+Description=SSH key agent
+
+[Service]
+Type=simple
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
+
+[Install]
+WantedBy=default.target
+#+END_SRC
+
+* Environment
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.config/env
+:END:
+#+BEGIN_SRC bash :tangle ssh-agent
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+#+END_SRC
