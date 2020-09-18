@@ -1,0 +1,14 @@
+#+TITLE: Audio
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #!/usr/bin/env bash
+:END:
+
+#+BEGIN_SRC bash :tangle volume
+check-args not-empty "$@" \
+    && check-deps pactl \
+    || exit 1
+
+pactl set-sink-volume 0 "$1%"
+#+END_SRC

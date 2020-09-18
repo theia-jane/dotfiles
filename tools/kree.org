@@ -49,6 +49,12 @@ global:
       o: org-capture
       s: screenshot
       t: d config-tangle
+    v:
+      j: volume -20
+      k: volume +20
+      m: volume 0
+    r:
+      k: kree.restart
   Cmd+Shift+q:
     Cmd+Shift+q:
       Cmd+Shift+q: pkill kree
