@@ -2,7 +2,7 @@
 
 * Scripts
 :PROPERTIES:
-:header-args:bash: :comments yes :dir $HOME/bin :shebang #/usr/bin/env bash
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #!/usr/bin/env bash
 :END:
 
 #+BEGIN_SRC bash :tangle check-deps

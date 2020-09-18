@@ -36,7 +36,7 @@ Not sure why I have this default, but it was in my original (pre-literate) confi
 
 * Scripts
 :PROPERTIES:
-:header-args:bash: :comments yes :dir $HOME/bin :shebang #/usr/bin/env bash
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #!/usr/bin/env bash
 :END:
 A collection of shortcuts to information or workflows in git.
 

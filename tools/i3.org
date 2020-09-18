@@ -47,7 +47,7 @@ fi
 # vim: ft=sh
 #+END_SRC
 
-#+BEGIN_SRC bash :tangle i3.ipc :shebang #/usr/bin/env python3
+#+BEGIN_SRC bash :tangle i3.ipc :shebang #!/usr/bin/env python3
 i3 = i3ipc.Connection()
 
 def border_float_change(i3, e):
