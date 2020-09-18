@@ -15,6 +15,21 @@
     (backward-char 1)
     (insert-tab nil)))
 
+(defun org-in-latex-block-p ()
+  (let* ((element (org-element-at-point))
+         (element-type (org-element-type element)))
+    (or
+     (and (eq element-type 'src-block)
+          (equal (org-element-property ':language element) "latex"))
+     (and (eq element-type 'export-block)
+          (equal (org-element-property ':type element) "latex"))
+     (and (eq element-type 'example-block)
+          (string-match-p (rx line-start "latex") (org-element-property ':switches element))))))
+
+(defun sp-org-in-non-latex-block (_id _action _context)
+  "ID, ACTION, CONTEXT."
+  (not (org-in-latex-block-p)))
+
 (use-package! smartparens-latex
   :after org
   :defer-incrementally t
@@ -23,12 +38,13 @@
     (sp-local-pair "`" "'"
                    :actions '(:rem autoskip)
                    :skip-match 'sp-latex-skip-match-apostrophe
-                   :unless '(sp-latex-point-after-backslash sp-in-math-p))
+                   :unless '(sp-latex-point-after-backslash sp-in-math-p sp-org-in-non-latex-block))
     ;; math modes, yay.  The :actions are provided automatically if
     ;; these pairs do not have global definitions.
-    (sp-local-pair "$" "$")
+    (sp-local-pair "$" "$"
+                   :unless '(sp-org-in-non-latex-block))
     (sp-local-pair "\\[" "\\]"
-                   :unless '(sp-latex-point-after-backslash)
+                   :unless '(sp-latex-point-after-backslash sp-org-in-non-latex-block)
                    :post-handlers '(sp-insert-newline-inside-pair))
 
     ;; disable useless pairs.
@@ -40,7 +56,7 @@
     ;; need to insert ", C-q is our friend.
     (sp-local-pair "``" "''"
                    :trigger "\""
-                   :unless '(sp-latex-point-after-backslash sp-in-math-p)
+                   :unless '(sp-latex-point-after-backslash sp-in-math-p sp-org-in-non-latex-block)
                    :post-handlers '(sp-latex-skip-double-quote))
 
     ;; add the prefix function sticking to {} pair
