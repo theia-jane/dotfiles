@@ -1,0 +1,126 @@
+#+TITLE: Media Capture
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #!/usr/bin/env bash
+:END:
+#+BEGIN_SRC bash :tangle screen-record-start
+check-deps slop \
+    notify-send \
+    ffmpeg \
+    gifsicle \
+    xwininfo \
+    awk \
+    || exit 1
+
+CAPTURETYPE="${1:-region}"
+! [ "$CAPTURETYPE" = "region" \
+    -o "$CAPTURETYPE" = "window" \
+    -o "$CAPTURETYPE" = "fullscreen" ] \
+    && echo "Invalid capture type." \
+    && exit 1
+
+
+## Limit recordins to one at a time
+LOCKFILE="/tmp/screen-record-lock.pid"
+[ -f "$LOCKFILE" ] \
+    && notify-send "Recording failed" \
+        "Currently recording, can't start a second recording." \
+    && exit 1
+
+get-geometry() {
+    if [ "$CAPTURETYPE" = "region" ]; then
+        slop -nof "%w %h %x %y"
+    elif [ "$CAPTURETYPE" = "window" -o "$CAPTURETYPE" = "fullscreen" ]; then
+        # xwininfo doesn't account for border in window positioning,
+        # so we'll compute the window position with awk
+        xwininfo $([ "$CAPTURETYPE" = "fullscreen" ] && echo "-root") \
+            | awk 'BEGIN {ORS=" "} /Absolute|Width|Height|Border/{print $(NF)}' \
+            | awk '{$1+=$5; $2+=$5; print $3, $4, $1, $2}'
+    fi
+}
+
+## Grap screen capture area
+read -r W H X Y < <(get-geometry)
+[ \
+    -z "$W" \
+    -o -z "$H" \
+    -o -z "$X" \
+    -o -z "$Y" \
+    ] \
+    && echo "No region selected." \
+    && exit 1
+
+## Files
+BASENAME="$(date -Iseconds)"
+DEST="${HOME}/Documents/screen-recordings/${BASENAME}.gif"
+MP4DEST="/tmp/screc-${BASENAME}.mp4"
+PALETTE="/tmp/screen-recording-pallette.png"
+
+## Breathe
+DELAY=${DELAY:-3}
+if (( DELAY > 0 )); then
+    for ((i=DELAY;i>0;i--)); do
+        echo "Recording in $i"
+        sleep 1
+    done
+fi
+
+COMPTON="$(pgrep compton)"
+[ -n "${COMPTON}" ]&& pkill compton
+
+## Record
+ffmpeg -y \
+    -f x11grab \
+    -show_region 1 \
+    -ss 1 \
+    -s ${W}x${H} \
+    -i :0.0+${X},${Y} \
+    -framerate 30 \
+    "${MP4DEST}" &
+
+[ -n "${COMPTON}" ] && d compton
+
+## Take Recording Lock
+PID=$!
+echo $PID > $LOCKFILE
+wait $PID
+
+## Done recording
+rm $LOCKFILE
+
+## Sanity check
+[ ! -f "$MP4DEST" ] \
+    && notify-send "Screencast failed." \
+        "No mp4 recording found." \
+    && exit 1
+
+## Make the GIF
+ffmpeg -v warning \
+    -i "$MP4DEST" \
+    -vf "fps=30,palettegen=stats_mode=full" \
+    -y "$PALETTE"
+
+ffmpeg -v warning \
+    -i "$MP4DEST" \
+    -i "$PALETTE" \
+    -lavfi "fps=30 [x]; [x][1:v] paletteuse" \
+    -y "$DEST"
+
+# Convert to a gif
+gifsicle -O3 "$DEST" -o "$DEST"
+
+# Cleanup
+rm "$PALETTE"
+rm "$MP4DEST"
+
+# Copy location to clipboard
+echo -n "$DEST" | c
+
+notify-send "Screencast successful"
+#+END_SRC
+
+
+#+BEGIN_SRC bash :tangle screen-record-stop
+kill `cat /tmp/screen-record-lock.pid`
+#+END_SRC

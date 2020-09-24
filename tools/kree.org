@@ -48,6 +48,12 @@ global:
     c:
       o: org-capture
       s: screenshot
+      r:
+        r: d screen-record-start region
+        w: d screen-record-start window
+        f: d screen-record-start fullscreen
+        k: screen-record-stop
+        Ctrl+c: screen-record-stop
       t: d config-tangle
     v:
       j: volume -20
