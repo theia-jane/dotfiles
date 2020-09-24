@@ -28,7 +28,9 @@
 
 (defun sp-org-in-non-latex-block (_id _action _context)
   "ID, ACTION, CONTEXT."
-  (not (org-in-latex-block-p)))
+  (let ((element-type (org-element-at-point)))
+    (and (memq element-type '(src-block export-block example-block))
+     (not (org-in-latex-block-p)))))
 
 (use-package! smartparens-latex
   :after org
