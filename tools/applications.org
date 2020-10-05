@@ -7,10 +7,11 @@
 
 #+BEGIN_SRC bash :tangle screenshot
 file="$(scrot -s -z -e 'echo $f')"
-screenshot_directory="${HOME}/Documents/screenshots"
+DEST_FILE="${HOME}/Documents/screenshots/$file"
 
-if [[ ! -z "${file}" ]] && [[ ! -e "${screenshot_directory}/${file}" ]]; then
-   mv $file $screenshot_directory
+if [[ ! -z "${file}" ]] && [[ ! -e "$DEST_FILE" ]]; then
+   mv $file $DEST_FILE
+   echo $DEST_FILE | c
 fi
 #+END_SRC
 
