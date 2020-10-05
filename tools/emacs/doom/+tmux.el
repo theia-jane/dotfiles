@@ -86,9 +86,8 @@ but do not execute them."
 
 (defun +tmux-get-or-create-session (session-name)
   "TODO"
-  (condition-case _err
-      (+tmux-get-session session-name)
-    (t (+tmux-create-session session-name))))
+  (or (+tmux-get-session session-name)
+      (+tmux-create-session session-name)))
 
 (defun +tmux-create-window (session window-name)
   (+tmux (format "new-window %s -n '%s' -d" (+tmux--generate-command-target session) window-name))
