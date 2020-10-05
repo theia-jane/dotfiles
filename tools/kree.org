@@ -48,6 +48,7 @@ global:
     c:
       o: org-capture
       s: screenshot
+      f: clipboard-copyfile
       r:
         r: d screen-record-start region
         w: d screen-record-start window
