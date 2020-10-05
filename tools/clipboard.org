@@ -28,3 +28,14 @@ elif [ "$OS" = "darwin" ]; then
     pbcopy
 fi
 #+END_SRC
+
+#+BEGIN_SRC bash :tangle clipboard-copyfile
+FILEPATH="$(v)"
+
+[ ! -f "${FILEPATH}" ]  \
+    && notify-send "Clipboard doesn't contain a file path" \
+    && exit 1
+
+TYPE=$(file -b --mime-type "${FILEPATH}")
+xclip -selection clipboard -t "$TYPE" < "${FILEPATH}"
+#+END_SRC
