@@ -11,8 +11,10 @@
 \ProvidesPackage{homework}[Tyler Ware's Homework Package]
 
 \RequirePackage[usenames]{color}
+\RequirePackage[utf8]{inputenc}
 \RequirePackage{
  amssymb,
+ biblatex,
  stmaryrd,
  amsthm,
  amsmath,
@@ -34,7 +36,7 @@
   { }%
   {
     % Don't mess with geometry when using standalone
-    \RequirePackage[margin=0.75in]{geometry}
+    \RequirePackage{geometry}
   }%
 \makeatother%
 
@@ -89,8 +91,25 @@
 \newcommand{\intor}[1]{\text{Int}(#1)}
 \newcommand{\bdry}[1]{\partial(#1)}
 
+\theoremstyle{plain}
+% for use with amsthm
+% same as proof environment, but with definition-style proof head
+% and named theorem.
+\makeatletter
+\newenvironment{proofof}[1]{\par
+  \pushQED{\square}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+        \bfseries
+    Proof of #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
 
 \def\utilde#1{\mathord{\vtop{\ialign{##\crcr
 $\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
 $\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+
 #+END_SRC
