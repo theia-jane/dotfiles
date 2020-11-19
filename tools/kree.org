@@ -65,6 +65,8 @@ global:
       m: volume 0
     r:
       k: kree.restart
+    w:
+      w: wm-set-background ${HOME}/.wallpaper
   Cmd+Shift+q:
     Cmd+Shift+q:
       Cmd+Shift+q: pkill kree
