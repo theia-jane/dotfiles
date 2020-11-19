@@ -56,6 +56,9 @@ global:
         k: screen-record-stop
         Ctrl+c: screen-record-stop
       t: d config-tangle
+    b:
+      j: xbacklight -dec 10
+      k: xbacklight -inc 10
     v:
       j: volume -20
       k: volume +20
