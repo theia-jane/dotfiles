@@ -28,6 +28,7 @@
 (package! solaire-mode :disable t)
 
 (package! vimrc-mode)
+(package! ox-ssh)
 
 (unpin! ivy)
 (unpin! swiper)

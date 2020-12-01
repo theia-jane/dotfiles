@@ -602,3 +602,35 @@ If :tangle-relative is
 (defun +org-backward-to-narrowed-heading (arg)
   (interactive "p")
   (+org-forward-to-narrowed-heading (- arg)))
+
+(define-minor-mode org-server-manager-mode
+  "TODO"
+  :init-val nil
+  :lighter ""
+  :keymap (make-sparse-keymap))
+
+(defun org-server-manager-ssh-connect (&optional arg)
+  "Connect to the host at point and open `dired'.
+If ARG is non-nil, open `eshell' instead of `dired'."
+  (interactive "P")
+  (let* ((properties (org-entry-properties))
+         (name (alist-get "ITEM" properties nil nil #'string=))
+         (user (alist-get "SSH_USER" properties nil nil #'string=))
+         (port (alist-get "SSH_PORT" properties nil nil #'string=))
+         (host (or (alist-get "IP" properties nil nil #'string=)
+                   (alist-get "HOSTNAME" properties nil nil #'string=))))
+    (if host
+        (let ((default-directory (format "/ssh:%s%s%s:"
+                                         (if user (format "%s@" user) "")
+                                         host
+                                         (if port (format "#%s" port) ""))))
+          (message "Connecting to %s..." name)
+          (if arg
+              (eshell t)
+            (dired ".")))
+      (user-error "Not an SSH host"))))
+
+(map! (:map org-server-manager-mode-map
+       :desc "Open dired to remote" "C-c s" #'org-server-manager-ssh-connect))
+
+(add-hook 'org-servers-file-open-hook #'org-server-manager-mode)
