@@ -1,4 +1,4 @@
-#+TITLE: Install
+#+TITLE: Emacs Install
 #+PROPERTY: header-args :mkdirp yes
 
 * Chemacs

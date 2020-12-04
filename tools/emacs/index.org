@@ -1,0 +1,15 @@
+#+TITLE: Emacs Config
+
+* Switching
+As seen in [[file:install.org][the install]] you can switch the config in use by way of chemacs. There are a list of profiles in [[file:~/.emacs-profiles.el][~/.emacs-profiles.el]] take one of them, such as =spacemacs=, and run start emacs with the =--with-profile <profile>=  flag. For example:
+
+#+begin_src bash
+emacs --with-profile spacemacs
+#+end_src
+
+* Making a new config
+Making a new config is as simple as creating a new directory, adding an empty =init.el= in it and adding an entry to [[file:~/.emacs-profiles.el][~/.emacs-profiles.el]] to use the profile, like so:
+
+#+begin_src emacs-lisp
+("profile-name" (user-emacs-directory . "/path/to/config"))
+#+end_src
