@@ -123,8 +123,10 @@ emacsdclient-bg -c -e "$lisp"
 
 #+begin_src bash :tangle emacs-from-dir
 # To work this requires a version of chemacs that allows for loading the config from the CLI
-[ -d "$1" ] \
-    && emacs --with-profile '((user-emacs-directory . "'$1'"))'
+DIR="$1"
+shift
+[ -d "$DIR" ] \
+    && emacs --with-profile '((user-emacs-directory . "'$DIR'"))' $@
 #+end_src
 
 #+BEGIN_SRC bash :tangle try-emacs-config :comments no
