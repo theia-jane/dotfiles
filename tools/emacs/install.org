@@ -4,8 +4,9 @@
 * Chemacs
 [[https://github.com/plexus/chemacs][Chemacs]] is a bootloader that lets me switch between various emacs configs. It's useful for experimenting and trying things out.
 #+BEGIN_SRC bash :dir ~/.local/src
+# Using my own fork for now https://github.com/plexus/chemacs
 [ ! -d chemacs ] \
-    && git clone https://github.com/plexus/chemacs \
+    && git clone https://github.com/tylerware/checmacs \
     && ./chemacs/install.sh
 #+END_SRC
 

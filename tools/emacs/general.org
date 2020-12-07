@@ -120,9 +120,44 @@ if [ ! -z "$dir" ]; then
 fi
 emacsdclient-bg -c -e "$lisp"
 #+END_SRC
+
+#+begin_src bash :tangle emacs-from-dir
+# To work this requires a version of chemacs that allows for loading the config from the CLI
+[ -d "$1" ] \
+    && emacs --with-profile '((user-emacs-directory . "'$1'"))'
+#+end_src
+
+#+BEGIN_SRC bash :tangle try-emacs-config :comments no
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+(require 'url)
+(defconst repos-dir "/tmp/emacs-try")
+
+(defun ensure-repos-dir ()
+  "Make sure the repos dir exists"
+  (or (file-exists-p repos-dir)
+      (mkdir repos-dir t)))
+
+(defun get-repo-link ()
+  (let ((link (with-temp-buffer
+                (shell-command "v" (current-buffer))
+                (url-get-url-at-point (point-min)))))
+    (or link "")))
+
+(defun get-repo-name (repo-link)
+  (save-match-data
+    (and (string-match "\\([^/]+\\)*/\\([^/]+\\)$" repo-link)
+         (format "%s__%s" (match-string 1 repo-link) (match-string 2 repo-link)))))
+
+(when-let ((repo-link (get-repo-link)))
+        (ensure-repos-dir)
+        (let ((default-directory repos-dir)
+              (repo-name (get-repo-name repo-link)))
+          (unless (file-exists-p repo-name)
+                (shell-command-to-string (format "git clone %s %s" repo-link repo-name)))
+          (shell-command-to-string (format "d emacs-from-dir %s" repo-name))))
+#+end_src
+
 ** Eval
-
-
 #+BEGIN_SRC bash :tangle el
 ELISP="$@"
 EXTRA_PARAMS=""
