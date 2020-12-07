@@ -81,14 +81,12 @@ emacsdclient-bg -ce \
 "
 #+END_SRC
 
-#+BEGIN_SRC bash :tangle magit :shebang #!/usr/bin/env emacs-frame-eval
-# -*- mode: emacs-lisp -*-
-(magit)
+#+BEGIN_SRC bash :tangle magit
+el "(magit)"
 #+END_SRC
 
-#+BEGIN_SRC bash :tangle e.f :shebang #!/usr/bin/env emacs-frame-eval
-# -*- mode: emacs-lisp -*-
-(counsel-find-file)
+#+BEGIN_SRC bash :tangle e.f
+el "(counsel-find-file)"
 #+END_SRC
 
 #+BEGIN_SRC bash :tangle e.emacs
@@ -123,34 +121,7 @@ fi
 emacsdclient-bg -c -e "$lisp"
 #+END_SRC
 ** Eval
-#+BEGIN_SRC bash :tangle emacs-eval
-EXTRA_PARAMS=""
-while true; do
-  case "$1" in
-    -c)
-      EXTRA_PARAMS="$1 "
-      shift 1
-      ;;
-      *)
-      break
-      ;;
-  esac
-done
 
-SCRIPT_NAME="$1"
-shift
-ARGS=("${@/#/\"}")
-ARGS=("${ARGS[@]/%/\"}")
-
-emacsdclient-bg $EXTRA_PARAMS -e "
-(let ((argv '(${ARGS[@]})))
-  $(script-contents "$SCRIPT_NAME")
-)"
-#+END_SRC
-
-#+BEGIN_SRC bash :tangle emacs-frame-eval
-emacs-eval -c "$@"
-#+END_SRC
 
 #+BEGIN_SRC bash :tangle el
 ELISP="$@"
