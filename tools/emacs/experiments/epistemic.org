@@ -1,0 +1,90 @@
+#+TITLE: Epistemic
+#+PROPERTY: header-args :dir ${HOME}/.local/emacs/configs/epistemic
+
+Just playing around with a new mode that was demonstrated at emacs conf 2020
+
+* Usage
+#+begin_src bash :dir ~/
+d emacs-from-dir ~/.local/emacs/configs/epistemic
+#+end_src
+
+* Package management
+Use [[https://github.com/raxod502/straight.el][straight.el]]!
+#+begin_src elisp :tangle init.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+#+end_src
+* Usability
+I don't think I can use emacs with out ivy... Sad.
+#+begin_src elisp :tangle init.el
+(straight-use-package 'ivy)
+(use-package ivy :config (ivy-mode))
+#+end_src
+* Dependencies
+There are a couple of things you'll need to get
+#+begin_src elisp :tangle init.el
+(straight-use-package 'evil)
+(use-package evil :config (evil-mode))
+(straight-use-package 'hydra)
+(use-package hydra)
+(straight-use-package 'ht)
+(straight-use-package 'symex)
+(use-package symex)
+(straight-use-package 'parsec)
+(use-package ht)
+#+end_src
+
+Scraped functions from [[https://github.com/countvajhula/.emacs.d][countvajhula's emacs.d]] that are also needed for this to work
+#+begin_src elisp :tangle init.el
+(global-display-line-numbers-mode)
+
+(cl-defun my-new-empty-buffer (&optional
+                               buffer-name
+                               major-mode-to-use
+                               &key
+                               switch-p)
+  "Create a new empty buffer.
+
+If BUFFER-NAME is not provided, the new buffer will be named
+“untitled” or “untitled<2>”, “untitled<3>”, etc. The buffer will be
+created in the currently active (at the time of command execution)
+major mode.
+If SWITCH-P is true, switch to the newly created buffer.
+
+Modified from:
+URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+Version 2017-11-01"
+  (interactive)
+  (let* ((buffer-name (or buffer-name "untitled"))
+         (major-mode-to-use (or major-mode-to-use major-mode))
+         ($buf (generate-new-buffer buffer-name)))
+    (with-current-buffer $buf
+      (funcall major-mode-to-use)
+      (setq buffer-offer-save t))
+    (when switch-p
+      (switch-to-buffer $buf))
+    $buf))
+#+end_src
+* Epistemic Mode
+#+begin_src elisp :tangle init.el
+(straight-use-package
+ '(epistemic-mode :type git :host github :repo "countvajhula/rigpa"))
+
+(use-package evil-epistemic-mode
+  :after (evil symex)
+  :config
+    (setq epistemic-mode t)
+    (setq epistemic-show-menus nil)
+    (message "Loaded eem"))
+#+end_src
