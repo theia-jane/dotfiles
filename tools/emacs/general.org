@@ -161,7 +161,6 @@ shift
 
 ** Eval
 #+BEGIN_SRC bash :tangle el
-ELISP="$@"
 EXTRA_PARAMS=""
 NO_FRAME="false"
 CALL_INTERACTIVELY="false"
@@ -183,6 +182,8 @@ done
 
 if [ "${CALL_INTERACTIVELY}" = "true" ]; then
   ELISP="(funcall-interactively #'${1})"
+else
+  ELISP="$@"
 fi
 
 
