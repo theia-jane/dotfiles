@@ -72,7 +72,7 @@
 
 (defun eval-context-update-mode-maybe ()
   (if (or eval-context-edebug
-          evil-context-buffer)
+          eval-context-buffer)
         (eval-context-mode +1)
       (eval-context-mode -1)))
 
