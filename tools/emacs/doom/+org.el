@@ -307,7 +307,7 @@
 (defun +org/babel-eval-in-repl ()
   "TODO"
   (interactive)
-  (destructuring-bind
+  (cl-destructuring-bind
       (lang contents header-args &rest _)
       (org-babel-get-src-block-info)
     (cond ((member lang org-babel-shell-names)
