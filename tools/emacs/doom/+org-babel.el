@@ -47,3 +47,17 @@
 
 
 (require 'ob-async)
+
+(defun ob-src-execute-by-method ()
+  "Choose how you want to execute the src block."
+  (interactive)
+  (let* ((element (org-element-at-point))
+         (element-type (org-element-type element)))
+    (when (eq element-type 'src-block)
+      (funcall-interactively
+       (let ((method (ivy-read "Execute: " (list "repl" "default" "async"))))
+         (cond
+          ((equal method "async") #'(lambda ()
+                                      (org-babel-execute-src-block nil nil '((:async "yes")))))
+          ((equal method "repl") #'+org/babel-eval-in-repl)
+          (t #'org-babel-execute-src-block)))))))
