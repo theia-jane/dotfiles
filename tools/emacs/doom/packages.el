@@ -23,6 +23,7 @@
 
 ;; declarative org capture templates
 (package! doct)
+
 ;; narrowing dired buffers
 (package! dired-narrow)
 (package! hl-line :disable t)
@@ -30,7 +31,8 @@
 (package! solaire-mode :disable t)
 
 (package! vimrc-mode)
-(package! ox-ssh)
+(package! ox-ssh
+  :recipe (:host github :repo "tylerware/ox-ssh"))
 
 (unpin! ivy)
 (unpin! swiper)
