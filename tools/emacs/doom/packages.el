@@ -18,6 +18,8 @@
 (package! graphql-mode)
 (package! ob-graphql
   :recipe (:host github :repo "tylerware/ob-graphql"))
+(package! ob-async
+  :recipe (:host github :repo "tylerware/ob-async"))
 
 ;; declarative org capture templates
 (package! doct)
