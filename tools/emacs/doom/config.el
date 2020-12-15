@@ -8,6 +8,10 @@
 (use-package! rextract
   :defer-incrementally t)
 
+(use-package! nov
+  :config
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+
 (defvar personal/config-directory (expand-file-name "~/Projects/dotfiles"))
 
 (+load!?

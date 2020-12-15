@@ -33,6 +33,7 @@
 (package! vimrc-mode)
 (package! ox-ssh
   :recipe (:host github :repo "tylerware/ox-ssh"))
+(package! nov)
 
 (unpin! ivy)
 (unpin! swiper)
