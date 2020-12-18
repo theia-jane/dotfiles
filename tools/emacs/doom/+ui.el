@@ -12,6 +12,11 @@
 
 (load-theme 'doom-gruvbox t)
 
+(defmacro set-face-attributes! (&rest attributes-list)
+  `(seq-do #'(lambda (attributes)
+            (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
+          ',attributes-list))
+
 ;;; Mode specific
 (after! org
   (set-face-attributes!
@@ -73,11 +78,6 @@
    (truncate (* (window-body-height) percent))
    t))
 
-;;; Helpers
-(defmacro set-face-attributes! (&rest attributes-list)
-  `(seq-do #'(lambda (attributes)
-            (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
-          ',attributes-list))
 
 (defun dashboard-logo-header ()
 (let ((point (point)))
