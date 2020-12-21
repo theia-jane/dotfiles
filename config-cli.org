@@ -1,0 +1,200 @@
+#+TITLE: Config CLI
+#+PROPERTY: header-args:elisp :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
+
+* Main command
+#+begin_src elisp :tangle bin/config
+(defconst subcommands
+  '(install
+    tangle
+    update
+    test))
+
+(defconst script-directory
+  (replace-regexp-in-string "/[^/]+$" "" load-file-name))
+
+(let ((subcommand (intern (car argv))))
+  (when (and subcommand
+             (memq subcommand subcommands))
+    (catch 'exit
+      (let* ((command (format "config-%s" subcommand))
+             (p (start-process command nil command)))
+        (set-process-sentinel p
+                              (lambda (process signal)
+                                (when (equal signal "finished\n")
+                                  (throw 'exit nil))))
+        (set-process-filter p (lambda (process output)
+                                (message "%s"
+                                         (replace-regexp-in-string "\n$" "" output))))
+        (while (memq p (process-list))
+          (sleep-for 1))))))
+#+end_src
+* Install
+#+BEGIN_SRC elisp :tangle bin/config-install
+(require 'org)
+(require 'org-element)
+(require 'ob-core)
+(require 'ob-shell)
+(setq org-confirm-babel-evaluate nil)
+(with-temp-buffer
+  (insert-file-contents (concat
+                         (shell-command-to-string
+                          "git rev-parse --show-toplevel | tr -d '\n'")
+                         "/tools/emacs/install.org"))
+  (org-mode)
+  (org-babel-execute-buffer))
+#+END_SRC
+
+* Tangle
+:PROPERTIES:
+:header-args:elisp+: :tangle bin/config-tangle
+:END:
+
+We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
+#+BEGIN_SRC elisp
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+(add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
+
+(require 'ob-tangle)
+(require 'ob-extended-tangle)
+(require 'ob-text-var-expansion)
+(require 'ob-load-namespaced-libraries)
+(require 'ob-var-table)
+(require 'notifications)
+#+END_SRC
+
+Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
+
+For my literate config I want to have the default tangle directory to from the to be the root of this repository, which this will set up.
+#+BEGIN_SRC elisp
+(setq org-babel-default-header-args `((:session         . "none")
+                                      (:noweb           . "yes")
+                                      (:root-dir        . ,config-root)
+                                      (:mkdirp          . "yes")
+                                      (:tangle-relative . dir)
+                                      (:tangle          . "no")
+                                      (:comments        . "yes"))
+      org-confirm-babel-evaluate nil)
+#+END_SRC
+
+#+RESULTS:
+
+I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
+#+begin_src elisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+end_src
+
+Finally, actually tangle the files that in the =literate/= & =tools/=
+#+BEGIN_SRC elisp
+(defun config-file-filter (file)
+  (and
+   (not (string-match (rx "mail.org" line-end) file))
+   (string-match
+    (rx line-start
+        (eval (file-name-as-directory config-root))
+        (or "literate/"
+            "tools/"
+            (and (+ (not "/")) ".org")))
+    file)))
+
+(defun config-files ()
+  (seq-filter
+   #'config-file-filter
+   (directory-files-recursively config-root "\\.org$")))
+
+(defun config-tangle ()
+  (let ((files (config-files)))
+    (message "Tangling files: %s" files)
+    (with-ob-global-lib
+     (ob-make-lib-from-files files t (lambda (file)
+                                  (setq file (string-remove-prefix (file-name-as-directory config-root) file))
+                                  (string-remove-suffix ".org" file)))
+     (ob-tangle-files files))
+    (notifications-notify :title "Config tangled"
+                          :timeout 1500)))
+
+(config-tangle)
+
+(kill-emacs 0)
+#+END_SRC
+* Update
+#+BEGIN_SRC elisp :tangle bin/config-update
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+
+(require 'notifications)
+(let* ((default-directory config-root)
+       (clean? (equal "\n" (shell-command-to-string "git status -u --porcelain=v2 | awk '{print $(NF)}'"))))
+       (if clean?
+             (shell-command-to-string "git pull && config-tangle")
+           (notifications-notify
+            :title "Skipping update"
+            :body "Config not clean"
+            :timeout 1500)))
+#+END_SRC
+* Test
+** Test setup
+:PROPERTIES:
+:header-args: :dir ${HOME}/.local/test/config-install :comments no
+:header-args:yaml: :var root=(shell-command-to-string "git rev-parse --show-toplevel | tr -d '\n'")
+:END:
+*** Image
+I require git as a dependency, so making sure I have it
+#+BEGIN_SRC text :tangle Dockerfile
+FROM silex/emacs:master
+
+RUN apt-get update && \
+    apt-get install -y \
+            git
+#+END_SRC
+
+*** Container
+#+BEGIN_SRC yaml :tangle docker-compose.yml
+version: '3'
+services:
+  server:
+    build: .
+    entrypoint: /root/test.sh
+    volumes:
+      - ${root}:/root/dotfiles
+      - ./test.sh:/root/test.sh
+#+END_SRC
+
+*** Test
+:PROPERTIES:
+:header-args:bash: :tangle test.sh :shebang #!/bin/bash
+:END:
+
+Start by testing the tangle (mostly spot checking)
+#+BEGIN_SRC bash
+cd ${HOME}/dotfiles
+
+ERROR_COUNT=0
+_error() {
+    echo "$1" > /dev/stderr
+    ERROR_COUNT=$((ERROR_COUNT + 1))
+}
+
+echo "Testing config-tangle..."
+./bin/config-tangle > /dev/null
+
+if [ -z "$(ls "${HOME}/bin")" ]; then
+    _error "Failed to tangle any scripts to ~/bin"
+fi
+
+if [ ! -f "${HOME}/.config/git/config" ]; then
+    _error "Failed to tangle ~/.config/git/config"
+fi
+
+if [ "0" = "${ERROR_COUNT}" ]; then
+    echo "Succeeded! No failures."
+else
+    _error "Failed ${ERROR_COUNT} tests"
+fi
+#+END_SRC
+** Run test
+#+BEGIN_SRC bash :tangle bin/config-test :shebang #!/bin/bash
+cd ~/.local/test/config-install
+docker-compose up
+#+END_SRC

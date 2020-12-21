@@ -1,0 +1,27 @@
+#!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;; [[file:~/Projects/dotfiles/config-cli.org::*Main command][Main command:1]]
+(defconst subcommands
+  '(install
+    tangle
+    update
+    test))
+
+(defconst script-directory
+  (replace-regexp-in-string "/[^/]+$" "" load-file-name))
+
+(let ((subcommand (intern (car argv))))
+  (when (and subcommand
+             (memq subcommand subcommands))
+    (catch 'exit
+      (let* ((command (format "config-%s" subcommand))
+             (p (start-process command nil command)))
+        (set-process-sentinel p
+                              (lambda (process signal)
+                                (when (equal signal "finished\n")
+                                  (throw 'exit nil))))
+        (set-process-filter p (lambda (process output)
+                                (message "%s"
+                                         (replace-regexp-in-string "\n$" "" output))))
+        (while (memq p (process-list))
+          (sleep-for 1))))))
+;; Main command:1 ends here

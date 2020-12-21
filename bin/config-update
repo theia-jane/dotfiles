@@ -1,7 +1,5 @@
-#!/usr/bin/env sh
-":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
-
-;; [[file:~/Projects/dotfiles/config-update.org][No heading:2]]
+#!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;; [[file:~/Projects/dotfiles/config-cli.org::*Update][Update:1]]
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 
 (require 'notifications)
@@ -13,4 +11,4 @@
             :title "Skipping update"
             :body "Config not clean"
             :timeout 1500)))
-;; No heading:2 ends here
+;; Update:1 ends here

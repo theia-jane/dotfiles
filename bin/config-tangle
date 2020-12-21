@@ -1,7 +1,5 @@
-#!/usr/bin/env sh
-":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
-
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:2]]
+#!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;; [[file:~/Projects/dotfiles/config-cli.org::*Tangle][Tangle:1]]
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 (add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
 
@@ -11,9 +9,9 @@
 (require 'ob-load-namespaced-libraries)
 (require 'ob-var-table)
 (require 'notifications)
-;; No heading:2 ends here
+;; Tangle:1 ends here
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:3]]
+;; [[file:~/Projects/dotfiles/config-cli.org::*Tangle][Tangle:2]]
 (setq org-babel-default-header-args `((:session         . "none")
                                       (:noweb           . "yes")
                                       (:root-dir        . ,config-root)
@@ -22,14 +20,14 @@
                                       (:tangle          . "no")
                                       (:comments        . "yes"))
       org-confirm-babel-evaluate nil)
-;; No heading:3 ends here
+;; Tangle:2 ends here
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:4]]
+;; [[file:~/Projects/dotfiles/config-cli.org::*Tangle][Tangle:3]]
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
-;; No heading:4 ends here
+;; Tangle:3 ends here
 
-;; [[file:~/Projects/dotfiles/config-tangle.org][No heading:5]]
+;; [[file:~/Projects/dotfiles/config-cli.org::*Tangle][Tangle:4]]
 (defun config-file-filter (file)
   (and
    (not (string-match (rx "mail.org" line-end) file))
@@ -60,4 +58,4 @@
 (config-tangle)
 
 (kill-emacs 0)
-;; No heading:5 ends here
+;; Tangle:4 ends here
