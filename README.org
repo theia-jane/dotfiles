@@ -3,4 +3,10 @@ If you're going to a use a tool, you should use one that's specialized and fits 
 
 * Intro
 Welcome! This is my configuration and utilities repository -- a home for the things that keep me productive and happy using a computer. Things are currently being transitioned from a hodge-podge of configuration files that I link everywhere to using a literate programming approach. The end state will /hopefully/ be that this repository reads a little more like a book.
-
+* Dependencies
+- =emacs=
+* Usage
+In order to get the various configuration files in place in the file system you need to to tangle them, which can be done by running
+#+begin_src bash
+./bin/config tangle
+#+end_src
