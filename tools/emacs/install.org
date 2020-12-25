@@ -2,12 +2,17 @@
 #+PROPERTY: header-args :mkdirp yes
 
 * Chemacs
-[[https://github.com/plexus/chemacs][Chemacs]] is a bootloader that lets me switch between various emacs configs. It's useful for experimenting and trying things out.
-#+BEGIN_SRC bash :dir ~/.local/src
-# Using my own fork for now https://github.com/plexus/chemacs
-[ ! -d chemacs ] \
-    && git clone https://github.com/tylerware/checmacs \
-    && ./chemacs/install.sh
+[[https://github.com/plexus/chemacs2][Chemacs]] is a bootloader that lets me switch between various emacs configs. It's useful for experimenting and trying things out.
+#+BEGIN_SRC bash :dir ~/.config
+if [ -e emacs ] && [ ! -f emacs/chemacs.el ]; then
+    moved_name="/tmp/$(date +%s)"
+    echo "$(pwd)/emacs exists and isn't chemacs. Moving to ${moved_name}"
+    mv emacs "$move_name"
+    rm -rf emacs
+fi
+
+[ ! -d emacs ] \
+    && git clone https://github.com/plexus/chemacs2.git emacs
 #+END_SRC
 
 ** Profiles
