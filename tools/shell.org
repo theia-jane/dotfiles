@@ -15,9 +15,11 @@ export p="${HOME}/Projects"
 
 export dot="$p/dotfiles"
 export cfg="${HOME}/.config"
+export lcl="${HOME}/.local"
 export cfg_sh="${cfg}/sh"
 export cfg_emacs="${dot}/tools/emacs"
 export DOOMDIR="${cfg_emacs}/doom"
+export EMACSLOADPATH="${lcl}/emacs/site-lisp:"
 
 export CLICOLOR=1
 export GTAGSLABEL="pygments"

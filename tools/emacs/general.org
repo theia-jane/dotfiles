@@ -3,7 +3,9 @@
 
 * Scripts
 :PROPERTIES:
-:header-args:bash: :dir ${HOME}/bin :shebang #!/bin/bash
+:header-args: :dir ${HOME}/bin
+:header-args:bash: :shebang #!/bin/bash
+:header-args:elisp: :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 :END:
 
 ** Daemon
@@ -210,3 +212,15 @@ done
 
 el $FORWARD_ARGS -mx "$1"
 #+END_SRC
+* Packages
+:PROPERTIES:
+:header-args: :dir ${HOME}/.local/emacs/site-lisp
+:END:
+** Global packages
+Simply requiring this will make all of my globablly installed packages available to me in any instance of emacs -- useful.
+#+begin_src elisp :tangle global-packages.el
+(require 'elpm)
+(let ((elpm-directory (expand-file-name "~/.local/emacs/site-lisp/")))
+  (elpm-bootstrap))
+(provide 'global-packages)
+#+end_src
