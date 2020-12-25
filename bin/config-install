@@ -4,12 +4,12 @@
 (require 'org-element)
 (require 'ob-core)
 (require 'ob-shell)
+
+(defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 (setq org-confirm-babel-evaluate nil)
-(with-temp-buffer
-  (insert-file-contents (concat
-                         (shell-command-to-string
-                          "git rev-parse --show-toplevel | tr -d '\n'")
-                         "/tools/emacs/install.org"))
-  (org-mode)
-  (org-babel-execute-buffer))
+(dolist (file (directory-files-recursively config-root "^install\\.org$"))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (org-babel-execute-buffer)))
 ;; Install:1 ends here
