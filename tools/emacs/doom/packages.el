@@ -37,3 +37,6 @@
 
 (unpin! ivy)
 (unpin! swiper)
+
+(package! org-transclusion
+  :recipe (:host github :repo "nobiot/org-transclusion"))
