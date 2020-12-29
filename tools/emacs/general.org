@@ -217,10 +217,66 @@ el $FORWARD_ARGS -mx "$1"
 :header-args: :dir ${HOME}/.local/emacs/site-lisp
 :END:
 ** Global packages
-Simply requiring this will make all of my globablly installed packages available to me in any instance of emacs -- useful.
+Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
 #+begin_src elisp :tangle global-packages.el
 (require 'elpm)
 (let ((elpm-directory (expand-file-name "~/.local/emacs/site-lisp/")))
-  (elpm-bootstrap))
+  (elpm-bootstrap)
+  (elpm-use-packages
+   '(use-package
+      evil
+      ivy
+      which-key)))
+
 (provide 'global-packages)
 #+end_src
+** Experiments
+:PROPERTIES:
+:header-args:elisp: :tangle experiment-bootstrap.el
+:END:
+It's useful to perform experiments to learn new things. To be somewhat effective
+it's best to isolate variables and have a stable environment to do so. Hopefully
+this will provide a basic starting point for my emacs experiments.
+
+*** Packages
+#+begin_src elisp
+(require 'elpm)
+; Allow reuse of common packages across experiments
+(let ((elpm-directory (expand-file-name "~/.local/emacs/site-lisp/")))
+  (elpm-bootstrap)
+  (elpm-use-packages
+   '(use-package
+      evil
+      ivy
+      which-key)))
+;; Now init elpm for this experiment
+(elpm-bootstrap)
+#+end_src
+
+*** Vim habit
+#+BEGIN_SRC elisp
+(use-package evil
+  :config
+  (evil-mode))
+#+END_SRC
+*** Completion / selection
+#+begin_src elisp
+(use-package ivy
+  :config (ivy-mode))
+#+end_src
+*** Help
+I need help figuring out what emacs has to offer -- enter a few nice tools. For what shortcuts I have available there is which-key
+#+begin_src elisp
+(use-package which-key
+  :config
+  (setq which-key-show-early-on-C-h t
+        which-key-idle-delay 2
+        which-key-idle-secondary-delay 0.05
+        which-key-popup-type 'side-window)
+  (which-key-mode))
+#+end_src
+*** Footer
+#+begin_src elisp
+(provide 'experiment-bootstrap)
+#+end_src
+
