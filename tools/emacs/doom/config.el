@@ -56,11 +56,6 @@
 (use-package! howdoyou
   :defer-incrementally t)
 
-(add-hook! '(org-mode-hook) #'disable-spelling)
-
-(defun disable-spelling ()
-  (spell-fu-mode -1))
-
 (set-irc-server! "chat.freenode.net"
   `(:tls t
     :port 6697

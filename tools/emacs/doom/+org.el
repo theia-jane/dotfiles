@@ -232,15 +232,15 @@
 
   (load! "+org-babel")
 
-  (setq +ligatures-extra-symbols (append
+  (setq +pretty-code-symbols (append
                                   `(:title ,(propertize "" 'display '(raise 1))
                                     :author ,(propertize "" 'display '(raise 0.1))
                                     :setting ,(propertize "" 'display '(raise 0.1))
                                     :latex ,(all-the-icons-fileicon "tex")
                                     :property ,(all-the-icons-octicon "chevron-right"))
-                                  +ligatures-extra-symbols))
+                                  +pretty-code-symbols))
 
-  (set-ligatures! 'org-mode
+  (set-pretty-symbols! 'org-mode
   ;; :name "#+name:"
   ;; :src_block "#+begin_src"
   ;; :src_block_end "#+end_src"
@@ -272,9 +272,6 @@
            (file-in-directory-p file "~/homework"))
   :trigger "__hw"
   :mode 'org-mode)
-
-
-
 
 
 (defun +org/goto-next-src-block ()
