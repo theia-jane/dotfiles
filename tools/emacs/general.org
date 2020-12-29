@@ -224,8 +224,11 @@ Simply requiring this will make all of my globally installed packages available 
   (elpm-bootstrap)
   (elpm-use-packages
    '(use-package
+      counsel
       evil
       ivy
+      ivy-rich
+      helpful
       which-key)))
 
 (provide 'global-packages)
@@ -246,8 +249,11 @@ this will provide a basic starting point for my emacs experiments.
   (elpm-bootstrap)
   (elpm-use-packages
    '(use-package
+      counsel
       evil
       ivy
+      ivy-rich
+      helpful
       which-key)))
 ;; Now init elpm for this experiment
 (elpm-bootstrap)
@@ -263,6 +269,13 @@ this will provide a basic starting point for my emacs experiments.
 #+begin_src elisp
 (use-package ivy
   :config (ivy-mode))
+
+(use-package counsel
+  :config (counsel-mode))
+
+(use-package ivy-rich
+  :config (ivy-rich-mode)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 #+end_src
 *** Help
 I need help figuring out what emacs has to offer -- enter a few nice tools. For what shortcuts I have available there is which-key
@@ -274,6 +287,15 @@ I need help figuring out what emacs has to offer -- enter a few nice tools. For 
         which-key-idle-secondary-delay 0.05
         which-key-popup-type 'side-window)
   (which-key-mode))
+
+(use-package helpful
+  :config
+  (global-set-key (kbd "C-h k") #'helpful-key))
+
+(use-package counsel
+  :config
+  (setq counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable))
 #+end_src
 *** Footer
 #+begin_src elisp
