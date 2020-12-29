@@ -1,0 +1,16 @@
+#+TITLE: Built From Scratch
+#+PROPERTY: header-args :dir ${HOME}/.local/emacs/configs/built-from-scratch
+
+I find myself using a lot of features, but wanting fine grain control of them. That becomes more difficult in an ecosystem like doom or spacemacs. A lot of the configuration and package integration is certainly quite nice for reasons of sensible defaults to consistent 'feel' to the layout of things.
+
+For me these packages / distributions have a lot of appeal for those reasons, but inevitably I but up against the edges or I get overwhelmed in all the goodies someone else has configured. It gives me the feeling of there being too many cooks in the kitchen. For now I am pretty happy with doom and I may always stay with doom, but I would like to experiment with my own "Built from scratch" configuration of emacs
+
+* Usage
+#+begin_src bash :dir ~/
+d emacs-from-dir ~/.local/emacs/configs/built-from-scratch
+#+end_src
+
+* Config
+#+begin_src elisp :tangle init.el
+(require 'experiment-bootstrap)
+#+end_src
