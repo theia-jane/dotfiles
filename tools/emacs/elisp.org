@@ -1,0 +1,75 @@
+#+TITLE: elisp
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+
+* Extras
+:PROPERTIES:
+:header-args+: :tangle my-elisp-extras.el
+:END:
+Extra elisp functionality that I find useful.
+** Expressions
+Allow for finding outermost sexps
+#+BEGIN_SRC elisp
+(defun beginning-of-sexp-p ()
+  "Test if the point is at the beginning of a sexp."
+  (= (point)
+     (save-excursion
+       (end-of-sexp)
+       (beginning-of-sexp)
+       (point))))
+
+(defun outermost-list (&optional escape-strings no-syntax-crossing)
+  "Move point to the end of the outermost list relative to the current point."
+  (interactive "d\nd")
+  ;; Don't ignore scan-error if we start at the wrong spot
+  (up-list 1 escape-strings no-syntax-crossing)
+  (ignore-error scan-error
+    (cl-loop (up-list 1 escape-strings no-syntax-crossing))))
+
+(defun end-of-outermost-sexp ()
+  (interactive)
+  (ignore-error scan-error
+    (outermost-list t nil))
+  (if (beginning-of-sexp-p)
+      (end-of-sexp)))
+#+END_SRC
+** Evaluation
+Evaluate the sexp under the point (rather than needing to be at the end of the sexp).
+#+BEGIN_SRC elisp
+(defun eval-sexp-under-point (eval-last-sexp-arg-internal)
+  (interactive "P")
+  (with-syntax-table emacs-lisp-mode-syntax-table
+    (save-excursion
+      (end-of-sexp)
+      (eros-eval-last-sexp eval-last-sexp-arg-internal))))
+#+END_SRC
+
+Adding evals for outer most sexp. Useful for =defun= and =let='s and the like.
+#+BEGIN_SRC elisp
+(defun eval-outermost-sexp (eval-last-sexp-arg-internal)
+  "Evaluate outermost sexp, this utilizes the 'eros-eval-last-sexp"
+  (interactive "P")
+  (with-syntax-table emacs-lisp-mode-syntax-table
+    (save-excursion
+      (end-of-outermost-sexp)
+      (eros-eval-last-sexp eval-last-sexp-arg-internal))))
+
+#+END_SRC
+
+Helper function that let's me eval elisp in a notebook like fashion. I've not added any keybindings in the package definition here, but there are some in my doom config.
+#+BEGIN_SRC elisp
+(defun eval-outermost-sexp-and-continue (eval-last-sexp-arg-internal)
+  "Attempts to evaluate outermost sexp. If it fails, move to next sexp.
+This utilizes the 'eros-eval-last-sexp."
+  (interactive "P")
+  (with-syntax-table emacs-lisp-mode-syntax-table
+    (ignore-error end-of-file
+      (eval-outermost-sexp eval-last-sexp-arg-internal))
+    (end-of-outermost-sexp)
+    (forward-sexp)
+    (beginning-of-sexp))
+  (recenter nil t))
+#+END_SRC
+** Footer
+#+BEGIN_SRC elisp
+(provide 'my-elisp-extras)
+#+END_SRC
