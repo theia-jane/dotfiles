@@ -1,0 +1,67 @@
+#+TITLE: Org
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+
+* Extras
+:PROPERTIES:
+:header-args+: :tangle my-org-extras.el
+:END:
+** Latex preview
+#+BEGIN_SRC elisp
+(defun org-latex-preview-buffer ()
+  (interactive)
+  (when (eq major-mode 'org-mode)
+        (org--latex-preview-region (point-min) (point-max))))
+
+(defun org-latex-preview-buffer-h ()
+  (add-hook 'after-save-hook #'org-latex-preview-buffer))
+
+(add-hook 'org-mode-hook #'org-latex-preview-buffer-h)
+#+END_SRC
+** Footer
+#+BEGIN_SRC elisp
+(provide 'my-org-extras)
+#+END_SRC
+* Server Manager
+:PROPERTIES:
+:header-args+: :tangle org-server-manager.el
+:END:
+** Mode
+#+BEGIN_SRC elisp
+(define-minor-mode org-server-manager-mode
+  "TODO"
+  :init-val nil
+  :lighter ""
+  :keymap (make-sparse-keymap))
+
+(add-hook 'org-servers-file-open-hook #'org-server-manager-mode)
+#+END_SRC
+
+** Connect to server
+#+BEGIN_SRC elisp
+(defun org-server-manager-ssh-connect (&optional arg)
+  "Connect to the host at point and open `dired'.
+If ARG is non-nil, open `eshell' instead of `dired'."
+  (interactive "P")
+  (let* ((properties (org-entry-properties))
+         (name (alist-get "ITEM" properties nil nil #'string=))
+         (user (alist-get "SSH_USER" properties nil nil #'string=))
+         (port (alist-get "SSH_PORT" properties nil nil #'string=))
+         (host (or (alist-get "IP" properties nil nil #'string=)
+                   (alist-get "HOSTNAME" properties nil nil #'string=))))
+    (if host
+        (let ((default-directory (format "/ssh:%s%s%s:"
+                                         (if user (format "%s@" user) "")
+                                         host
+                                         (if port (format "#%s" port) ""))))
+          (message "Connecting to %s..." name)
+          (if arg
+              (eshell t)
+            (dired ".")))
+      (user-error "Not an SSH host"))))
+
+#+END_SRC
+
+** Footer
+#+BEGIN_SRC elisp
+(provide 'org-server-manager)
+#+END_SRC
