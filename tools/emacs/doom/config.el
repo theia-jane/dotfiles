@@ -39,12 +39,13 @@
  ;;lang
  "+c"
  "+php"
- "+sage"
  "+scheme"
  ;; Hacks
  "+hacks"
  )
 
+(require 'lean-config)
+(require 'sagemath-config)
 
 (after! undo-fu
   (remove-hook 'undo-fu-mode-hook #'global-undo-fu-session-mode))

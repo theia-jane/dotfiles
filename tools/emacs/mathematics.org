@@ -1,0 +1,27 @@
+#+TITLE: Mathematics
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+
+* Lean
+:PROPERTIES:
+:header-args+: :tangle lean-config.el
+:END:
+#+BEGIN_SRC elisp
+(use-package lean-mode)
+(use-package company-lean
+  :after '(lean-mode company))
+
+(provide 'lean-config)
+#+END_SRC
+* SageMath
+:PROPERTIES:
+:header-args+: :tangle sagemath-config.el
+:END:
+#+BEGIN_SRC elisp
+(use-package sage-shell-mode
+  :config
+  (setq sage-shell:use-prompt-toolkit nil))
+
+(use-package ob-sagemath
+  :after '(org))
+(provide 'sagemath-config)
+#+END_SRC
