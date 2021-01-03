@@ -220,45 +220,44 @@ el $FORWARD_ARGS -mx "$1"
 Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
 #+begin_src elisp :tangle global-packages.el
 (require 'elpm)
-(let ((elpm-directory (expand-file-name "~/.local/emacs/site-lisp/")))
-  (elpm-bootstrap)
-  (elpm-use-packages
+(defvar global-packages-dir
+  (expand-file-name "~/.local/emacs/site-lisp/"))
+
+(elpm-use-packages
    '(use-package
       counsel
       evil
       ivy
       ivy-rich
       helpful
-      which-key)))
-
+      which-key)
+   global-packages-dir
+   t)
+(require 'use-package)
 (provide 'global-packages)
 #+end_src
 ** Experiments
 :PROPERTIES:
-:header-args:elisp: :tangle experiment-bootstrap.el
+:header-args:elisp: :tangle experiment.el
 :END:
 It's useful to perform experiments to learn new things. To be somewhat effective
 it's best to isolate variables and have a stable environment to do so. Hopefully
 this will provide a basic starting point for my emacs experiments.
 
+#+BEGIN_SRC elisp
+(provide 'experiment)
+(require 'global-packages)
+(setq experiment-directory (or (and (boundp 'experiment-directory)
+                                    experiment-directory)
+                               (make-temp-file "/tmp/emacs-experiment" t))
+      user-emacs-directory experiment-directory
+      elpm-directory experiment-directory)
+#+END_SRC
+
 *** Packages
 #+begin_src elisp
-(require 'elpm)
-; Allow reuse of common packages across experiments
-(let ((elpm-directory (expand-file-name "~/.local/emacs/site-lisp/")))
-  (elpm-bootstrap)
-  (elpm-use-packages
-   '(use-package
-      counsel
-      evil
-      ivy
-      ivy-rich
-      helpful
-      which-key)))
-;; Now init elpm for this experiment
-(elpm-bootstrap)
+(elpm-use-packages '())
 #+end_src
-
 *** Vim habit
 #+BEGIN_SRC elisp
 (use-package evil
@@ -297,8 +296,3 @@ I need help figuring out what emacs has to offer -- enter a few nice tools. For 
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable))
 #+end_src
-*** Footer
-#+begin_src elisp
-(provide 'experiment-bootstrap)
-#+end_src
-
