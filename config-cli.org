@@ -74,11 +74,19 @@ For my literate config I want to have the default tangle directory to from the t
                                       (:mkdirp          . "yes")
                                       (:tangle-relative . dir)
                                       (:tangle          . "no")
-                                      (:comments        . "yes"))
-      org-confirm-babel-evaluate nil)
+                                      (:comments        . "yes")))
 #+END_SRC
 
-#+RESULTS:
+
+During tangling there are cases where a source block will be evaluated to get
+some JIT information. (Such as a credential or system dependent thing)
+#+BEGIN_SRC elisp
+(setq org-confirm-babel-evaluate nil)
+(org-babel-do-load-languages 'org-babel-load-languages
+    '((shell . t)
+      (emacs-lisp . t)))
+#+END_SRC
+
 
 I want my tangled scripts to automatically be executable, so I'll make sure it's executable when I save it.
 #+begin_src elisp
@@ -89,15 +97,13 @@ I want my tangled scripts to automatically be executable, so I'll make sure it's
 Finally, actually tangle the files that in the =literate/= & =tools/=
 #+BEGIN_SRC elisp
 (defun config-file-filter (file)
-  (and
-   (not (string-match (rx "mail.org" line-end) file))
-   (string-match
-    (rx line-start
-        (eval (file-name-as-directory config-root))
-        (or "literate/"
-            "tools/"
-            (and (+ (not "/")) ".org")))
-    file)))
+  (string-match
+   (rx line-start
+       (eval (file-name-as-directory config-root))
+       (or "literate/"
+           "tools/"
+           (and (+ (not "/")) ".org")))
+   file))
 
 (defun config-files ()
   (seq-filter

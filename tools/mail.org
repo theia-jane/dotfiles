@@ -1,5 +1,9 @@
 #+TITLE: Mail
+#+PROPERTY: header-args :tangle-relative 'dir
 #+STARTUP: overview
+
+To handle my mail I'll use =mbsync=, =mu=, and =pass= to handle fetching emails, indexing
+and storing my passwords and then in emacs I'll use mu4e.
 
 * Installation
 #+NAME: Dependencies
@@ -18,8 +22,8 @@ yay -S ${dependencies[@]}
 ** Get my email
 Grab my email address from =pass=
 #+NAME: email-address
-#+BEGIN_SRC elisp
-(+pass-get-user "mail/mail.google.com")
+#+BEGIN_SRC bash
+pass mail/mail.google.com | awk '/^username:/ {print $2}'
 #+END_SRC
 
 ** App Password
@@ -42,9 +46,8 @@ can follow the follwing steps:
 
 * Configure IMAP Syncing
 :PROPERTIES:
-:header-args:conf: :noweb yes :comments link :tangle ~/.mbsyncrc
+:header-args:conf: :tangle .mbsyncrc :dir ${HOME}
 :END:
-
 ** Account information
 #+BEGIN_SRC conf
 IMAPAccount gmail-personal
@@ -62,7 +65,7 @@ Account gmail-personal
 
 ** Local storage
 #+NAME: emailDir
-#+BEGIN_SRC txt
+#+BEGIN_SRC text
 ~/.mail/gmail/
 #+END_SRC
 
@@ -73,19 +76,36 @@ Path <<emailDir>>
 Inbox <<emailDir>>Inbox
 #+END_SRC
 
-** Channel
+** Folders (Channels)
+*** Gmail's 'internal' folders
+Gmail has some internal folders located under =[Gmail]=. Of specific interest to me are the folders like =All Mail= and =Trash=. I don't want to have these show up in =[Gmail]/= in my local mail (e.g. don't want =[Gmail]/Trash=). Instead we'll map the special folders I care about directly.
+#+BEGIN_SRC conf
+Channel gmail-personal-channel-special
+Master :gmail-personal-remote:"[Gmail]/"
+Slave :gmail-personal-local:
+Patterns "Starred" "All Mail" "Sent Mail" "Trash" "Drafts"
+Create Both
+SyncState *
+#+END_SRC
+
+*** All other folders
+All other folders are of interest
 #+BEGIN_SRC conf
 Channel gmail-personal-channel
 Master :gmail-personal-remote:
 Slave :gmail-personal-local:
-Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
+Patterns * ![Gmail]*
 Create Both
 SyncState *
 #+END_SRC
+
 * Auto-syncing
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.config/systemd/user
+:END:
 ** Sync service
 Create the service which will sync email and then index it:
-#+BEGIN_SRC conf :tangle ~/.config/systemd/user/mbsync.service :comments link
+#+BEGIN_SRC conf :tangle mbsync.service
 [Unit]
 Description=Mailbox synchronization service
 
@@ -95,7 +115,7 @@ ExecStart=/usr/bin/mbsync -Va
 ExecStartPost=/usr/bin/mu index --maildir ~/.mail/
 #+END_SRC
 ** Sync timer
-#+BEGIN_SRC conf :tangle ~/.config/systemd/user/mbsync.timer :comments link
+#+BEGIN_SRC conf :tangle mbsync.timer
 [Unit]
 Description=Mailbox synchronization timer
 
@@ -109,26 +129,97 @@ WantedBy=timers.target
 #+END_SRC
 * Initialize
 1. With =mbsync= sufficiently configured we can now tangle the file
-#+BEGIN_SRC elisp
-(org-babel-tangle)
-#+END_SRC
-
-   #+RESULTS:
-   | ~/.config/systemd/user/mbsync.tiimer | ~/.config/systemd/user/mbsync.service | ~/.mbsyncrc |
-
 2. Make the directory where we'll store the email
-#+BEGIN_SRC bash
+    #+BEGIN_SRC bash
 mkdir -p ~/.mail/gmail/
-#+END_SRC
-3. Sync all =mbsync= channels
-#+BEGIN_SRC bash
-mbsync -Va
-#+END_SRC
-4. Index with =mu=
-#+BEGIN_SRC bash
-mu index --maildir=~/.mail/
-#+END_SRC
+    #+END_SRC
 
+3. Sync all =mbsync= channels
+    #+BEGIN_SRC bash
+mbsync -Va
+    #+END_SRC
+4. Index with =mu=
+    #+BEGIN_SRC bash :var email_address=email-address()
+mu init --maildir=~/.mail/ --my-address=$email_address
+mu index
+    #+END_SRC
+
+* Configure emacs mail client
+#+BEGIN_SRC elisp :tangle config-email.el :dir ${HOME}/.local/emacs/site-lisp
+(use-package mu4e
+  :commands mu4e mu4e-compose-new
+  :init
+  (setq mu4e-maildir  "~/.mail")
+  :config
+  <<config/account>>
+  <<config/sync>>
+  <<config/appearances>>
+  <<config/smtp>>
+  )
+(provide 'config-email)
+#+end_src
+** Account
+#+NAME: config/account
+#+BEGIN_SRC elisp
+(setq mu4e-contexts `(,(make-mu4e-context
+                        :name "gmail"
+                        :vars '((user-full-name         . "Tyler Ware")
+                                (user-mail-address      . "tyler.ware.777@gmail.com")
+                                (smtpmail-smtp-user     . "tyler.ware.777@gmail.com")
+                                (smtpmail-smtp-server   . "smtp.gmail.com")
+                                (smtpmail-smtp-service  . 587)
+                                (mu4e-sent-folder       . "/gmail/Sent Mail")
+                                (mu4e-drafts-folder     . "/gmail/Drafts")
+                                (mu4e-refile-folder     . "/gmail/All Mail")
+                                (mu4e-trash-folder      . "/gmail/Trash")
+                                (mu4e-compose-signature . "--\nTyler Ware")))))
+#+END_SRC
+** Behavior
+#+NAME: config/sync
+#+BEGIN_SRC elisp
+(setq mail-user-agent 'mu4e-user-agent
+      mu4e-get-mail-command "mbsync -a"
+      mu4e-change-filenames-when-moving t
+      mu4e-update-interval nil
+      mu4e-view-show-addresses t
+      mu4e-compose-format-flowed t ; visual-line-mode + auto-fill upon sending
+      mu4e-sent-messages-behavior 'sent
+      mu4e-hide-index-messages t
+      message-send-mail-function #'smtpmail-send-it
+      smtpmail-stream-type 'starttls
+      message-kill-buffer-on-exit t ; close after sending
+      mu4e-confirm-quit nil
+      mu4e-completing-read-function #'ivy-completing-read
+      mu4e-context-policy 'pick-first
+      mu4e-compose-context-policy 'ask-if-none)
+#+END_SRC
+** Appearances
+#+NAME: config/appearances
+#+BEGIN_SRC elisp
+(setq mu4e-view-show-images t
+      mu4e-view-image-max-width 800
+      ;; mu4e-headers-fields
+      ;; '((:account . 12)
+      ;;   (:human-date . 12)
+      ;;   (:flags . 4)
+      ;;   (:from . 25)
+      ;;   (:subject))
+
+      mu4e-use-fancy-chars t
+      mu4e-headers-draft-mark '("D" . "")
+      mu4e-headers-flagged-mark '("F" . "")
+      mu4e-headers-new-mark '("N" . "")
+      mu4e-headers-passed-mark '("P" . "")
+      mu4e-headers-replied-mark '("R" . "")
+      mu4e-headers-seen-mark '("S" . "")
+      mu4e-headers-trashed-mark '("T" . "")
+      mu4e-headers-attach-mark '("a" . "")
+      mu4e-headers-encrypted-mark '("x" . "")
+      mu4e-headers-signed-mark '("s" . "")
+      mu4e-headers-unread-mark '("u" . ""))
+#+END_SRC
+** SMTP
+Note that in order for emails to be sent the password must be found in your auth source. I use [[file:pass.org::*Emacs integration][pass]] to store my passwords, which for sending mail requires that the password be stored in =smtp.domain.com/user@example.com=.
 * Scripts
 :PROPERTIES:
 :header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
@@ -141,6 +232,3 @@ while true; do
     sleep "$((5 * 60))"
 done
 #+END_SRC
-
-To handle my mail I'll =mbsync=, =mu=, and =pass= to handle fetching emails, indexing
-and storing my passwords.

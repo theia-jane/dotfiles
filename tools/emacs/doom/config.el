@@ -44,6 +44,8 @@
  "+hacks"
  )
 
+(require 'config-auth)
+(require 'config-email)
 (require 'lean-config)
 (require 'sagemath-config)
 

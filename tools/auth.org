@@ -1,6 +1,8 @@
-#+TITLE: Pass
+#+TITLE: Auth
+#+PROPERTY: header-args :tangle-relative 'dir
 
-* Scripts
+* Pass
+** Scripts
 :PROPERTIES:
 :header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
@@ -30,3 +32,11 @@ else
 		xdotool type --clearmodifiers --file -
 fi
 #+END_SRC
+** Emacs integration
+#+BEGIN_SRC elisp :tangle config-auth.el :dir ${HOME}/.local/emacs/site-lisp
+(provide 'config-auth)
+
+(use-package auth-source-pass
+  :config
+  (auth-source-pass-enable))
+#+end_src
