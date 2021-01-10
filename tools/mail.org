@@ -2,10 +2,9 @@
 #+PROPERTY: header-args :tangle-relative 'dir
 #+STARTUP: overview
 
-To handle my mail I'll use =mbsync=, =mu=, and =pass= to handle fetching emails, indexing
-and storing my passwords and then in emacs I'll use mu4e.
+To handle my mail I'll use =mbsync=, =mu=, and =pass= to handle fetching emails, indexing and storing my passwords and then in emacs I'll use mu4e to send email I'll use org-mode (via =org-mu4e=).
 
-* Installation
+* Dependencies
 #+NAME: Dependencies
 - mbsync
 - mu
@@ -20,10 +19,18 @@ yay -S ${dependencies[@]}
 1. From the inbox: Navigate to the gear icon > Settings > Forwarding and POP/IMAP
 2. Click "Enable IMAP"
 ** Get my email
+:PROPERTIES:
+:header-args+: :cache yes
+:END:
 Grab my email address from =pass=
-#+NAME: email-address
+#+NAME: personal-email-address
 #+BEGIN_SRC bash
 pass mail/mail.google.com | awk '/^username:/ {print $2}'
+#+END_SRC
+
+#+NAME: school-email-address
+#+BEGIN_SRC bash
+pass mail/boisestate.edu | awk '/^username:/ {print $2}'
 #+END_SRC
 
 ** App Password
@@ -48,23 +55,38 @@ can follow the follwing steps:
 :PROPERTIES:
 :header-args:conf: :tangle .mbsyncrc :dir ${HOME}
 :END:
-** Account information
+The config for gmail is pretty much copy/paste. Reuse would be ideal.
+** Gmail special folders
+Helper to generate the special gmail folders for inclusion and exclusion depending on the channel
+#+NAME: gmail-special-folders
+#+begin_src elisp :var exclude='nil
+(mapconcat
+ (lambda (folder)
+   (format "\"%s%s\""
+           (if exclude "!" "")
+           folder))
+ '("Starred" "All Mail" "Sent Mail" "Trash" "Drafts")
+ " ")
+#+end_src
+
+** Personal
+*** Account information
 #+BEGIN_SRC conf
 IMAPAccount gmail-personal
 Host imap.gmail.com
-User <<email-address()>>
+User <<personal-email-address()>>
 PassCmd "pass mail/imap.gmail.com | head -1"
 SSLType IMAPS
 #+END_SRC
 
-** Remote storage
+*** Remote storage
 #+BEGIN_SRC conf
 IMAPStore gmail-personal-remote
 Account gmail-personal
 #+END_SRC
 
-** Local storage
-#+NAME: emailDir
+*** Local storage
+#+NAME: personalEmailDir
 #+BEGIN_SRC text
 ~/.mail/gmail/
 #+END_SRC
@@ -72,29 +94,81 @@ Account gmail-personal
 #+BEGIN_SRC conf
 MaildirStore gmail-personal-local
 Subfolders Verbatim
-Path <<emailDir>>
-Inbox <<emailDir>>Inbox
+Path <<personalEmailDir>>
+Inbox <<personalEmailDir>>Inbox
 #+END_SRC
 
-** Folders (Channels)
-*** Gmail's 'internal' folders
+*** Folders (Channels)
+**** Gmail's 'internal' folders
 Gmail has some internal folders located under =[Gmail]=. Of specific interest to me are the folders like =All Mail= and =Trash=. I don't want to have these show up in =[Gmail]/= in my local mail (e.g. don't want =[Gmail]/Trash=). Instead we'll map the special folders I care about directly.
 #+BEGIN_SRC conf
 Channel gmail-personal-channel-special
 Master :gmail-personal-remote:"[Gmail]/"
 Slave :gmail-personal-local:
-Patterns "Starred" "All Mail" "Sent Mail" "Trash" "Drafts"
+Patterns <<gmail-special-folders()>>
 Create Both
 SyncState *
 #+END_SRC
 
-*** All other folders
+**** All other folders
 All other folders are of interest
 #+BEGIN_SRC conf
 Channel gmail-personal-channel
 Master :gmail-personal-remote:
 Slave :gmail-personal-local:
-Patterns * ![Gmail]*
+Patterns * ![Gmail]* <<gmail-special-folders[:var exclude='t]()>>
+Create Both
+SyncState *
+#+END_SRC
+
+** School
+*** Account information
+#+BEGIN_SRC conf
+IMAPAccount gmail-school
+Host imap.gmail.com
+User <<school-email-address()>>
+PassCmd "pass mail/boisestate.edu | head -1"
+SSLType IMAPS
+#+END_SRC
+
+*** Remote storage
+#+BEGIN_SRC conf
+IMAPStore gmail-school-remote
+Account gmail-school
+#+END_SRC
+
+*** Local storage
+#+NAME: schoolEmailDir
+#+BEGIN_SRC text
+~/.mail/school/
+#+END_SRC
+
+#+BEGIN_SRC conf
+MaildirStore gmail-school-local
+Subfolders Verbatim
+Path <<schoolEmailDir>>
+Inbox <<schoolEmailDir>>Inbox
+#+END_SRC
+
+*** Folders (Channels)
+**** Gmail's 'internal' folders
+Gmail has some internal folders located under =[Gmail]=. Of specific interest to me are the folders like =All Mail= and =Trash=. I don't want to have these show up in =[Gmail]/= in my local mail (e.g. don't want =[Gmail]/Trash=). Instead we'll map the special folders I care about directly.
+#+BEGIN_SRC conf
+Channel gmail-school-channel-special
+Master :gmail-school-remote:"[Gmail]/"
+Slave :gmail-school-local:
+Patterns <<gmail-special-folders()>>
+Create Both
+SyncState *
+#+END_SRC
+
+**** All other folders
+All other folders are of interest
+#+BEGIN_SRC conf
+Channel gmail-school-channel
+Master :gmail-school-remote:
+Slave :gmail-school-local:
+Patterns * ![Gmail]* <<gmail-special-folders[:var exclude='t]()>>
 Create Both
 SyncState *
 #+END_SRC
@@ -103,6 +177,7 @@ SyncState *
 :PROPERTIES:
 :header-args+: :dir ${HOME}/.config/systemd/user
 :END:
+I don't think these are actually being used.. I believe my =mail-sync= script is what's doing the magic..
 ** Sync service
 Create the service which will sync email and then index it:
 #+BEGIN_SRC conf :tangle mbsync.service
@@ -131,7 +206,7 @@ WantedBy=timers.target
 1. With =mbsync= sufficiently configured we can now tangle the file
 2. Make the directory where we'll store the email
     #+BEGIN_SRC bash
-mkdir -p ~/.mail/gmail/
+mkdir -p ~/.mail/{gmail,school}
     #+END_SRC
 
 3. Sync all =mbsync= channels
@@ -139,12 +214,13 @@ mkdir -p ~/.mail/gmail/
 mbsync -Va
     #+END_SRC
 4. Index with =mu=
-    #+BEGIN_SRC bash :var email_address=email-address()
-mu init --maildir=~/.mail/ --my-address=$email_address
+    #+BEGIN_SRC bash :var personal_email=personal-email-address() school_email=school-email-address()
+mu init --maildir=~/.mail/ --my-address=$personal_email --my-address=$school_email
 mu index
     #+END_SRC
 
 * Configure emacs mail client
+I borrowed an awful lot of this config from doom-emacs to get me started.
 #+BEGIN_SRC elisp :tangle config-email.el :dir ${HOME}/.local/emacs/site-lisp
 (use-package mu4e
   :commands mu4e mu4e-compose-new
@@ -154,25 +230,51 @@ mu index
   <<config/account>>
   <<config/sync>>
   <<config/appearances>>
-  <<config/smtp>>
   )
+
+(use-package org-mu4e
+  :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
+  :config
+  (setq org-mu4e-convert-to-html t
+        org-mu4e-link-query-in-headers-mode nil)
+
+  <<config/image-fix>>
+
+  ;; Only render to html once. If the first send fails for whatever reason,
+  ;; org-mu4e would do so each time you try again.
+  (setq-hook! 'message-send-hook org-mu4e-convert-to-html nil))
+
+
 (provide 'config-email)
 #+end_src
-** Account
+** Accounts
 #+NAME: config/account
 #+BEGIN_SRC elisp
 (setq mu4e-contexts `(,(make-mu4e-context
-                        :name "gmail"
+                        :name "personal"
                         :vars '((user-full-name         . "Tyler Ware")
-                                (user-mail-address      . "tyler.ware.777@gmail.com")
-                                (smtpmail-smtp-user     . "tyler.ware.777@gmail.com")
+                                (user-mail-address      . "<<personal-email-address()>>")
+                                (smtpmail-smtp-user     . "<<personal-email-address()>>")
                                 (smtpmail-smtp-server   . "smtp.gmail.com")
                                 (smtpmail-smtp-service  . 587)
                                 (mu4e-sent-folder       . "/gmail/Sent Mail")
                                 (mu4e-drafts-folder     . "/gmail/Drafts")
                                 (mu4e-refile-folder     . "/gmail/All Mail")
                                 (mu4e-trash-folder      . "/gmail/Trash")
-                                (mu4e-compose-signature . "--\nTyler Ware")))))
+                                (mu4e-compose-signature . "Tyler Ware")))
+                      ,(make-mu4e-context
+                        :name "school"
+                        :vars '((user-full-name         . "Tyler Ware")
+                                (user-mail-address      . "<<school-email-address()>>")
+                                (smtpmail-smtp-user     . "<<school-email-address()>>")
+                                (smtpmail-smtp-server   . "smtp.gmail.com")
+                                (smtpmail-smtp-service  . 587)
+                                (mu4e-sent-folder       . "/school/Sent Mail")
+                                (mu4e-drafts-folder     . "/school/Drafts")
+                                (mu4e-refile-folder     . "/school/All Mail")
+                                (mu4e-trash-folder      . "/school/Trash")
+                                (mu4e-compose-signature . "Tyler Ware")))
+                      ))
 #+END_SRC
 ** Behavior
 #+NAME: config/sync
@@ -220,6 +322,47 @@ mu index
 #+END_SRC
 ** SMTP
 Note that in order for emails to be sent the password must be found in your auth source. I use [[file:pass.org::*Emacs integration][pass]] to store my passwords, which for sending mail requires that the password be stored in =smtp.domain.com/user@example.com=.
+** Fix for images in emails
+When the =org-preview-latex-image-directory= is set to an absolute path to the image is absolute. =org~mu4e-mime-replace-images= assumes that it's relative at the leads to it not finding the images. This fixes that. This should be pushed upstream to [[https://github.com/djcb/mu][mu]].
+#+NAME: config/image-fix
+#+BEGIN_SRC elisp
+(defun org~mu4e-mime-replace-images (str current-file)
+  "Replace images in html files STR in CURRENT-FILE with cid links."
+  (let (html-images)
+    (cons
+     (replace-regexp-in-string ;; replace images in html
+      "src=\"\\([^\"]+\\)\""
+      (lambda (text)
+        (format
+         "src=\"cid:%s\""
+         (save-match-data
+           (let* ((url (and (string-match "src=\"\\([^\"]+\\)\"" text)
+                            (match-string 1 text)))
+                  (path (if (string-match "file://\\(.+\\)" url)
+                            (match-string 1 url)
+                          (expand-file-name
+                           url (file-name-directory current-file))))
+                  (ext (file-name-extension path))
+                  (id (replace-regexp-in-string "[\/\\\\]" "_" path)))
+             (cl-pushnew (org~mu4e-mime-file
+                          (concat "image/" ext) path id)
+                         html-images
+                         :test 'equal)
+             id))))
+      str)
+     html-images)))
+
+(defadvice! org-mu4e-latex-fragments (fn latex-frag _processing-type info)
+  :around 'org-html-format-latex
+    (funcall fn latex-frag 'pdf2svg2png info))
+
+(defadvice! org-mu4e-html-options (fn &rest args)
+  :around 'message-send
+  (let ((org-format-latex-options
+  '(:html-foreground "Black" :html-background "White" :html-scale 1.5)))
+    (apply fn args)))
+#+END_SRC
+*** TODO Get tikz working in emails
 * Scripts
 :PROPERTIES:
 :header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
