@@ -132,71 +132,12 @@
     (sp-local-tag "bi" "\\begin{itemize}" "\\end{itemize}")
     (sp-local-tag "be" "\\begin{enumerate}" "\\end{enumerate}")))
 
-
 (after! org
-  (setq org-directory "~/notes/"
-        org-agenda-files `(,(f-join org-directory "projects"))
-        org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
-        org-refile-targets '((nil :maxlevel . 7)
-                             (org-agenda-files :maxlevel . 1))
-        org-refile-allow-creating-parent-nodes t
-        org-src-ask-before-returning-to-edit-buffer nil
-        org-outline-path-complete-in-steps nil    ; Refile in a single go
-        org-refile-use-outline-path 'file         ; Show full paths for refiling
-        org-highlight-latex-and-related nil ;; '(latex)
-        org-M-RET-may-split-line '((default . nil)) ; don't split headings...
-        org-src-tab-acts-natively t
-        org-confirm-babel-evaluate nil
-        org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
-        org-display-inline-images t
-        org-pretty-entities nil
-        org-startup-with-inline-images "inlineimages"
-        org-startup-folded 'overview
-        org-hide-emphasis-markers nil
-        org-export-with-toc nil
-        org-export-with-section-numbers nil
-        org-export-time-stamp-file nil
-        org-export-async-init-file (expand-file-name "org-export-init.el" (dir!))
-        org-src-window-setup 'current-window
-        org-list-allow-alphabetical t)
-
-  ;; http://bnbeckwith.com/blog/org-mode-tikz-previews-on-windows.html
-  (add-to-list 'org-latex-packages-alist
-               '("" "tikz" t))
-  (after! preview
-    (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
-  ;; Note if you have issues w/ rendering might need to check your imagemagick policies
-  ;;      /etc/ImageMagick-{6,7}/policy.xml
-  ;;      It's possible that one of the policies is set to 'none' for something.
-  ;; (setq org-preview-latex-default-process 'imagemagick)
-
-  (setq org-preview-latex-default-process 'pdf2svg)
-  (add-to-list
-   'org-preview-latex-process-alist
-   '(pdf2svg :programs
-               ("latex" "pdf2svg" "rsvg-convert")
-               :description "pdf > svg" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "svg" :image-size-adjust
-               (1 . 1)
-               :latex-compiler
-               ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
-               :image-converter
-               ("pdf2svg %f %O-pre"
-                "rsvg-convert -d %D -p %D %O-pre -f svg -o %O"
-                "rm %O-pre"))
-   )
-  (defadvice! +org-svg-preview (fn &rest args)
-    :around 'org-create-formula-image
-    (let ((org-format-latex-header "\\documentclass[varwidth]{standalone}
-\\usepackage[usenames]{color}
-[PACKAGES]
-[DEFAULT-PACKAGES]
-\\addtolength{\\textwidth}{-1cm}
-")
-          (org-preview-latex-default-process 'pdf2svg))
-      (apply fn args)))
-
-
-
+  (setq org-export-async-init-file (expand-file-name "org-export-init.el" (dir!)))
+  (require! config-org
+            config-org-latex
+            config-org-babel
+            config-org-ui)
 
   ;; A start, but I want to add a lot more rotations!
   ;; - block type
@@ -230,36 +171,29 @@
   (after! projectile
     (add-to-list 'projectile-project-root-files-functions '+org-notes-root))
 
-  (load! "+org-babel")
-
-  (setq +pretty-code-symbols (append
-                                  `(:title ,(propertize "" 'display '(raise 1))
-                                    :author ,(propertize "" 'display '(raise 0.1))
-                                    :setting ,(propertize "" 'display '(raise 0.1))
-                                    :latex ,(all-the-icons-fileicon "tex")
+  (setq +ligatures-extra-symbols (append
+                                  `(:title    ,(propertize "" 'display '(raise 1))
+                                    :author   ,(propertize "" 'display '(raise 0.1))
+                                    :setting  ,(propertize "" 'display '(raise 0.1))
+                                    :latex    ,(all-the-icons-fileicon "tex")
                                     :property ,(all-the-icons-octicon "chevron-right"))
-                                  +pretty-code-symbols))
+                                  +ligatures-extra-symbols))
 
-  (set-pretty-symbols! 'org-mode
-  ;; :name "#+name:"
-  ;; :src_block "#+begin_src"
-  ;; :src_block_end "#+end_src"
-  :src_block "#+begin_example"
-  :src_block_end "#+end_example"
-  :src_block "#+BEGIN_EXAMPLE"
-  :src_block_end "#+END_EXAMPLE"
-  :title "#+TITLE:"
-  :setting "#+PROPERTY:"
-  :author "#+AUTHOR:"
-  :latex "#+LATEX_HEADER:"
-  :latex "#+LATEX_HEADER_EXTRA:"
-  :property  "#+STARTUP:"
-  :property "#+RESULTS:")
+  (set-ligatures! 'org-mode
+    :src_block     "#+begin_example"
+    :src_block_end "#+end_example"
+    :src_block     "#+BEGIN_EXAMPLE"
+    :src_block_end "#+END_EXAMPLE"
+    :title         "#+TITLE:"
+    :setting       "#+PROPERTY:"
+    :author        "#+AUTHOR:"
+    :latex         "#+LATEX_HEADER:"
+    :latex         "#+LATEX_HEADER_EXTRA:"
+    :property      "#+STARTUP:"
+    :property      "#+RESULTS:")
 
   (add-hook 'org-mode-hook
             #'(lambda () (yas-activate-extra-mode 'latex-mode))))
-
-
 
 (use-package! ox-extra
   :after org
@@ -272,7 +206,6 @@
            (file-in-directory-p file "~/homework"))
   :trigger "__hw"
   :mode 'org-mode)
-
 
 (defun +org/goto-next-src-block ()
   (interactive)
@@ -389,7 +322,7 @@
        (:prefix ("L" . "Latex")
         :desc "Preview" "p" #'org-latex-preview-buffer)))
 
-(use-package my-org-extras)
+(use-package config-org-latex)
 
 ;;; Babel
 (defadvice! +org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)

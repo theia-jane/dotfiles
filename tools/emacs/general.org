@@ -230,7 +230,9 @@ Simply requiring this will make all of my globally installed packages available 
       ivy
       ivy-rich
       helpful
-      which-key)
+      which-key
+      f
+      s)
    global-packages-dir
    t)
 (require 'use-package)
@@ -375,6 +377,12 @@ serve as a predicated alternative to `after!'."
                           ,@body)))
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(defmacro require! (&rest requires)
+  `(dolist (rargs ',requires)
+     (apply #'require `,(enlist rargs))))
 #+END_SRC
 *** General helpers
 #+BEGIN_SRC elisp

@@ -1,11 +1,166 @@
 #+TITLE: Org
 #+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
 
-* Extras
+* General
 :PROPERTIES:
-:header-args+: :tangle my-org-extras.el
+:header-args+: :tangle config-org.el
 :END:
+#+BEGIN_SRC elisp
+(provide 'config-org)
+(require 'f)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(setq org-directory "~/notes/"
+      org-agenda-files `(,(f-join org-directory "projects"))
+      org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
+      org-refile-targets '((nil :maxlevel . 7)
+                           (org-agenda-files :maxlevel . 1))
+      org-refile-allow-creating-parent-nodes t
+      org-src-ask-before-returning-to-edit-buffer nil
+      org-outline-path-complete-in-steps nil
+      org-refile-use-outline-path 'file
+      org-highlight-latex-and-related nil
+      org-M-RET-may-split-line '((default . nil))
+      org-src-tab-acts-natively t
+      org-confirm-babel-evaluate nil
+      org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
+      org-display-inline-images t
+      org-pretty-entities nil
+      org-startup-with-inline-images "inlineimages"
+      org-startup-folded 'overview
+      org-hide-emphasis-markers nil
+      org-export-with-toc nil
+      org-export-with-section-numbers nil
+      org-export-time-stamp-file nil
+      org-src-window-setup 'current-window
+      org-list-allow-alphabetical t)
+#+END_SRC
+* Latex
+:PROPERTIES:
+:header-args+: :tangle config-org-latex.el
+:END:
+#+BEGIN_SRC elisp
+(provide 'config-org-latex)
+#+END_SRC
+
+** Fixing rendering
+Using =\color= in latex messes with vspace something awful / unpredicatably. To fix that I set =\color= and =\pagecolor= in the preamble instead of in the document. I should push this upstream.
+#+begin_src elisp
+(defun org-create-formula-image
+    (string tofile options buffer &optional processing-type)
+  "Create an image from LaTeX source using external processes.
+
+The LaTeX STRING is saved to a temporary LaTeX file, then
+converted to an image file by process PROCESSING-TYPE defined in
+`org-preview-latex-process-alist'.  A nil value defaults to
+`org-preview-latex-default-process'.
+
+The generated image file is eventually moved to TOFILE.
+
+The OPTIONS argument controls the size, foreground color and
+background color of the generated image.
+
+When BUFFER non-nil, this function is used for LaTeX previewing.
+Otherwise, it is used to deal with LaTeX snippets showed in
+a HTML file."
+  (message "%s" options)
+  (let* ((processing-type (or processing-type
+                              org-preview-latex-default-process))
+         (processing-info
+          (cdr (assq processing-type org-preview-latex-process-alist)))
+         (programs (plist-get processing-info :programs))
+         (error-message (or (plist-get processing-info :message) ""))
+         (image-input-type (plist-get processing-info :image-input-type))
+         (image-output-type (plist-get processing-info :image-output-type))
+         (post-clean (or (plist-get processing-info :post-clean)
+                         '(".dvi" ".xdv" ".pdf" ".tex" ".aux" ".log"
+                           ".svg" ".png" ".jpg" ".jpeg" ".out")))
+         (latex-header
+          (or (plist-get processing-info :latex-header)
+              (org-latex-make-preamble
+               (org-export-get-environment (org-export-get-backend 'latex))
+               org-format-latex-header
+               'snippet)))
+         (latex-compiler (plist-get processing-info :latex-compiler))
+         (image-converter (plist-get processing-info :image-converter))
+         (tmpdir temporary-file-directory)
+         (texfilebase (make-temp-name
+                       (expand-file-name "orgtex" tmpdir)))
+         (texfile (concat texfilebase ".tex"))
+         (image-size-adjust (or (plist-get processing-info :image-size-adjust)
+                                '(1.0 . 1.0)))
+         (scale (* (if buffer (car image-size-adjust) (cdr image-size-adjust))
+                   (or (plist-get options (if buffer :scale :html-scale)) 1.0)))
+         (dpi (* scale (if buffer (org--get-display-dpi) 140.0)))
+         (fg (or (plist-get options (if buffer :foreground :html-foreground))
+                 "Black"))
+         (bg (or (plist-get options (if buffer :background :html-background))
+                 "Transparent"))
+         (log-buf (get-buffer-create "*Org Preview LaTeX Output*"))
+         (resize-mini-windows nil)) ;Fix Emacs flicker when creating image.
+    (message "DPI: %s" dpi)
+    (dolist (program programs)
+      (org-check-external-command program error-message))
+    (if (eq fg 'default)
+        (setq fg (org-latex-color :foreground))
+      (setq fg (org-latex-color-format fg)))
+    (setq bg (cond
+              ((eq bg 'default) (org-latex-color :background))
+              ((string= bg "Transparent") nil)
+              (t (org-latex-color-format bg))))
+    ;; Remove TeX \par at end of snippet to avoid trailing space.
+    (if (string-suffix-p string "\n")
+        (aset string (1- (length string)) ?%)
+      (setq string (concat string "%")))
+    (with-temp-file texfile
+      (insert latex-header
+              "\n"
+              "\\definecolor{fg}{rgb}{" fg "}%\n"
+              (if bg
+                  (concat "\\definecolor{bg}{rgb}{" bg "}%\n"
+                          "\n\\pagecolor{bg}%\n")
+                "")
+              "\\color{fg}\n"
+              "\\begin{document}\n"
+              "\\noindent%\n"
+              string
+              "\n\\end{document}\n")
+      (message "Buffer string: %s" (buffer-string)))
+    (let* ((err-msg (format "Please adjust `%s' part of \
+`org-preview-latex-process-alist'."
+                            processing-type))
+           (image-input-file
+            (org-compile-file
+             texfile latex-compiler image-input-type err-msg log-buf))
+           (image-output-file
+            (org-compile-file
+             image-input-file image-converter image-output-type err-msg log-buf
+             `((?D . ,(shell-quote-argument (format "%s" dpi)))
+               (?S . ,(shell-quote-argument (format "%s" (/ dpi 140.0))))))))
+      (copy-file image-output-file tofile 'replace)
+      (dolist (e post-clean)
+        (when (file-exists-p (concat texfilebase e))
+          (delete-file (concat texfilebase e))))
+      (message image-output-file)
+      image-output-file)))
+
+#+END_SRC
+
+#+begin_src elisp
+(setq org-format-latex-options
+      '(:foreground default
+        :background default
+        :scale 1.0
+        :html-foreground "Black"
+        :html-background "Transparent"
+        :html-scale 1.0
+        :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+#+end_src
 ** Latex preview
+http://bnbeckwith.com/blog/org-mode-tikz-previews-on-windows.html
+Note if you have issues w/ rendering might need to check your imagemagick policies /etc/ImageMagick-{6,7}/policy.xml. It's possible that one of the policies is set to 'none' for something. =(setq org-preview-latex-default-process 'imagemagick)=
+
 #+BEGIN_SRC elisp
 (defun org-latex-preview-buffer ()
   (interactive)
@@ -17,9 +172,191 @@
 
 (add-hook 'org-mode-hook #'org-latex-preview-buffer-h)
 #+END_SRC
-** Footer
+
 #+BEGIN_SRC elisp
-(provide 'my-org-extras)
+(add-to-list 'org-latex-packages-alist
+             '("" "tikz" t))
+(after! preview
+  (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+#+END_SRC
+**
+**  pdf2svg
+#+BEGIN_SRC elisp
+(setq org-preview-latex-default-process 'pdf2svg
+      org-export-with-latex 'dvipng)
+(add-to-list
+ 'org-preview-latex-process-alist
+ '(pdf2svg :programs
+           ("latex" "pdf2svg" "rsvg-convert")
+           :description "pdf > svg" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "svg" :image-size-adjust
+           (1 . 1)
+           :latex-compiler
+           ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
+           :image-converter
+           ("pdf2svg %f %O-pre"
+            "rsvg-convert -d %D -p %D %O-pre -f svg -o %O"
+            "rm %O-pre")))
+
+(defadvice! +org-svg-preview (fn &rest args)
+  :around 'org--latex-preview-region
+  (let ((org-preview-latex-default-process 'pdf2svg))
+    (apply fn args)))
+
+(defadvice! +org-use-svg-documentclass (fn string tofile options buffer &optional processing-type)
+  :around 'org-create-formula-image
+  (let* ((processing-type (or processing-type
+                              org-preview-latex-default-process))
+         (org-format-latex-header (if (memq processing-type '(pdf2svg pdf2svg2png))
+                                      "\\documentclass[border=2pt,varwidth]{standalone}
+\\usepackage[usenames]{color}
+[PACKAGES]
+[DEFAULT-PACKAGES]
+"
+                                    org-format-latex-header)))
+    (funcall fn string tofile options buffer processing-type)))
+#+END_SRC
+** pdf2svg2png
+#+BEGIN_SRC elisp
+(add-to-list
+ 'org-preview-latex-process-alist
+ '(pdf2svg2png :programs
+           ("latex" "pdf2svg" "rsvg-convert" "convert")
+           :description "pdf > svg > png" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "png" :image-size-adjust
+           (1 . 1)
+           :latex-compiler
+           ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
+           :image-converter
+           ("pdf2svg %f %O.svg"
+            "rsvg-convert -d %D -p %D %O.svg -f png -o %O"
+            "rm %O.svg")))
+#+END_SRC
+** HTML Export
+*** tikz fix
+#+begin_src elisp
+(after! ox-html
+  (defvar org-html-latex-non-numbered-environment '("tikzpicture"
+                                                    "displaymath")
+    "When converting org to html latex we automatically make enviroments
+unnumbered (adding a * to the end of them). For example in
+
+        \\begin{equation}
+           ...
+        \\end{equation}
+
+`equation' will become `equation*'. Some environments aren't numbered and so
+don't have a * equivalent and such environments should be in or added to this
+list.
+")
+
+  (defun org-html--unlabel-latex-environment (latex-frag)
+    "Change environment in LATEX-FRAG string to an unnumbered one.
+For instance, change an 'equation' environment to 'equation*'."
+    (let ((transform
+           #'(lambda (s)
+               (let ((env (match-string 1 s)))
+                 (concat env
+                         (unless (member env
+                                         org-html-latex-non-numbered-environment)
+                           "*"))))))
+      (replace-regexp-in-string
+       "\\`[ \t]*\\\\begin{\\([^*]+?\\)}"
+       transform
+       (replace-regexp-in-string "^[ \t]*\\\\end{\\([^*]+?\\)}[ \r\t\n]*\\'"
+                                 transform
+                                 latex-frag nil nil 1)
+       nil nil 1)
+      ))
+
+  (defun org-html--latex-environment-numbered-p (element)
+    "Non-nil when ELEMENT contains a numbered LaTeX math environment.
+Starred and \"displaymath\" environments are not numbered."
+    (let ((s (org-element-property :value element)))
+      (save-match-data
+        (string-match "\\`[ \t]*\\\\begin{\\([^*]+?\\)}" s)
+        (let ((env (match-string 1 s)))
+          (not (or (member env org-html-latex-non-numbered-environment)
+                   (equal (substring env -1) "*"))))))))
+#+end_src
+
+* Babel
+:PROPERTIES:
+:header-args+: :tangle config-org-babel.el
+:END:
+#+BEGIN_SRC elisp
+(provide 'config-org-babel)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(defun define-ob--make-symbol (fmt sym)
+  (intern (format fmt (symbol-name sym))))
+
+;; Making an org babel definer (cause why not?)
+(cl-defmacro define-ob! (name &key
+                              execute
+                              assign-variables
+                              expand-body
+                              prep-edit
+                              prep-session
+                              header-args
+                              lang
+                              file-ext)
+  "TODO"
+  (unless execute
+    (error "Must at least provide a babel execute function."))
+
+  `(let ((header-args ,header-args)
+         (lang ,lang)
+         (file-ext ,file-ext))
+
+     (defun ,(define-ob--make-symbol "org-babel-execute:%s" name)
+         (body params)
+       (funcall ,execute body params))
+
+     (when header-args
+       (defconst ,(define-ob--make-symbol "org-babel-header-args:%s" name) header-args ""))
+
+     (when lang
+       (add-to-list 'org-src-lang-modes (cons (symbol-name ',name) lang)))
+
+     (when file-ext
+       (add-to-list 'org-babel-tangle-lang-exts (cons (symbol-name ',name) file-ext)))))
+
+(define-ob! cat
+  :execute (lambda (body params)
+             (format body))
+  :lang "text")
+
+(use-package ob-async)
+(defun ob-src-execute-by-method ()
+  "Choose how you want to execute the src block."
+  (interactive)
+  (let* ((element (org-element-at-point))
+         (element-type (org-element-type element)))
+    (when (eq element-type 'src-block)
+      (funcall-interactively
+       (let ((method (ivy-read "Execute: " (list "repl" "default" "async"))))
+         (cond
+          ((equal method "async") #'(lambda ()
+                                      (org-babel-execute-src-block nil nil '((:async "yes")))))
+          ((equal method "repl") #'+org/babel-eval-in-repl)
+          (t #'org-babel-execute-src-block)))))))
+#+END_SRC
+* User Interface
+:PROPERTIES:
+:header-args+: :tangle config-org-babel.el
+:END:
+#+BEGIN_SRC elisp
+(provide 'config-org-ui)
+(require 'config-ui)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(set-face-attributes!
+   (org-document-title        :height 1.5)
+   (org-level-1               :height 1.1)
+   (org-level-2               :height 1.05)
+   (org-level-3               :height 1.025)
+   (org-document-info-keyword :height 1.0))
 #+END_SRC
 * Server Manager
 :PROPERTIES:
