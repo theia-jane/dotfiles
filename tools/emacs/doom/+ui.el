@@ -12,19 +12,6 @@
 
 (load-theme 'doom-gruvbox t)
 
-(defmacro set-face-attributes! (&rest attributes-list)
-  `(seq-do #'(lambda (attributes)
-            (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
-          ',attributes-list))
-
-;;; Mode specific
-(after! org
-  (set-face-attributes!
-   (org-document-title :height 1.5)
-   (org-level-1 :height 1.1)
-   (org-level-2 :height 1.05)
-   (org-level-3 :height 1.025)
-   (org-document-info-keyword :height 1.0)))
 
 
 (defun +ui/non-code--display-hook ()

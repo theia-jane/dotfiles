@@ -1,0 +1,28 @@
+#+TITLE: UI
+#+PROPERTY: header-args :tangle-relative 'dir
+#+PROPERTY: header-args:elisp :tangle config-ui.el :dir ${HOME}/.local/emacs/site-lisp/
+
+#+BEGIN_SRC elisp
+(provide 'config-ui)
+#+END_SRC
+* Disable
+I don't like the clutter of the menu, toolbar and scroll bar.
+#+BEGIN_SRC elisp
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+#+END_SRC
+
+I'd like to disable the startup screen and echo message 'site' wide... Generally not 'right', but I'm the only one using my system, so I'll break the rules by overwritting the functions.
+#+BEGIN_SRC elisp
+(defun fancy-startup-screen (&rest _))
+(defun display-startup-echo-area-message (&rest _))
+#+END_SRC
+
+* Helpers
+#+BEGIN_SRC elisp
+(defmacro set-face-attributes! (&rest attributes-list)
+  `(seq-do #'(lambda (attributes)
+            (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
+          ',attributes-list))
+#+END_SRC
