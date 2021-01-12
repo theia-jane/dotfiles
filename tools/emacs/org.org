@@ -179,7 +179,6 @@ Note if you have issues w/ rendering might need to check your imagemagick polici
 (after! preview
   (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 #+END_SRC
-**
 **  pdf2svg
 #+BEGIN_SRC elisp
 (setq org-preview-latex-default-process 'pdf2svg

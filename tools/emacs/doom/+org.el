@@ -322,7 +322,6 @@
        (:prefix ("L" . "Latex")
         :desc "Preview" "p" #'org-latex-preview-buffer)))
 
-(use-package config-org-latex)
 
 ;;; Babel
 (defadvice! +org-babel--resolve-tangle-path-to-dir-a (fn &optional light datum)
