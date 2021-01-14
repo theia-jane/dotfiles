@@ -377,9 +377,13 @@ When the =org-preview-latex-image-directory= is set to an absolute path to the i
 :END:
 Script for syncing mail down from the server(s) and then indexing it
 #+begin_src elisp :tangle mail-sync
-(loop
- (shell-command "mbsync -a")
- (shell-command "mu index")
+(require 'commands-lib)
+(while t
+  (run-commands #'message
+                "mbsync -a"
+                "mu index")
+
  ;; GMail might freak out a little if you try to sync too often
- (sleep-for (* 10 60)))
+  (sleep-for (* 10 60)))
 #+end_src
+
