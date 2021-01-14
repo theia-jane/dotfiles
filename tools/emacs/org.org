@@ -188,7 +188,7 @@ Note if you have issues w/ rendering might need to check your imagemagick polici
  '(pdf2svg :programs
            ("latex" "pdf2svg" "rsvg-convert")
            :description "pdf > svg" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "svg" :image-size-adjust
-           (1 . 1)
+           (1.5 . 1)
            :latex-compiler
            ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
            :image-converter
@@ -221,7 +221,7 @@ Note if you have issues w/ rendering might need to check your imagemagick polici
  '(pdf2svg2png :programs
            ("latex" "pdf2svg" "rsvg-convert" "convert")
            :description "pdf > svg > png" :message "you need to install the programs: latex and pdf2svg." :image-input-type "pdf" :image-output-type "png" :image-size-adjust
-           (1 . 1)
+           (1.5 . 1)
            :latex-compiler
            ("pdflatex -interaction nonstopmode -output-directory %o -shell-escape %f")
            :image-converter
