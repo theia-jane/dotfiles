@@ -627,6 +627,27 @@ testing advice (when combined with `rotate-text').
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
 #+END_SRC
+** Commands
+:PROPERTIES:
+:header-args:elisp: :tangle commands-lib.el
+:END:
+#+begin_src elisp
+(provide 'commands-lib)
+#+END_SRC
+
+Convenience macro for running a list of commands
+#+begin_src elisp
+(defmacro run-commands (result-fn &rest commands)
+    `(with-temp-buffer
+      (let ((after-change-functions after-change-functions))
+        (add-to-list 'after-change-functions
+                     #'(lambda (start end _)
+                         (funcall ,result-fn (buffer-substring start
+                                                    ;; chop off trailing newline
+                                                    (1- end)))))
+        (dolist (command ',commands)
+                (shell-command command (current-buffer))))))
+#+end_src
 ** Site start
 :PROPERTIES:
 :header-args:elisp: :tangle site-start.el
