@@ -2,7 +2,12 @@
 #+PROPERTY: header-args :tangle-relative 'dir
 #+STARTUP: overview
 
-To handle my mail I'll use =mbsync=, =mu=, and =pass= to handle fetching emails, indexing and storing my passwords and then in emacs I'll use mu4e to send email I'll use org-mode (via =org-mu4e=).
+To handle my mail I'll use =mbsync=, =mu=, and =pass= to handle fetching emails, indexing and storing my passwords and then in emacs I'll use mu4e to send email I'll use org-mode (via =org-mu4e=). My mail will live in this directory:
+
+#+NAME: mailDir
+#+begin_src text
+~/.mail/
+#+end_src
 
 * Dependencies
 #+NAME: Dependencies
@@ -36,7 +41,7 @@ pass mail/boisestate.edu | awk '/^username:/ {print $2}'
 ** App Password
 Rather than using my user password for Gmail I'm using my app password for
 increased security, which I stored under =mail/imap.gmail.com=. To set that up you
-can follow the follwing steps:
+can follow the following steps:
 
 1. Go to your [[https://myaccount.google.com][Google Account]].
 2. On the left navigation panel, choose Security.
@@ -51,6 +56,8 @@ can follow the follwing steps:
 7. Follow the instructions to enter the App Password. The App Password is the 16-character code in the yellow bar on your device.
 8. Choose Done.
 
+
+Note: if you have issues connecting or your app password is getting rejected you may need to [[https://www.google.com/accounts/DisplayUnlockCaptcha][unlock captcha]].
 * Configure IMAP Syncing
 :PROPERTIES:
 :header-args:conf: :tangle .mbsyncrc :dir ${HOME}
@@ -88,7 +95,7 @@ Account gmail-personal
 *** Local storage
 #+NAME: personalEmailDir
 #+BEGIN_SRC text
-~/.mail/gmail/
+<<mailDir>>gmail/
 #+END_SRC
 
 #+BEGIN_SRC conf
@@ -140,7 +147,7 @@ Account gmail-school
 *** Local storage
 #+NAME: schoolEmailDir
 #+BEGIN_SRC text
-~/.mail/school/
+<<mailDir>>school/
 #+END_SRC
 
 #+BEGIN_SRC conf
@@ -187,7 +194,7 @@ Description=Mailbox synchronization service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/mbsync -Va
-ExecStartPost=/usr/bin/mu index --maildir ~/.mail/
+ExecStartPost=/usr/bin/mu index
 #+END_SRC
 ** Sync timer
 #+BEGIN_SRC conf :tangle mbsync.timer
@@ -206,7 +213,7 @@ WantedBy=timers.target
 1. With =mbsync= sufficiently configured we can now tangle the file
 2. Make the directory where we'll store the email
     #+BEGIN_SRC bash
-mkdir -p ~/.mail/{gmail,school}
+mkdir -p <<mailDir>>{gmail,school}
     #+END_SRC
 
 3. Sync all =mbsync= channels
@@ -215,7 +222,7 @@ mbsync -Va
     #+END_SRC
 4. Index with =mu=
     #+BEGIN_SRC bash :var personal_email=personal-email-address() school_email=school-email-address()
-mu init --maildir=~/.mail/ --my-address=$personal_email --my-address=$school_email
+mu init --maildir=<<mailDir>> --my-address=$personal_email --my-address=$school_email
 mu index
     #+END_SRC
 
@@ -225,7 +232,7 @@ I borrowed an awful lot of this config from doom-emacs to get me started.
 (use-package mu4e
   :commands mu4e mu4e-compose-new
   :init
-  (setq mu4e-maildir  "~/.mail")
+  (setq mu4e-maildir "<<mailDir>>")
   :config
   <<config/account>>
   <<config/sync>>
@@ -365,13 +372,14 @@ When the =org-preview-latex-image-directory= is set to an absolute path to the i
 *** TODO Get tikz working in emails
 * Scripts
 :PROPERTIES:
-:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:header-args: :tangle-relative 'dir :dir ${HOME}/bin
+:header-args:elisp: :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 :END:
-
-#+BEGIN_SRC bash :tangle mail-sync
-while true; do
-    mbsync -Va
-    mu index --maildir=~/.mail/
-    sleep "$((5 * 60))"
-done
-#+END_SRC
+Script for syncing mail down from the server(s) and then indexing it
+#+begin_src elisp :tangle mail-sync
+(loop
+ (shell-command "mbsync -a")
+ (shell-command "mu index")
+ ;; GMail might freak out a little if you try to sync too often
+ (sleep-for (* 10 60)))
+#+end_src
