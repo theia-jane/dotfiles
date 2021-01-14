@@ -1,5 +1,60 @@
 #+TITLE: General
 #+PROPERTY: header-args :tangle-relative 'dir
+* Building emacs
+** Init Repository
+Get the repository and get it ready to build
+#+begin_src bash :dir ~/.local/src :mkdirp yes
+[ ! -d "emacs" ] \
+    && git clone https://git.savannah.gnu.org/git/emacs.git emacs \
+    && cd emacs \
+    && ./autogen.sh
+#+end_src
+** Configuring build
+To see what options there are to configure emacs during the build run =./configure --help=. For my linux build I use:
+#+begin_src bash :dir ~/.local/src/emacs
+nice -n 10 ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --libexecdir=/usr/lib \
+    --localstatedir=/var \
+    --mandir=/usr/share/man \
+    --with-gameuser=:games \
+    --with-x \
+    --with-sound=alsa \
+    --with-x-toolkit=gtk3 \
+    --with-xft \
+    --without-gconf \
+    --without-gsettings \
+    --without-xaw3d \
+    --with-xwidgets \
+    --with-file-notification=inotify \
+    --with-json \
+    --with-nativecomp \
+    --with-modules \
+    --with-pdumper \
+    --without-compress-install \
+    --enable-link-time-optimization \
+    'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt -flto' \
+    CPPFLAGS=-D_FORTIFY_SOURCE=2 \
+    LDFLAGS=-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
+#+end_src
+** Build it!
+:PROPERTIES:
+:header-args+: :dir ~/.local/src/emacs
+:END:
+#+begin_src bash
+nice -n 10 make
+#+END_SRC
+
+Make sure it works the way you want it to
+#+begin_src bash
+./src/emacs
+#+end_src
+
+Then install it (might need =sudo=)
+#+begin_src bash
+make install
+#+end_src
 
 * Scripts
 :PROPERTIES:
