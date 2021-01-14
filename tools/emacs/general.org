@@ -220,24 +220,59 @@ el $FORWARD_ARGS -mx "$1"
 Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
 #+begin_src elisp :tangle global-packages.el
 (require 'elpm)
+(require 'seq)
 (defvar global-packages-dir
   (expand-file-name "~/.local/emacs/site-lisp/"))
 
-(elpm-use-packages
-   '(use-package
-      counsel
-      evil
-      ivy
-      ivy-rich
-      helpful
-      which-key
-      f
-      s)
-   global-packages-dir
-   t)
-(require 'use-package)
+(defvar global-packages-load-paths-file
+  (concat global-packages-dir "global-packages-load-paths.el"))
+
+(defvar global-packages-required-packages
+  '(use-package counsel evil ivy ivy-rich helpful which-key f s))
+
+(defvar global-packages-load-path '())
+
+(defun global-packages/install-packages ()
+  (let ((old-load-path load-path))
+    (elpm-use-packages global-packages-required-packages global-packages-dir t)
+    (global-packages/add-load-paths (seq-difference load-path old-load-path))
+    (global-packages/save-load-paths-file)))
+
+(defun global-packages/save-load-paths-file ()
+  (with-temp-buffer
+    (insert (pp-to-string global-packages-load-path))
+    (write-region (point-min) (point-max) global-packages-load-paths-file)))
+
+(defun global-packages/get-load-paths ()
+  (let* ((file-name global-packages-load-paths-file)
+         (file-contents (when (file-exists-p file-name)
+                          (with-temp-buffer
+                            (insert-file-contents file-name)
+                            (buffer-string))))
+         (paths (and file-contents
+                     (not (equal file-contents ""))
+                     (car (read-from-string file-contents)))))
+    (when (listp paths)
+      paths)))
+
+(defun global-packages/add-load-paths (load-path-additions)
+  (dolist (path load-path-additions)
+    (when (stringp path)
+      (add-to-list 'global-packages-load-path path)
+      (add-to-list 'load-path path))))
+
+(defun global-packages/init ()
+  (if (file-exists-p global-packages-load-paths-file)
+      (global-packages/add-load-paths (global-packages/get-load-paths))
+    (global-packages/install-packages))
+  (require 'use-package))
+
+;; Better to ignore any errors since this loaded in every emacs session
+(ignore-errors (global-packages/init))
+
 (provide 'global-packages)
 #+end_src
+*** TODO make =global-packages/init= an autoloaded fn
 ** Experiments
 :PROPERTIES:
 :header-args:elisp: :tangle experiment.el
