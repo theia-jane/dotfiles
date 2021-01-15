@@ -4,7 +4,7 @@
 * Pass
 ** Scripts
 :PROPERTIES:
-:header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:header-args+: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
 
 #+BEGIN_SRC bash :tangle pass-menu
@@ -39,4 +39,14 @@ fi
 (use-package auth-source-pass
   :config
   (auth-source-pass-enable))
+#+end_src
+* GPG
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.gnupg
+:END:
+
+One hour is a bit short for me to need to reenter my master password. My machines are fairly inaccessible, so 8 hours sounds good.
+#+begin_src conf :tangle gpg-agent.conf :var ttl=(* 60 60 8)
+default-cache-ttl ${ttl}
+max-cache-ttl ${ttl}
 #+end_src
