@@ -173,9 +173,16 @@ Note if you have issues w/ rendering might need to check your imagemagick polici
 (add-hook 'org-mode-hook #'org-latex-preview-buffer-h)
 #+END_SRC
 
+Add the packages I use
 #+BEGIN_SRC elisp
-(add-to-list 'org-latex-packages-alist
-             '("" "tikz" t))
+(dolist (package '("tikz"
+                   "tikz-config"
+                   "shorthand"))
+        (add-to-list 'org-latex-packages-alist `("" ,package t)))
+#+END_SRC
+
+#+BEGIN_SRC elisp
+
 (after! preview
   (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 #+END_SRC
