@@ -19,6 +19,16 @@ ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
 WantedBy=default.target
 #+END_SRC
 
+
+** Install unit
+:PROPERTIES:
+:config-install:
+:END:
+#+begin_src bash
+systemctl --user enable ssh-agent
+systemctl --user restart ssh-agent
+#+end_src
+
 * Environment
 :PROPERTIES:
 :header-args+: :dir ${HOME}/.config/env
