@@ -1,5 +1,5 @@
 #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
-;; [[file:~/Projects/dotfiles/config-cli.org::*Install][Install:1]]
+;; [[file:../config-cli.org::*Install][Install:1]]
 (require 'org)
 (require 'org-element)
 (require 'ob-core)
@@ -7,9 +7,16 @@
 
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 (setq org-confirm-babel-evaluate nil)
-(dolist (file (directory-files-recursively config-root "^install\\.org$"))
+(dolist (file (directory-files-recursively config-root ".org$"))
   (with-temp-buffer
     (insert-file-contents file)
-    (org-mode)
-    (org-babel-execute-buffer)))
+    (delay-mode-hooks (org-mode))
+    (if (string-match-p "/install\\.org$" file)
+        ;; execute the whole file if it's basename
+        (org-babel-execute-buffer)
+      ;; Search for subtrees called 'install'
+      (org-map-entries
+       (lambda ()
+         (when (org-entry-properties (point) "config-install")
+           (org-babel-execute-subtree)))))))
 ;; Install:1 ends here

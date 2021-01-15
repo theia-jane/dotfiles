@@ -1,5 +1,5 @@
 #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
-;; [[file:~/Projects/dotfiles/config-cli.org::*Update][Update:1]]
+;; [[file:../config-cli.org::*Update][Update:1]]
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 
 (require 'notifications)

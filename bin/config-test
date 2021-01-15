@@ -1,5 +1,5 @@
 #!/bin/bash
-# [[file:~/Projects/dotfiles/config-cli.org::*Run test][Run test:1]]
+# [[file:../config-cli.org::*Run test][Run test:1]]
 cd ~/.local/test/config-install
 docker-compose up
 # Run test:1 ends here

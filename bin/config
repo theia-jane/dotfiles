@@ -1,5 +1,5 @@
 #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
-;; [[file:~/Projects/dotfiles/config-cli.org::*Main command][Main command:1]]
+;; [[file:../config-cli.org::*Main command][Main command:1]]
 (defconst subcommands
   '(install
     tangle
