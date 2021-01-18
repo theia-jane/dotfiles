@@ -36,3 +36,15 @@ systemctl --user restart ssh-agent
 #+BEGIN_SRC bash :tangle ssh-agent
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 #+END_SRC
+* Config
+#+begin_src conf :tangle no
+Host *
+   AddKeysToAgent yes
+   IdentityFile ~/.ssh/id_rsa
+#+end_src
+** TODO determine a way to allow for 'weaving' multiple files together
+Each maching has a different =~/.ssh/config= and I don't want my work stuff to be included here
+Some way to have tangle only insert into 'part' of a file would be ideal.
+
+Perhaps a hash could be used to identity a section of a file managed by the repo, to only
+sync (tangle) part of the file.
