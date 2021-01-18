@@ -56,6 +56,8 @@ Then install it (might need =sudo=)
 #+begin_src bash
 make install
 #+end_src
+** TODO Add pdump with my config, local libraries & 'required' libraries
+I think you can create a dump file that emacs can load up /quickly/ into memory. Stuff in here should be stuff that doesn't change much.
 
 * Scripts
 :PROPERTIES:
