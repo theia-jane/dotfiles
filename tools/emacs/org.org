@@ -64,7 +64,6 @@ background color of the generated image.
 When BUFFER non-nil, this function is used for LaTeX previewing.
 Otherwise, it is used to deal with LaTeX snippets showed in
 a HTML file."
-  (message "%s" options)
   (let* ((processing-type (or processing-type
                               org-preview-latex-default-process))
          (processing-info
@@ -99,7 +98,6 @@ a HTML file."
                  "Transparent"))
          (log-buf (get-buffer-create "*Org Preview LaTeX Output*"))
          (resize-mini-windows nil)) ;Fix Emacs flicker when creating image.
-    (message "DPI: %s" dpi)
     (dolist (program programs)
       (org-check-external-command program error-message))
     (if (eq fg 'default)
@@ -125,8 +123,7 @@ a HTML file."
               "\\begin{document}\n"
               "\\noindent%\n"
               string
-              "\n\\end{document}\n")
-      (message "Buffer string: %s" (buffer-string)))
+              "\n\\end{document}\n"))
     (let* ((err-msg (format "Please adjust `%s' part of \
 `org-preview-latex-process-alist'."
                             processing-type))
@@ -142,7 +139,6 @@ a HTML file."
       (dolist (e post-clean)
         (when (file-exists-p (concat texfilebase e))
           (delete-file (concat texfilebase e))))
-      (message image-output-file)
       image-output-file)))
 
 #+END_SRC
@@ -182,11 +178,15 @@ Add the packages I use
 #+END_SRC
 
 #+BEGIN_SRC elisp
-
 (after! preview
   (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 #+END_SRC
-**  pdf2svg
+*** TODO make preview async
+I have /lots/ of latex embedded into my documents sometimes and it's annoying to wait for the previews to render, so ideally they should be done async.
+*** TODO add ability to preview src & example blocks
+Somethings are easier to accomplish in a straight =#+begin_src latex= block. In particular, some things like adding oomlats via ={\"o}= just don't work.
+*** TODO Allow for result type of latex from src blocks
+** pdf2svg
 #+BEGIN_SRC elisp
 (setq org-preview-latex-default-process 'pdf2svg
       org-export-with-latex 'dvipng)
