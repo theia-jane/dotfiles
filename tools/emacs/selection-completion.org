@@ -1,0 +1,26 @@
+#+TITLE: Selection / Completion
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp :tangle config-selection-completion.el
+
+#+begin_src elisp
+(provide 'config-selection-completion)
+#+END_SRC
+* Orderless
+Used for matching candidates in a completion framework. Works with standard emacs completion mechanisms (and 'higher' packages, like =ivy=).
+#+begin_src elisp
+(after! orderless
+  (setq completion-styles '(orderless)
+        orderless-component-separator " +"
+        orderless-matching-styles '(orderless-prefixes
+                                    orderless-literal
+                                    orderless-strict-leading-initialism
+                                    orderless-regexp
+                                    orderless-flex)
+        orderless-style-dispatchers '((lambda (p &rest _)
+                                        (when (string-prefix-p "!" p)
+                                          `(orderless-without-literal . ,(substring p 1))))
+                                      (lambda (p &rest _)
+                                        (when (string-suffix-p "=" p)
+                                          `(orderless-literal . ,(substring p 0 -1))))))
+  (keymap! :map minibuffer-local-completion-map
+           "SPC"  nil))
+#+end_src
