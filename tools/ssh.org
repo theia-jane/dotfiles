@@ -37,6 +37,7 @@ systemctl --user restart ssh-agent
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 #+END_SRC
 * Config
+Store ssh-passphrase while =ssh-agent= is running
 #+begin_src conf :tangle no
 Host *
    AddKeysToAgent yes
