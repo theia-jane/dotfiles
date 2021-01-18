@@ -283,7 +283,11 @@ Simply requiring this will make all of my globally installed packages available 
   (concat global-packages-dir "global-packages-load-paths.el"))
 
 (defvar global-packages-required-packages
-  '(use-package counsel evil ivy ivy-rich helpful which-key f s))
+  '(evil which-key general
+     helpful
+     counsel ivy ivy-rich
+     use-package f s async
+    ))
 
 (defvar global-packages-load-path '())
 
@@ -377,7 +381,8 @@ I need help figuring out what emacs has to offer -- enter a few nice tools. For 
         which-key-idle-delay 2
         which-key-idle-secondary-delay 0.05
         which-key-popup-type 'side-window)
-  (which-key-mode))
+  (which-key-mode)
+  (setq-hook! 'which-key-init-buffer-hook line-spacing 3))
 
 (use-package helpful
   :config
