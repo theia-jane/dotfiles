@@ -1,5 +1,6 @@
 #+TITLE: General
 #+PROPERTY: header-args :tangle-relative 'dir
+
 * Building emacs
 ** Init Repository
 Get the repository and get it ready to build
@@ -393,7 +394,14 @@ I need help figuring out what emacs has to offer -- enter a few nice tools. For 
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable))
 #+end_src
+** Config
+Config packages (those prefixed with =config-=) should not 'do' anything by default.
+They should simply provide /my/ configuration preferences for packages, so I can pull
+them in anywhere. I may add methods to select which packages to use (and how they are
+loaded). I am wanting to avoid loading any packages unless I actually decide I want them.
 
+This might end up following the 'feature' / 'module' pattern that =doom-emacs= does, but
+for now it's not so complex.
 ** Personal lib
 :PROPERTIES:
 :header-args:elisp: :tangle personal-lib.el

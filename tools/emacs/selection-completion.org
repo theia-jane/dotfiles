@@ -24,3 +24,9 @@ Used for matching candidates in a completion framework. Works with standard emac
   (keymap! :map minibuffer-local-completion-map
            "SPC"  nil))
 #+end_src
+* TODO Embark
+* TODO Consult
+* TODO Marginalia
+* TODO Selectrum
+* TODO Ivy
+* TODO Counsel
