@@ -363,15 +363,14 @@ this will provide a basic starting point for my emacs experiments.
 #+END_SRC
 *** Completion / selection
 #+begin_src elisp
-(use-package ivy
-  :config (ivy-mode))
+(require!
+ ;; Load my configurations
+ config-selection-completion
 
-(use-package counsel
-  :config (counsel-mode))
-
-(use-package ivy-rich
-  :config (ivy-rich-mode)
-  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
+ ;; Packages to use
+ ivy
+ counsel
+ ivy-rich)
 #+end_src
 *** Help
 I need help figuring out what emacs has to offer -- enter a few nice tools. For what shortcuts I have available there is which-key

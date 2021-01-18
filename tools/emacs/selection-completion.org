@@ -24,9 +24,31 @@ Used for matching candidates in a completion framework. Works with standard emac
   (keymap! :map minibuffer-local-completion-map
            "SPC"  nil))
 #+end_src
+* Ivy
+#+begin_src elisp
+(after! ivy
+  (ivy-mode)
+  (setq ivy-read-action-function #'ivy-hydra-read-action
+        ivy-height 13)
+  (push '(swiper . 10) ivy-height-alist))
+
+(after! ivy-rich
+  (ivy-rich-mode)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
+#+end_src
+** Counsel
+#+begin_src elisp
+(after! counsel
+  (counsel-mode))
+(after! counsel-projectile
+  (defadvice! +counsel-projectile-switch-project--set-default-a (args)
+    :filter-args #'counsel-projectile-switch-project
+    (list (or (car args)
+              #'counsel-projectile-switch-project-action-vc))))
+#+end_src
+
 * TODO Embark
 * TODO Consult
 * TODO Marginalia
 * TODO Selectrum
-* TODO Ivy
 * TODO Counsel

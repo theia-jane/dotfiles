@@ -25,7 +25,6 @@
  "+movement"
  ;; Features / tools / etc
  "+bookmark"
- "+ivy"
  "+evil"
  "+elisp"
  "+org"
@@ -44,14 +43,15 @@
  "+hacks"
  )
 
-(require 'config-auth)
-(require 'config-email)
-(require 'lean-config)
-(require 'sagemath-config)
+(require!
+ config-auth
+ config-email
+ lean-config
+ sagemath-config
+ config-selection-completion)
 
 (after! undo-fu
   (remove-hook 'undo-fu-mode-hook #'global-undo-fu-session-mode))
-
 
 (setq
  find-function-C-source-directory (expand-file-name "~/src/emacs/src"))
