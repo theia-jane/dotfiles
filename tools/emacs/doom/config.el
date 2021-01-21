@@ -46,6 +46,7 @@
 (require!
  config-auth
  config-email
+ config-file-management
  lean-config
  sagemath-config
  config-selection-completion)

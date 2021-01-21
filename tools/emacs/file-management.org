@@ -1,0 +1,12 @@
+#+TITLE: File Management
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-file-management.el
+
+#+begin_src elisp
+(provide 'config-file-management)
+#+end_src
+* dired
+#+begin_src elisp
+(after! dired
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode))
+#+end_src

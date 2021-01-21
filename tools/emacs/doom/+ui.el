@@ -55,9 +55,6 @@
                                                    (get-buffer-window-list (current-buffer) nil)))))
 
 
-(after! dired
-  (add-hook 'dired-mode-hook 'dired-hide-details-mode))
-
 ;;; Commands
 (defun +ui/scroll-to-percent (percent)
   (interactive)
