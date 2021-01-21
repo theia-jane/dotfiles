@@ -18,6 +18,36 @@ I'd like to disable the startup screen and echo message 'site' wide... Generally
 (defun fancy-startup-screen (&rest _))
 (defun display-startup-echo-area-message (&rest _))
 #+END_SRC
+* Fonts
+#+begin_src elisp
+(set-frame-font (font-spec :family "Source Code Pro" :size 27) nil t)
+#+end_src
+* Non-program buffers
+#+begin_src elisp
+(defun ui/non-code--display-hook ()
+  (setq display-line-numbers nil
+        left-margin-width 5
+        right-margin-width 5
+        header-line-format " "
+        evil-respect-visual-line-mode nil
+        line-spacing 14
+        fill-column 80)
+  (pcase major-mode
+    (org-mode (org-latex-preview-buffer)))
+  (if (> (line-number-at-pos (point-max)) 1500)
+      (pcase major-mode
+        ;; Is there an earlier point I can set this up at? Seems like it isn't as effective as #+STARTUP: overview
+        (org-mode (org-overview)))))
+
+(add-hook 'org-mode-hook #'ui/non-code--display-hook)
+#+end_src
+
+* Program buffers
+#+begin_src elisp
+(defun ui/code--display-hook ()
+  (setq line-spacing 7))
+(add-hook 'prog-mode-hook #'ui/code--display-hook)
+#+end_src
 
 * Helpers
 #+BEGIN_SRC elisp

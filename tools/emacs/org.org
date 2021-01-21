@@ -11,30 +11,26 @@
 #+END_SRC
 
 #+BEGIN_SRC elisp
-(setq org-directory "~/notes/"
-      org-agenda-files `(,(f-join org-directory "projects"))
-      org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
-      org-refile-targets '((nil :maxlevel . 7)
-                           (org-agenda-files :maxlevel . 1))
-      org-refile-allow-creating-parent-nodes t
-      org-src-ask-before-returning-to-edit-buffer nil
-      org-outline-path-complete-in-steps nil
-      org-refile-use-outline-path 'file
-      org-highlight-latex-and-related nil
-      org-M-RET-may-split-line '((default . nil))
-      org-src-tab-acts-natively t
-      org-confirm-babel-evaluate nil
-      org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
-      org-display-inline-images t
-      org-pretty-entities nil
-      org-startup-with-inline-images "inlineimages"
-      org-startup-folded 'overview
-      org-hide-emphasis-markers nil
-      org-export-with-toc nil
-      org-export-with-section-numbers nil
-      org-export-time-stamp-file nil
-      org-src-window-setup 'current-window
-      org-list-allow-alphabetical t)
+(after! org
+  (setq org-directory "~/notes/"
+        org-agenda-files `(,(f-join org-directory "projects"))
+        org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
+        org-refile-targets '((nil :maxlevel . 7)
+                             (org-agenda-files :maxlevel . 1))
+        org-refile-allow-creating-parent-nodes t
+        org-src-ask-before-returning-to-edit-buffer nil
+        org-outline-path-complete-in-steps nil
+        org-refile-use-outline-path 'file
+        org-highlight-latex-and-related nil
+        org-M-RET-may-split-line '((default . nil))
+        org-src-tab-acts-natively t
+        org-confirm-babel-evaluate nil
+        org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
+        org-export-with-toc nil
+        org-export-with-section-numbers nil
+        org-export-time-stamp-file nil
+        org-src-window-setup 'current-window
+        org-list-allow-alphabetical t))
 #+END_SRC
 * Latex
 :PROPERTIES:
@@ -42,6 +38,7 @@
 :END:
 #+BEGIN_SRC elisp
 (provide 'config-org-latex)
+(after! org
 #+END_SRC
 
 ** Fixing rendering
@@ -284,12 +281,17 @@ Starred and \"displaymath\" environments are not numbered."
                    (equal (substring env -1) "*"))))))))
 #+end_src
 
+** Footer
+#+begin_src elisp
+)
+#+end_src
 * Babel
 :PROPERTIES:
 :header-args+: :tangle config-org-babel.el
 :END:
 #+BEGIN_SRC elisp
 (provide 'config-org-babel)
+(after! org
 #+END_SRC
 
 #+BEGIN_SRC elisp
@@ -332,7 +334,8 @@ Starred and \"displaymath\" environments are not numbered."
              (format body))
   :lang "text")
 
-(use-package ob-async)
+(use-package ob-async
+  :defer t)
 (defun ob-src-execute-by-method ()
   "Choose how you want to execute the src block."
   (interactive)
@@ -347,9 +350,13 @@ Starred and \"displaymath\" environments are not numbered."
           ((equal method "repl") #'+org/babel-eval-in-repl)
           (t #'org-babel-execute-src-block)))))))
 #+END_SRC
+** Footer
+#+begin_src elisp
+)
+#+end_src
 * User Interface
 :PROPERTIES:
-:header-args+: :tangle config-org-babel.el
+:header-args+: :tangle config-org-ui.el
 :END:
 #+BEGIN_SRC elisp
 (provide 'config-org-ui)
@@ -357,12 +364,21 @@ Starred and \"displaymath\" environments are not numbered."
 #+END_SRC
 
 #+BEGIN_SRC elisp
-(set-face-attributes!
+(after! org
+  (set-face-attributes!
    (org-document-title        :height 1.5)
    (org-level-1               :height 1.1)
    (org-level-2               :height 1.05)
    (org-level-3               :height 1.025)
    (org-document-info-keyword :height 1.0))
+
+  (setq org-startup-indented t
+        org-display-inline-images t
+        org-pretty-entities nil
+        org-startup-with-inline-images "inlineimages"
+        org-hide-emphasis-markers nil
+        org-startup-folded 'overview
+        ))
 #+END_SRC
 * Server Manager
 :PROPERTIES:
