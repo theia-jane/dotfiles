@@ -354,6 +354,39 @@ Starred and \"displaymath\" environments are not numbered."
 #+begin_src elisp
 )
 #+end_src
+* Export
+:PROPERTIES:
+:header-args+: :tangle config-org-export.el
+:END:
+#+begin_src elisp
+(provide 'config-org-export)
+#+end_src
+** Latex
+#+BEGIN_SRC elisp
+(defvar org-compile-file--directory "./org-export/")
+
+(defadvice! ox-file--inject-custom-output-directory (fn &rest args)
+  "Beware! black magic ahead...
+
+TODO Might create a 'double-advice' macro this is basically doing that..."
+  :around '(org-latex-export-to-pdf)
+  (let* ((filename-fn (symbol-function 'org-export-output-file-name))
+         (filename-sub
+          #'(lambda (extension &optional subtreep pub-dir)
+              (let* ((filename (funcall filename-fn extension subtreep (or pub-dir
+                                                                           org-compile-file--directory)))
+                     (output-dir (file-name-directory filename)))
+                (when (and output-dir
+                         (not (file-directory-p output-dir)))
+                  ;; This is relative.. so might need more care (might depend on default-directory)
+                  (mkdir output-dir t))
+                filename)
+              )))
+    (cl-letf (((symbol-function 'org-export-output-file-name) filename-sub))
+      (apply fn args))))
+
+#+END_SRC
+
 * User Interface
 :PROPERTIES:
 :header-args+: :tangle config-org-ui.el

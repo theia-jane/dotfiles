@@ -717,6 +717,7 @@ Convenience macro for running a list of commands
           config-org-ui
           config-org-babel
           config-org-latex
+          config-org-export
           config-selection-completion
           config-introspection
           config-file-management)

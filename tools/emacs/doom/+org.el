@@ -136,6 +136,7 @@
   (require! config-org
             config-org-latex
             config-org-babel
+            config-org-export
             config-org-ui)
 
   ;; A start, but I want to add a lot more rotations!
