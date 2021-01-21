@@ -351,50 +351,24 @@ this will provide a basic starting point for my emacs experiments.
                                (make-temp-file "/tmp/emacs-experiment" t))
       user-emacs-directory experiment-directory
       elpm-directory experiment-directory)
-#+END_SRC
 
-*** Packages
-#+begin_src elisp
+;; Minimal setup
+(require! config-evil
+          evil
+
+          config-selection-completion
+          ivy
+          counsel
+          ivy-rich
+
+          config-introspection
+          which-key
+          helpful)
+
+;; Init packages
 (elpm-use-packages '())
-#+end_src
-*** Vim habit
-#+BEGIN_SRC elisp
-(use-package evil
-  :config
-  (evil-mode))
 #+END_SRC
-*** Completion / selection
-#+begin_src elisp
-(require!
- ;; Load my configurations
- config-selection-completion
 
- ;; Packages to use
- ivy
- counsel
- ivy-rich)
-#+end_src
-*** Help
-I need help figuring out what emacs has to offer -- enter a few nice tools. For what shortcuts I have available there is which-key
-#+begin_src elisp
-(use-package which-key
-  :config
-  (setq which-key-show-early-on-C-h t
-        which-key-idle-delay 2
-        which-key-idle-secondary-delay 0.05
-        which-key-popup-type 'side-window)
-  (which-key-mode)
-  (setq-hook! 'which-key-init-buffer-hook line-spacing 3))
-
-(use-package helpful
-  :config
-  (global-set-key (kbd "C-h k") #'helpful-key))
-
-(use-package counsel
-  :config
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable))
-#+end_src
 ** Config
 Config packages (those prefixed with =config-=) should not 'do' anything by default.
 They should simply provide /my/ configuration preferences for packages, so I can pull
@@ -728,3 +702,39 @@ Convenience macro for running a list of commands
 (require 'global-packages)
 (require 'keymap)
 #+END_SRC
+** Config
+:PROPERTIES:
+:header-args:elisp: :tangle config-main.el
+:END:
+#+BEGIN_SRC elisp
+(provide 'config-main)
+
+(require! config-evil
+          config-auth
+          config-email
+          config-ui
+          config-org
+          config-org-ui
+          config-org-babel
+          config-org-latex
+          config-selection-completion
+          config-introspection
+          config-file-management)
+#+END_SRC
+* Personal
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.local/emacs/configs/personal
+:END:
+
+#+begin_src elisp :tangle init.el
+(elpm-use-packages '(ob-async))
+
+(require! config-main
+          evil
+          org
+          ivy
+          ivy-rich
+          counsel
+          which-key
+          helpful)
+#+end_src

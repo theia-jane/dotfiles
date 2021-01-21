@@ -50,6 +50,7 @@ fi
   (let* ((distro-dir "~/.local/emacs/distros")
          (config-dir "~/.local/emacs/configs")
          (profiles `(("default" . ((user-emacs-directory . ,(concat distro-dir "/doom-default"))))
+                     ("personal" . ((user-emacs-directory . ,(concat config-dir "/personal"))))
                      ("spacemacs" . ((user-emacs-directory . ,(concat distro-dir "/spacemacs"))
                                      (env . (("SPACEMACSDIR" . ,(concat config-dir "/spacemacs"))))))
                      ,@(mapcar (lambda (variant)

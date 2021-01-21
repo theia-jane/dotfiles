@@ -1,0 +1,14 @@
+#+TITLE: Evil
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+
+* Config
+:PROPERTIES:
+:header-args+: :tangle config-evil.el
+:END:
+
+#+begin_src elisp
+(provide 'config-evil)
+
+(after! evil
+  (evil-mode))
+#+end_src
