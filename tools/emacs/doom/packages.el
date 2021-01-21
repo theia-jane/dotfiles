@@ -39,7 +39,6 @@
  ;; Package I made.. not sure if it's worth anything
  (rextract
   :recipe (:host github :repo "tylerware/rextract.el"))
- dired-narrow
  vimrc-mode
  nov
  (ox-ssh

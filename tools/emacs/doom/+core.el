@@ -62,6 +62,8 @@ For WILDCARDS see `find-file'.
   (when (listp filename)
     (setq filename (apply #'f-join filename)))
   (find-file filename wildcards))
+
+;; Already extracted to own package, leaving this for now..
 (defvar doom-map-extra-mapping-fns nil)
 
 (defun doom-map-extra-mapping-key-p (key)
@@ -198,7 +200,7 @@ For WILDCARDS see `find-file'.
                                                         ,define-fn-symbol))))
        (after! which-key
          (which-key-add-key-based-replacements ,key-symbol ,(format "<%s-leader>" name))))))
-
+;; ----
 
 (defun +clone-buffer (&optional newname display-flag)
   "Clones the current buffer.
@@ -293,7 +295,6 @@ TODO: Add some extra actions to specifiy where to pull the popup at
   (apply-enlist
    (apply #'-compose fns)
    args))
-
 
 (defun d (command)
   (shell-command (concat "d " command)))
