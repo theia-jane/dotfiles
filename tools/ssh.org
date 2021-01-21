@@ -2,11 +2,7 @@
 #+PROPERTY: header-args :tangle-relative 'dir :mkdirp t
 
 * SystemD Service
-:PROPERTIES:
-:header-args+: :dir ${HOME}/.config/systemd
-:END:
-
-#+BEGIN_SRC conf :tangle user/ssh-agent.service
+#+BEGIN_SRC conf :tangle user/ssh-agent.service :dir ${HOME}/.config/systemd
 [Unit]
 Description=SSH key agent
 
