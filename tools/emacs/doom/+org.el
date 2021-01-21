@@ -127,7 +127,6 @@
                     :post-handlers '(sp-latex-insert-spaces-inside-pair))
 
     ;; some common wrappings
-    (sp-local-tag "\"" "``" "''" :actions '(wrap))
     (sp-local-tag "\\b" "\\begin{_}" "\\end{_}")
     (sp-local-tag "bi" "\\begin{itemize}" "\\end{itemize}")
     (sp-local-tag "be" "\\begin{enumerate}" "\\end{enumerate}")))
