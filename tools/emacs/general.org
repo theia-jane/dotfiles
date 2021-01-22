@@ -289,7 +289,8 @@ Simply requiring this will make all of my globally installed packages available 
   '(evil which-key general
      helpful
      counsel ivy ivy-rich
-     use-package f s async
+     use-package f s async dash
+    auto-minor-mode
     ))
 
 (defvar global-packages-load-path '())
@@ -327,7 +328,8 @@ Simply requiring this will make all of my globally installed packages available 
   (if (file-exists-p global-packages-load-paths-file)
       (global-packages/add-load-paths (global-packages/get-load-paths))
     (global-packages/install-packages))
-  (require 'use-package))
+  (require 'use-package)
+  (require 'auto-minor-mode))
 
 ;; Better to ignore any errors since this loaded in every emacs session
 (ignore-errors (global-packages/init))
