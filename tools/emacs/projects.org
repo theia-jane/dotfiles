@@ -1,0 +1,21 @@
+#+TITLE: Projects
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args:elisp :tangle config-projects.el
+
+#+begin_src elisp
+(provide 'config-projects)
+#+end_src
+
+* Magit
+Config sometime?
+#+begin_src elisp
+(define-leader! git "H-g")
+
+(config! magit
+  (keymap! :git
+           ;; Maybe make this into a:
+           ;; if in git project, do status
+           ;; if not, list projects to switch to
+           ;; dwim
+           "H-g" #'magit-status))
+#+end_src

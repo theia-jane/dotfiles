@@ -680,6 +680,7 @@ Convenience macro for running a list of commands
 (require! config-evil
           config-auth
           config-email
+          config-projects
           config-ui
           config-org
           config-org-ui
