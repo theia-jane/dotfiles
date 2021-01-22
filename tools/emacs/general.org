@@ -747,4 +747,6 @@ Convenience macro for running a list of commands
           helpful
 
           php-mode)
+
+(load "~/.local.el" t)
 #+end_src
