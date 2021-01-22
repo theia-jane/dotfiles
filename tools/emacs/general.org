@@ -638,6 +638,14 @@ testing advice (when combined with `rotate-text').
        (dolist (target (cdr targets))
          (advice-remove target #',symbol)))))
 #+END_SRC
+*** Setter
+#+begin_src elisp
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place.
+
+From doom-emacs."
+  `(setq ,sym (append ,@lists ,sym)))
+#+end_src
 ** Commands
 :PROPERTIES:
 :header-args:elisp: :tangle commands-lib.el

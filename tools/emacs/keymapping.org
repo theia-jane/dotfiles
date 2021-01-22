@@ -13,7 +13,6 @@ available keybindings. All built into one powerful macro: =keymap!= . If evil is
 #+BEGIN_SRC elisp
 (provide 'keymap)
 (require 'general)
-(require 'evil)
 #+END_SRC
 
 ** Define a leader key
@@ -55,9 +54,10 @@ leader later."
        (define-key ,map-symbol [override-state] 'all)
 
        ;; Bind the leader key
-       (let ((map general-override-mode-map))
-         (evil-define-key* '(normal visual motion emacs insert) map (kbd ,key-symbol) ',command-symbol)
-         (general-override-mode +1))
+       (after! evil
+         (let ((map general-override-mode-map))
+           (evil-define-key* '(normal visual motion emacs insert) map (kbd ,key-symbol) ',command-symbol)
+           (general-override-mode +1)))
 
        (defmacro ,define-fn-symbol (&rest keys)
          (let (prefix forms wkforms)
