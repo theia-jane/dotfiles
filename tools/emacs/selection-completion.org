@@ -49,6 +49,14 @@ Used for matching candidates in a completion framework. Works with standard emac
 
 * TODO Embark
 * TODO Consult
-* TODO Marginalia
-* TODO Selectrum
+* Marginalia
+#+begin_src elisp
+(config! marginalia
+  (marginalia-mode))
+#+end_src
+* Selectrum
+#+begin_src elisp
+(config! selectrum
+  (selectrum-mode))
+#+end_src
 * TODO Counsel
