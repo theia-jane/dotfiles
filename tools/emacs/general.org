@@ -697,7 +697,11 @@ Convenience macro for running a list of commands
 :END:
 
 #+begin_src elisp :tangle init.el
-(elpm-use-packages '(ob-async))
+(elpm-use-packages '(ob-async
+                     magit)
+                   user-emacs-directory
+                   t)
+
 
 (require! config-main
           evil
@@ -705,6 +709,7 @@ Convenience macro for running a list of commands
           ivy
           ivy-rich
           counsel
+          magit
           which-key
           helpful)
 #+end_src
