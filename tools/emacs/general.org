@@ -682,6 +682,7 @@ Convenience macro for running a list of commands
           config-email
           config-projects
           config-ui
+          config-ui-themes
           config-org
           config-org-ui
           config-org-babel
@@ -698,6 +699,7 @@ Convenience macro for running a list of commands
 
 #+begin_src elisp :tangle init.el
 (elpm-use-packages '(ob-async
+                     gruvbox-theme
                      orderless
                      selectrum
                      marginalia
@@ -708,6 +710,9 @@ Convenience macro for running a list of commands
 
 
 (require! config-main
+          gruvbox
+
+
           evil
           magit
           orderless

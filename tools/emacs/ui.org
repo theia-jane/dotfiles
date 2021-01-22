@@ -62,3 +62,17 @@ Turn off the bell
             (apply #'set-face-attribute (car attributes) nil (cdr attributes)))
           ',attributes-list))
 #+END_SRC
+
+* Themes
+:PROPERTIES:
+:header-args:elisp+: :tangle config-ui-themes.el
+:END:
+
+#+begin_src elisp
+(provide 'config-ui-themes)
+#+end_src
+** Gruvbox
+#+begin_src elisp
+(config! gruvbox
+  (load-theme 'gruvbox t))
+#+end_src
