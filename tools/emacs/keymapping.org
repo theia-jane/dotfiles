@@ -83,17 +83,15 @@ leader later."
                                   (general--concat t ,',key-symbol ,key)
                                   ,desc))))))))
            (macroexp-progn
-            (append (and wkforms `((after! which-key ,@(nreverse wkforms))))
+            (append (and wkforms `((config! which-key ,@(nreverse wkforms))))
                     (nreverse forms)))))
 
        (unless (plist-get keymap-extra-mapping-fns ,keyword-symbol)
          (setq keymap-extra-mapping-fns (append keymap-extra-mapping-fns
                                                   '(,keyword-symbol
                                                         ,define-fn-symbol))))
-       (after! which-key
+       (config! which-key
          (which-key-add-key-based-replacements ,key-symbol ,(format "<%s>" name))))))
-
-
 #+END_SRC
 *** TODO add support for localleader types
 *** TODO add support for normal-mode leader vs.
@@ -178,7 +176,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar keymap-state '(:dummy t))
 (defvar keymap-parent-state nil)
 (defvar keymap-evil-p nil)
-(after! evil (setq keymap-evil-p t))
+(config! evil (setq keymap-evil-p t))
 
 (defvar keymap-extra-mapping-fns nil)
 (defun keymap-extra-mapping-key-p (key)
@@ -199,7 +197,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (keymap-commit)
                   (setq keymap-fn (plist-get keymap-extra-mapping-fns key)))
                  (:after
-                  (keymap-nested (list 'after! (pop rest)) rest)
+                  (keymap-nested (list 'config! (pop rest)) rest)
                   (setq rest nil))
                  (:desc
                   (setq desc (pop rest)))

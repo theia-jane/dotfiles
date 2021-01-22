@@ -8,7 +8,7 @@
 
 * Which key
 #+begin_src elisp
-(after! which-key
+(config! which-key
   (setq which-key-show-early-on-C-h t
         which-key-idle-delay 2
         which-key-idle-secondary-delay 0.05
@@ -18,13 +18,13 @@
 
 * Helpful
 #+begin_src elisp
-(after! helpful
+(config! helpful
   (keymap!
    "C-h k" #'helpful-key))
 #+END_SRC
 ** Counsel
 #+begin_src elisp
-(after! '(helpful counsel)
+(config! (helpful counsel)
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable))
 #+end_src

@@ -9,6 +9,6 @@
 #+begin_src elisp
 (provide 'config-evil)
 
-(after! evil
+(config! evil
   (evil-mode))
 #+end_src

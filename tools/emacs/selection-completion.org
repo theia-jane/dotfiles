@@ -7,7 +7,7 @@
 * Orderless
 Used for matching candidates in a completion framework. Works with standard emacs completion mechanisms (and 'higher' packages, like =ivy=).
 #+begin_src elisp
-(after! orderless
+(config! orderless
   (setq completion-styles '(orderless)
         orderless-component-separator " +"
         orderless-matching-styles '(orderless-prefixes
@@ -26,21 +26,21 @@ Used for matching candidates in a completion framework. Works with standard emac
 #+end_src
 * Ivy
 #+begin_src elisp
-(after! ivy
+(config! ivy
   (ivy-mode)
   (setq ivy-read-action-function #'ivy-hydra-read-action
         ivy-height 13)
   (push '(swiper . 10) ivy-height-alist))
 
-(after! ivy-rich
+(config! ivy-rich
   (ivy-rich-mode)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 #+end_src
 ** Counsel
 #+begin_src elisp
-(after! counsel
+(config! counsel
   (counsel-mode))
-(after! counsel-projectile
+(config! counsel-projectile
   (defadvice! +counsel-projectile-switch-project--set-default-a (args)
     :filter-args #'counsel-projectile-switch-project
     (list (or (car args)

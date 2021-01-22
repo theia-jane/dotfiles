@@ -11,7 +11,7 @@
 #+END_SRC
 
 #+BEGIN_SRC elisp
-(after! org
+(config! org
   (setq org-directory "~/notes/"
         org-agenda-files `(,(f-join org-directory "projects"))
         org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
@@ -38,7 +38,7 @@
 :END:
 #+BEGIN_SRC elisp
 (provide 'config-org-latex)
-(after! org
+(config! org
 #+END_SRC
 
 ** Fixing rendering
@@ -175,13 +175,13 @@ Add the packages I use
 #+END_SRC
 
 #+BEGIN_SRC elisp
-(after! preview
+(config! preview
   (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 #+END_SRC
 
 Change where the preview cache lives. Make it OS global, so all emacs instances can use it.
 #+begin_src elisp
-(after! org
+(config! org
   (setq org-preview-latex-image-directory (expand-file-name "~/.cache/emacs/org-latex-preview/")))
 #+end_src
 *** TODO make preview async
@@ -242,7 +242,7 @@ Somethings are easier to accomplish in a straight =#+begin_src latex= block. In 
 ** HTML Export
 *** tikz fix
 #+begin_src elisp
-(after! ox-html
+(config! ox-html
   (defvar org-html-latex-non-numbered-environment '("tikzpicture"
                                                     "displaymath")
     "When converting org to html latex we automatically make enviroments
@@ -297,7 +297,7 @@ Starred and \"displaymath\" environments are not numbered."
 :END:
 #+BEGIN_SRC elisp
 (provide 'config-org-babel)
-(after! org
+(config! org
 #+END_SRC
 
 #+BEGIN_SRC elisp
@@ -403,7 +403,7 @@ TODO Might create a 'double-advice' macro this is basically doing that..."
 #+END_SRC
 
 #+BEGIN_SRC elisp
-(after! org
+(config! org
   (set-face-attributes!
    (org-document-title        :height 1.5)
    (org-level-1               :height 1.1)

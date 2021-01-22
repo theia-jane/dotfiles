@@ -23,6 +23,6 @@ I don't want backups :)
 
 * dired
 #+begin_src elisp
-(after! dired
+(config! dired
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 #+end_src
