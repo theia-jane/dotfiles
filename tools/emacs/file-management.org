@@ -5,6 +5,15 @@
 #+begin_src elisp
 (provide 'config-file-management)
 #+end_src
+* file leader
+#+begin_src elisp
+(define-leader! file "H-f")
+(keymap! :file
+         "H-f" #'find-file
+         "f" #'find-file
+         "s" #'save-buffer)
+#+end_src
+
 * backups
 I don't want backups :)
 #+begin_src elisp
