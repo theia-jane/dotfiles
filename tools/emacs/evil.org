@@ -9,6 +9,13 @@
 #+begin_src elisp
 (provide 'config-evil)
 
+(init! evil
+       (setq evil-want-integration t
+             evil-want-keybinding nil))
+
 (config! evil
   (evil-mode))
+
+(config! (evil evil-collection)
+  (evil-collection-init))
 #+end_src

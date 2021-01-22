@@ -286,7 +286,7 @@ Simply requiring this will make all of my globally installed packages available 
   (concat global-packages-dir "global-packages-load-paths.el"))
 
 (defvar global-packages-required-packages
-  '(evil which-key general
+  '(evil evil-collection which-key general
      helpful
      counsel ivy ivy-rich
      use-package f s async dash
@@ -737,8 +737,8 @@ Convenience macro for running a list of commands
 (require! config-main
           gruvbox
 
-
           evil
+          evil-collection
           magit
           orderless
           selectrum
