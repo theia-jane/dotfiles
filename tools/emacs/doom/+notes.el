@@ -192,7 +192,7 @@ is selected, only the bare key is returned."
 
 
 ;;; Keymap
-(map! :personal-leader
+(keymap! :personal
       (:prefix ("n" . "new")
        :desc "Homework" "h" #'notes/new-homework
        :desc "Monthly notes" "m" #'+notes/month))

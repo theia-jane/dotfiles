@@ -1,6 +1,19 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+key.el -*- lexical-binding: t; -*-
 
 (define-leader! personal "s-,")
+(keymap! :personal
+         (:prefix ("o" . "open")
+          :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org"))))
+         (:prefix ("f" . "files")
+          :desc "Find in config" "p" (cmd! (doom-project-find-file personal/config-directory))
+          :desc "Find in homework" "h" (cmd! (doom-project-find-file notes/homework-directory)))
+         (:prefix ("c" . "Config")
+          :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
+                                          (magit)))
+          :desc "Tangle config" "t" (cmd! (d "config-tangle")))
+         (:prefix ("p" . "Project")
+          :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
+                                          (magit)))))
 
 (map!
  ;; Normal mode
@@ -53,16 +66,4 @@
   :desc "Jump back" "C-<" 'better-jumper-jump-backward
   :vimerong "M-m" (eval `(general-simulate-key ,doom-localleader-key  :state 'normal)))
 
- (:personal-leader
-  (:prefix ("o" . "open")
-   :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org"))))
-  (:prefix ("f" . "files")
-   :desc "Find in config" "p" (cmd! (doom-project-find-file personal/config-directory))
-   :desc "Find in homework" "h" (cmd! (doom-project-find-file notes/homework-directory)))
-  (:prefix ("c" . "Config")
-   :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
-                                   (magit)))
-   :desc "Tangle config" "t" (cmd! (d "config-tangle")))
-  (:prefix ("p" . "Project")
-   :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
-                                   (magit))))))
+ )

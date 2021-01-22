@@ -13,6 +13,7 @@ available keybindings. All built into one powerful macro: =keymap!= . If evil is
 #+BEGIN_SRC elisp
 (provide 'keymap)
 (require 'general)
+(require 'evil)
 #+END_SRC
 
 ** Define a leader key
