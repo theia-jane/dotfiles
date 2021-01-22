@@ -178,6 +178,12 @@ Add the packages I use
 (after! preview
   (add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
 #+END_SRC
+
+Change where the preview cache lives. Make it OS global, so all emacs instances can use it.
+#+begin_src elisp
+(after! org
+  (setq org-preview-latex-image-directory (expand-file-name "~/.cache/emacs/org-latex-preview/")))
+#+end_src
 *** TODO make preview async
 I have /lots/ of latex embedded into my documents sometimes and it's annoying to wait for the previews to render, so ideally they should be done async.
 *** TODO add ability to preview src & example blocks
