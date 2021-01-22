@@ -232,7 +232,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                   (let* ((key (pop rest))
                          (inner (pop rest))
                          (outer (pop rest)))
-                    (push `(map! (:map evil-inner-text-objects-map ,key ,inner)
+                    (push `(keymap! (:map evil-inner-text-objects-map ,key ,inner)
                                  (:map evil-outer-text-objects-map ,key ,outer))
                           keymap-forms)))
                  (_
@@ -241,7 +241,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                      (keymap-keyword-to-states key)
                                      desc)
                     (error
-                     (error "Not a valid `map!' property: %s" key)))
+                     (error "Not a valid `keymap!' property: %s" key)))
                   (setq desc nil))))
 
               ((keymap-def key (pop rest) nil desc)
