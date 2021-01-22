@@ -407,6 +407,21 @@ Alias of `after!' that is a little more descriptive at times.")
 #+END_SRC
 
 #+BEGIN_SRC elisp
+(defmacro before! (package &rest body)
+  "Do BODY before PACKAGE has been loaded.
+
+Just leverages `use-package'."
+  `(use-package ,package
+     :defer t
+     :init (progn ,@body)))
+
+(defalias
+  'init!
+  'before!
+  "Initialize a package (settings to be set before it's loaded)")
+#+END_SRC
+
+#+BEGIN_SRC elisp
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on `after-load-functions'). Meant to
 serve as a predicated alternative to `after!'.
