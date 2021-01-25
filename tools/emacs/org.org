@@ -13,25 +13,37 @@
 #+BEGIN_SRC elisp
 (config! org
   (setq org-directory "~/notes/"
+        org-link-elisp-confirm-function nil
         org-agenda-files `(,(f-join org-directory "projects"))
         org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
         org-refile-targets '((nil :maxlevel . 7)
                              (org-agenda-files :maxlevel . 1))
         org-refile-allow-creating-parent-nodes t
-        org-src-ask-before-returning-to-edit-buffer nil
-        org-outline-path-complete-in-steps nil
         org-refile-use-outline-path 'file
-        org-highlight-latex-and-related nil
+        org-outline-path-complete-in-steps nil
         org-M-RET-may-split-line '((default . nil))
-        org-src-tab-acts-natively t
-        org-confirm-babel-evaluate nil
         org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
-        org-export-with-toc nil
-        org-export-with-section-numbers nil
-        org-export-time-stamp-file nil
-        org-src-window-setup 'current-window
-        org-list-allow-alphabetical t))
+        org-list-allow-alphabetical t)
+
+  <<org/source-blocks>>)
 #+END_SRC
+
+
+** Org source blocks
+#+NAME: org/source-blocks
+#+BEGIN_SRC elisp :tangle no
+(setq org-src-window-setup 'other-window
+      org-src-tab-acts-natively t
+      org-src-preserve-indentation t
+      org-src-ask-before-returning-to-edit-buffer nil)
+
+(add-to-list 'org-modules
+             'org-tempo)
+
+(keymap! :map org-src-mode-map
+         "C-c C-c" #'org-edit-src-exit)
+#+END_SRC
+
 * Latex
 :PROPERTIES:
 :header-args+: :tangle config-org-latex.el
@@ -39,6 +51,7 @@
 #+BEGIN_SRC elisp
 (provide 'config-org-latex)
 (config! org
+  (setq org-highlight-latex-and-related nil)
 #+END_SRC
 
 ** Fixing rendering
@@ -299,7 +312,11 @@ Starred and \"displaymath\" environments are not numbered."
 (provide 'config-org-babel)
 (config! org
 #+END_SRC
-
+** General
+#+begin_src elisp
+(setq  org-confirm-babel-evaluate nil)
+#+end_src
+** Define babel src blocks
 #+BEGIN_SRC elisp
 (defun define-ob--make-symbol (fmt sym)
   (intern (format fmt (symbol-name sym))))
@@ -356,6 +373,13 @@ Starred and \"displaymath\" environments are not numbered."
           ((equal method "repl") #'+org/babel-eval-in-repl)
           (t #'org-babel-execute-src-block)))))))
 #+END_SRC
+
+** Allowed languages
+#+begin_src elisp
+(org-babel-do-load-languages 'org-babel-load-languages
+    '((shell . t)
+      (emacs-lisp . t)))
+#+end_src
 ** Footer
 #+begin_src elisp
 )
@@ -366,6 +390,12 @@ Starred and \"displaymath\" environments are not numbered."
 :END:
 #+begin_src elisp
 (provide 'config-org-export)
+#+end_src
+** General
+#+begin_src elisp
+(setq org-export-with-toc nil
+      org-export-with-section-numbers nil
+      org-export-time-stamp-file nil)
 #+end_src
 ** Latex
 #+BEGIN_SRC elisp
@@ -463,3 +493,4 @@ If ARG is non-nil, open `eshell' instead of `dired'."
 #+BEGIN_SRC elisp
 (provide 'org-server-manager)
 #+END_SRC
+
