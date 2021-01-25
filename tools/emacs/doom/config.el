@@ -46,6 +46,7 @@
  config-auth
  config-email
  config-file-management
+ config-buffer
  lean-config
  sagemath-config
  config-selection-completion)

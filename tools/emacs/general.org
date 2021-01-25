@@ -406,14 +406,6 @@ this will provide a basic starting point for my emacs experiments.
 (elpm-use-packages '())
 #+END_SRC
 
-** Config
-Config packages (those prefixed with =config-=) should not 'do' anything by default.
-They should simply provide /my/ configuration preferences for packages, so I can pull
-them in anywhere. I may add methods to select which packages to use (and how they are
-loaded). I am wanting to avoid loading any packages unless I actually decide I want them.
-
-This might end up following the 'feature' / 'module' pattern that =doom-emacs= does, but
-for now it's not so complex.
 ** Personal lib
 :PROPERTIES:
 :header-args:elisp: :tangle personal-lib.el
@@ -735,11 +727,19 @@ Convenience macro for running a list of commands
 :PROPERTIES:
 :header-args:elisp: :tangle config-main.el
 :END:
+Config packages (those prefixed with =config-=) should not 'do' anything by default.
+They should simply provide /my/ configuration preferences for packages, so I can pull
+them in anywhere. I may add methods to select which packages to use (and how they are
+loaded). I am wanting to avoid loading any packages unless I actually decide I want them.
+
+This might end up following the 'feature' / 'module' pattern that =doom-emacs= does, but
+for now it's not so complex.
 #+BEGIN_SRC elisp
 (provide 'config-main)
 
 (require! config-evil
           config-auth
+          config-buffer
           config-email
           config-projects
           config-ui

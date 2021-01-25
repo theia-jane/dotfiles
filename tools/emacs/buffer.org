@@ -1,0 +1,12 @@
+#+TITLE: Buffer
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-buffer.el
+
+
+#+begin_src elisp
+(provide 'config-buffer)
+(define-leader! buffer "H-b")
+(keymap! :buffer
+        "b" #'switch-to-buffer
+        "d" #'kill-current-buffer)
+#+end_src 
