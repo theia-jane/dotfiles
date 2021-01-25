@@ -1,0 +1,10 @@
+#+TITLE: Remote
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-remote.el
+
+#+begin_src elisp
+  (provide 'config-remote)
+
+  (config! tramp 
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+#+end_src

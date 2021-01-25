@@ -751,6 +751,7 @@ Convenience macro for running a list of commands
           config-org-export
           config-selection-completion
           config-introspection
+          config-remote
           config-file-management)
 #+END_SRC
 * Personal
