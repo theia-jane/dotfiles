@@ -337,6 +337,41 @@ Simply requiring this will make all of my globally installed packages available 
 (provide 'global-packages)
 #+end_src
 *** TODO make =global-packages/init= an autoloaded fn
+** Global settings
+:PROPERTIES:
+:header-args:elisp: :tangle global-settings.el
+:END:
+#+begin_src elisp
+(provide 'global-settings)
+#+end_src
+*** Cache directories
+Cache directories are the home of those things which can be
+deleted at anytime without an noticable difference to behavior
+-- with the exception of performance.
+#+begin_src elisp
+(defvar user-cache-directory (expand-file-name "~/.cache/"))
+(defvar emacs-cache-directory (concat user-cache-directory "emacs/"))
+#+END_SRC
+
+*** Local directories
+Local directories are the home of things that aren't quite
+cache, but also aren't suitable for version control. If
+these are deleted then some behavior / value / is lost, but
+no core functionality should be broken or majorly changed.
+#+begin_src elisp
+(defvar user-local-directory (expand-file-name "~/.local/"))
+(defvar emacs-local-directory (concat user-local-directory "emacs/"))
+#+end_src
+
+*** Config directories
+Config directories are the home of things that should be managed
+by things that are under version control. Changes to anything
+in these directories is expected to break things or at least
+cause a change in behavior. 
+#+begin_src elisp
+(defvar user-config-directory (expand-file-name "~/.config/"))
+(defvar emacs-config-directory (concat user-config-directory "emacs/"))
+#+end_src
 ** Experiments
 :PROPERTIES:
 :header-args:elisp: :tangle experiment.el
@@ -690,6 +725,7 @@ Convenience macro for running a list of commands
 :END:
 #+BEGIN_SRC elisp
 (provide 'site-start)
+(require 'global-settings)
 (require 'config-ui)
 (require 'personal-lib)
 (require 'global-packages)

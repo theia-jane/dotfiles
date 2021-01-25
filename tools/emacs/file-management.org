@@ -14,13 +14,26 @@
          "s" #'save-buffer)
 #+end_src
 
-* backups
+* Backups
 I don't want backups :)
 #+begin_src elisp
 (setq create-lockfiles nil
       make-backup-files nil)
 #+end_src
 
+* Autosaving
+Autosave all the things, in case the unexpected happens (emacs crashes or my machine does). Put all the autosaves in emacs' cache directory
+#+begin_src elisp
+(setq auto-save-default t
+      auto-save-list-file-prefix (concat emacs-cache-directory "autosave/")
+      auto-save-file-name-transforms `((".*" ,auto-save-list-file-prefix t)))
+#+END_SRC
+
+With this tramp will put all autosaves in a single directory. This supercedes `auto-save-file-name-transforms'
+#+begin_src elisp
+(after! tramp
+  (setq tramp-auto-save-directory (concat emacs-cache-directory "tramp-autosave/")))
+#+end_src
 * dired
 #+begin_src elisp
 (config! dired
