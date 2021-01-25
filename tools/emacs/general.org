@@ -752,6 +752,7 @@ for now it's not so complex.
           config-selection-completion
           config-introspection
           config-editting
+          config-pdf
           config-remote
           config-file-management)
 #+END_SRC
@@ -767,6 +768,8 @@ for now it's not so complex.
                      selectrum
                      marginalia
                      magit
+                     pdf-tools
+                     org-pdftools
                      php-mode)
                    user-emacs-directory
                    t)
@@ -784,6 +787,8 @@ for now it's not so complex.
           which-key
           helpful
 
+          pdf-tools
+          org-pdftools
           php-mode)
 
 (load "~/.local.el" t)

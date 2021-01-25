@@ -1,6 +1,7 @@
 ;;; ~/Projects/dotfiles/src/config/doom/+pdf.el -*- lexical-binding: t; -*-
 
 ;; General
+;; Already migrated to new config --->
 (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
 
 (after! pdf-tools
@@ -9,6 +10,7 @@
 (map! :map pdf-view-mode-map
       :nv "C-d" #'pdf-view-next-page
       :nv "C-u" #'pdf-view-previous-page)
+;; Already migrated to new config <---
 
 ;; Advice
 (defadvice! +pdf-view--preserve-hscroll (fn &rest args)

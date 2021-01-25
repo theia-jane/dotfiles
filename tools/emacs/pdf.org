@@ -1,0 +1,43 @@
+#+TITLE: PDF
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-pdf.el
+
+#+begin_src elisp
+(provide 'config-pdf)
+#+end_src
+* PDF Tools
+#+begin_src elisp
+(after! pdf-tools
+  ;;(pdf-tools-install)
+  (setq pdf-view-use-scaling t
+        pdf-view-use-imagemagick nil)
+  (add-to-list 'auto-mode-alist
+               '("\\.pdf" . pdf-view-mode))
+
+
+  (setq-default pdf-view-display-size 'fit-width))
+
+(keymap! :map pdf-view-mode-map
+         :nv "C-d" #'pdf-view-next-page
+         :nv "C-u" #'pdf-view-previous-page)
+
+(after! (org org-pdftools)
+  (org-pdftools-setup-link))
+#+END_SRC
+
+** PDF View Mode
+Adjusting visuals of =pdf-view-mode=, specifically the main goal is to make the
+PDFs colors match my themes.
+#+begin_src elisp
+(add-hook 'pdf-view-mode-hook
+          #'(lambda ()
+            ;; Making 'midnight mode' into more of 'matches my theme mode'
+            (setq pdf-view-midnight-colors (cons
+                                            (face-attribute 'default :foreground)
+                                            (face-attribute 'default :background))
+                  ;; Fixes annoying blinking border (thanks doom-emacs!)
+                  evil-normal-state-cursor '(nil))
+            ;; Actually enable midnight mode
+            (pdf-view-midnight-minor-mode)))
+#+end_src
+
