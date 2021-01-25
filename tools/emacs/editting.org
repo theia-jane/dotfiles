@@ -1,0 +1,15 @@
+#+TITLE: Editting
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args:elisp :tangle config-editting.el
+
+
+#+begin_src elisp 
+(provide 'config-editting)
+#+END_SRC
+
+* Spaces.
+Specifically, two spaces. 
+#+begin_src elisp
+(setq-default indent-tabs-mode nil
+              tab-width 2)
+#+end_src
