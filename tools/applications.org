@@ -12,6 +12,10 @@ DEST_FILE="${HOME}/Documents/screenshots/$file"
 if [[ ! -z "${file}" ]] && [[ ! -e "$DEST_FILE" ]]; then
    mv $file $DEST_FILE
    echo $DEST_FILE | c
+
+   if [ "$1" = "copy" ]; then
+        xclip -selection clipboard -t image/png "$DEST_FILE"
+   fi
 fi
 #+END_SRC
 

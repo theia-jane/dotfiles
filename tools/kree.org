@@ -48,6 +48,7 @@ global:
     c:
       o: org-capture
       s: screenshot
+      Shift+s: screenshot copy
       f: clipboard-copyfile
       r:
         r: d screen-record-start region
