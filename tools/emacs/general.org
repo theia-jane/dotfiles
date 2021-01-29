@@ -776,6 +776,7 @@ for now it's not so complex.
 
 
 (require! config-main
+          auth-source-pass
           gruvbox
 
           evil
