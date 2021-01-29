@@ -16,7 +16,6 @@
 
 (+load!?
  ;; General
- "+reset"
  "+core" ;; TODO migrate this to 'personal-lib
  "+svg"
  "+doom"

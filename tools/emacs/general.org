@@ -372,6 +372,11 @@ cause a change in behavior.
 (defvar user-config-directory (expand-file-name "~/.config/"))
 (defvar emacs-config-directory (concat user-config-directory "emacs/"))
 #+end_src
+*** Enable 'disabled' features
+#+begin_src elisp
+(put 'erase-buffer 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+#+end_src
 ** Experiments
 :PROPERTIES:
 :header-args:elisp: :tangle experiment.el
