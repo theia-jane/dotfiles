@@ -28,7 +28,6 @@
  "+notes"
  "+eshell"
  "+magit"
- "+pdf"
  "+snippets"
  "+tmux"
  ;;lang
@@ -44,6 +43,7 @@
  config-email
  config-file-management
  config-buffer
+ config-pdf
  config-elisp
  lean-config
  sagemath-config

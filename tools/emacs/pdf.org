@@ -21,7 +21,7 @@
          :nv "C-d" #'pdf-view-next-page
          :nv "C-u" #'pdf-view-previous-page)
 
-(after! (org org-pdftools)
+(after! org-pdftools
   (org-pdftools-setup-link))
 #+END_SRC
 
@@ -39,5 +39,22 @@ PDFs colors match my themes.
                   evil-normal-state-cursor '(nil))
             ;; Actually enable midnight mode
             (pdf-view-midnight-minor-mode)))
+
+
+(defadvice! pdf-view-next-page--top (&rest _)
+  "After we move to the next page, we should start at the top of the page."
+  :after '(pdf-view-next-page
+           pdf-view-next-page-command)
+  (image-set-window-vscroll 0))
+#+end_src
+** Org
+#+begin_src elisp
+(after! (org-pdf-tools config-buffer)
+  (defadvice! +pdf--org-open-links (fn &rest args)
+    "Open PDFs in a vertical split, open one if none-exists and
+don't do anything if the buffer is already displayed."
+    :around 'org-pdftools-open-pdftools
+    (let ((display-buffer-overriding-action '(buffer--display-in-vertical-split-maybe . nil)))
+      (apply fn args))))
 #+end_src
 
