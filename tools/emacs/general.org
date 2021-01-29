@@ -743,6 +743,7 @@ for now it's not so complex.
           config-email
           config-projects
           config-ui
+          config-elisp
           config-ui-themes
           config-org
           config-org-ui
@@ -767,6 +768,7 @@ for now it's not so complex.
                      orderless
                      selectrum
                      marginalia
+                     eros
                      magit
                      pdf-tools
                      org-pdftools
@@ -781,6 +783,7 @@ for now it's not so complex.
 
           evil
           evil-collection
+          eros
           magit
           orderless
           selectrum

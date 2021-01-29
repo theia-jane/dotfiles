@@ -3,7 +3,7 @@
 
 * Extras
 :PROPERTIES:
-:header-args+: :tangle my-elisp-extras.el
+:header-args+: :tangle config-elisp.el
 :END:
 Extra elisp functionality that I find useful.
 ** Expressions
@@ -32,7 +32,13 @@ Allow for finding outermost sexps
   (if (beginning-of-sexp-p)
       (end-of-sexp)))
 #+END_SRC
+
 ** Evaluation
+Allow for different functions for eval-ing the sexp before the point.
+#+begin_src elisp
+(defvar elisp-eval-last-sexp-function #'eval-last-sexp)
+#+end_src
+
 Evaluate the sexp under the point (rather than needing to be at the end of the sexp).
 #+BEGIN_SRC elisp
 (defun eval-sexp-under-point (eval-last-sexp-arg-internal)
@@ -40,18 +46,18 @@ Evaluate the sexp under the point (rather than needing to be at the end of the s
   (with-syntax-table emacs-lisp-mode-syntax-table
     (save-excursion
       (end-of-sexp)
-      (eros-eval-last-sexp eval-last-sexp-arg-internal))))
+      (funcall elisp-eval-last-sexp-function eval-last-sexp-arg-internal))))
 #+END_SRC
 
 Adding evals for outer most sexp. Useful for =defun= and =let='s and the like.
 #+BEGIN_SRC elisp
 (defun eval-outermost-sexp (eval-last-sexp-arg-internal)
-  "Evaluate outermost sexp, this utilizes the 'eros-eval-last-sexp"
+  "Evaluate outermost sexp, this utilizes the `elisp-eval-last-sexp-function'"
   (interactive "P")
   (with-syntax-table emacs-lisp-mode-syntax-table
     (save-excursion
       (end-of-outermost-sexp)
-      (eros-eval-last-sexp eval-last-sexp-arg-internal))))
+      (funcall elisp-eval-last-sexp-function eval-last-sexp-arg-internal))))
 
 #+END_SRC
 
@@ -59,7 +65,7 @@ Helper function that let's me eval elisp in a notebook like fashion. I've not ad
 #+BEGIN_SRC elisp
 (defun eval-outermost-sexp-and-continue (eval-last-sexp-arg-internal)
   "Attempts to evaluate outermost sexp. If it fails, move to next sexp.
-This utilizes the 'eros-eval-last-sexp."
+This utilizes the `elisp-eval-last-sexp-function'."
   (interactive "P")
   (with-syntax-table emacs-lisp-mode-syntax-table
     (ignore-error end-of-file
@@ -69,7 +75,60 @@ This utilizes the 'eros-eval-last-sexp."
     (beginning-of-sexp))
   (recenter nil t))
 #+END_SRC
+** Eros 
+Add a nice overlay when executing emacs lisp
+#+begin_src elisp
+(config! eros
+         (setq elisp-eval-last-sexp-function #'eros-eval-last-sexp)
+         (add-hook 'emacs-lisp-mode-hook 'eros-mode))
+#+end_src
+** Keybinding
+#+begin_src elisp
+;; Key-bindings
+(keymap!
+ (:map ctl-x-map
+   ;; Replace 'elisp-eval-last-sexp-function
+   :desc "Eval outermost sexp" "C-e" #'eval-outermost-sexp
+   ;; Move 'elisp-eval-last-sexp-function
+   "C-S-e" #'(lambda () (interactive) (funcall elisp-eval-last-sexp-function)))
+ (:map emacs-lisp-mode-map
+   :desc "Eval outermost sexp" "<S-return>" #'eval-outermost-sexp
+   "<C-return>" #'eval-outermost-sexp-and-continue))
+#+end_src
+** Hacks 
+Evil doesn't play really well with some elisp navigating function... This corrects for it. Probably should push some of this upstream
+#+begin_src elisp
+(after! evil
+    (defun evil/is-emulated-eol? ()
+        "Determines if the point's current position is an emulated eol."
+        (and (or (evil-normal-state-p)
+                (evil-operator-state-p))
+            (= (1+ (point))
+                (line-end-position))))
+
+    (defvar evil--should-correct-for-eol nil)
+
+    (defadvice! evil/correct-eol--advice (fn &rest args)
+        "Corrects the emulate eol for low level sexp / list functions.
+This behavior is opt in only. Set '+evil--correct-eol--advice to t to
+apply the correction."
+        :around '(forward-sexp up-list)
+        (when (and evil--should-correct-for-eol (evil/is-emulated-eol?))
+        (forward-char))
+        (apply fn args))
+
+    (defadvice! elisp/correct-evil-emulate-eol (fn &rest args)
+        "Outside of the emulated eol with forward sexp"
+        :around '(beginning-of-sexp-p
+                end-of-sexp-p
+                outermost-list
+                end-of-outermost-sexp
+                eval-outermost-sexp
+                eval-outermost-sexp-and-continue)
+        (let ((evil--should-correct-for-eol t))
+        (apply fn args))))
+#+end_src
 ** Footer
 #+BEGIN_SRC elisp
-(provide 'my-elisp-extras)
+(provide 'config-elisp)
 #+END_SRC

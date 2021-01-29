@@ -25,8 +25,6 @@
  "+movement"
  ;; Features / tools / etc
  "+bookmark"
- "+evil"
- "+elisp"
  "+org"
  "+notes"
  "+eshell"
@@ -47,6 +45,7 @@
  config-email
  config-file-management
  config-buffer
+ config-elisp
  lean-config
  sagemath-config
  config-selection-completion)
