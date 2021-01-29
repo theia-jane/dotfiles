@@ -27,6 +27,8 @@
  graphql-mode
  (ob-graphql
   :recipe (:host github :repo "tylerware/ob-graphql"))
+ (rustic
+  :recipe (:host github :repo "tylerware/rustic"))
 
  ;; Org
  (ob-async
