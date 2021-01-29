@@ -13,9 +13,6 @@ Config sometime?
 
 (config! magit
   (keymap! :git
-           ;; Maybe make this into a:
-           ;; if in git project, do status
-           ;; if not, list projects to switch to
-           ;; dwim
-           "H-g" #'magit-status))
+           "g" #'magit-status))
 #+end_src
+
