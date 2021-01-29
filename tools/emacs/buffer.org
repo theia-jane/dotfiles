@@ -5,8 +5,78 @@
 
 #+begin_src elisp
 (provide 'config-buffer)
+#+END_SRC
+* Keyindings
+#+begin_src elisp
 (define-leader! buffer "H-b")
 (keymap! :buffer
         "b" #'switch-to-buffer
-        "d" #'kill-current-buffer)
+        "d" #'kill-current-buffer
+        "c" #'force-clone-buffer
+        :desc "Rename" "r" #'(lambda ()
+                (interactive)
+                (let ((name (read-string (format "Rename '%s' to: " (buffer-name)))))
+                  (when (null name)
+                    (user-error "No name provided, buffer name unchanged"))
+                  (rename-buffer name)))
+        "e" #'erase-buffer
+        "R" #'revert-buffer)
 #+end_src 
+* Displaying 
+#+begin_src elisp
+(defun buffer--display-in-vertical-split (buffer alist)
+  "Uses an existing window to the right or left to display the BUFFER.
+Otherwise it creates a window on the right and displays the BUFFER."
+  (if-let ((side-window (or (window-in-direction 'right)
+                         (window-in-direction 'left))))
+        (with-selected-window side-window
+          (display-buffer-same-window buffer nil))
+    (display-buffer-in-direction buffer '((direction . right)))))
+
+(defun buffer--display-in-vertical-split-maybe (buffer alist)
+  "Wraps around `buffer--display-in-vertical-split', but only
+displays the buffer if it isn't already in a window in this frame."
+  (or (get-buffer-window buffer nil)
+    (buffer--display-in-vertical-split buffer alist)))
+
+(defun buffer-open-in-vertical-split-maybe (buffer-or-name &optional force)
+  "Open the BUFFER-OR-NAME in a vertical split, but only if the buffer isn't
+already displayed.
+
+If FORCE is set, it overrides any other actions down in `display-buffer' by setting
+`display-buffer-overriding-action'. For those times you really, really want things to
+do as you say."
+  (let ((action '(buffer--display-in-vertical-split-maybe . nil))
+        (display-buffer-overriding-action display-buffer-overriding-action))
+    (when force
+      (setq display-buffer-overriding-action action))
+    (display-buffer buffer-or-name action)))
+#+end_src
+* Buffer tools
+#+begin_src elisp
+(defun ensure-buffer (name &optional setup-fn)
+  (let ((buffer (get-buffer name)))
+    (unless buffer
+      (setq buffer (get-buffer-create name))
+      (with-current-buffer buffer
+          (funcall setup-fn)))
+    buffer))
+
+(defun force-clone-buffer (&optional newname display-flag)
+  "Clones the current buffer.
+
+If the current buffer is visiting a file, then the clone
+will not be associated with the file.
+
+This is basically a pass through to `call-buffer'."
+  (interactive)
+  (let* ((buffer-file-name nil)
+         (buffer-file-truename nil)
+         (cloned-buffer (if (called-interactively-p)
+                            (call-interactively #'clone-buffer)
+                          (clone-buffer newname display-flag))))
+    (with-current-buffer cloned-buffer
+      (set-buffer-modified-p t))
+    cloned-buffer))
+
+#+end_src

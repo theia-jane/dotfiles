@@ -36,8 +36,6 @@ For valid definitions of ARGS see `xml:tag'.
     'path
     args))
 
-(defmacro comment (&rest _) nil)
-
 (defun svg/as-image (svg)
   (create-image svg 'svg t))
 
@@ -47,7 +45,7 @@ For valid definitions of ARGS see `xml:tag'.
     (with-current-buffer buffer
       (erase-buffer)
       (insert-image (svg/as-image svg)))
-    (+buffer-open-in-vertical-split-maybe buffer)))
+    (buffer-open-in-vertical-split-maybe buffer)))
 
 (cl-defun wayward-arcanist-logo (&key
                                  (outer-box "#3c3843")

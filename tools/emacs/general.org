@@ -417,6 +417,7 @@ this will provide a basic starting point for my emacs experiments.
 :END:
 #+BEGIN_SRC elisp
 (provide 'personal-lib)
+(require 'commands-lib)
 #+END_SRC
 
 *** Loading
@@ -695,6 +696,26 @@ testing advice (when combined with `rotate-text').
 From doom-emacs."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
+*** with-* macros
+#+begin_src elisp
+(defmacro with-directory (directory &rest body)
+  `(let ((default-directory ,directory))
+    ,@body))
+
+(defmacro with-contents (contents &rest body)
+  `(with-temp-buffer
+     (insert ,contents)
+     ,@body))
+#+end_src
+*** String manip
+#+begin_src elisp
+(defun trim-trailing-newline (string)
+  (with-contents string
+                 (goto-char (point-max))
+                 (when (= (char-before) ?\n)
+                   (delete-char -1))
+                 (buffer-string)))
+#+end_src
 ** Commands
 :PROPERTIES:
 :header-args:elisp: :tangle commands-lib.el
@@ -715,6 +736,24 @@ Convenience macro for running a list of commands
                                                     (1- end)))))
         (dolist (command ',commands)
                 (shell-command command (current-buffer))))))
+#+END_SRC
+
+Wrap around my =d= script for running things as a daemon
+#+begin_src elisp
+(defun d (command)
+  (shell-command (concat "d " command)))
+#+END_SRC
+
+Not sure this is the /best/ place for this, but it lives here for now
+#+begin_src elisp
+(defun firefox (url &optional container)
+  (let ((url (if container
+                 (format "ext+container:name=%s&url=%s"
+                         container
+                         (url-hexify-string url))
+                 url)))
+    (when url
+      (d (format "firefox '%s'" url)))))
 #+end_src
 ** Site start
 :PROPERTIES:

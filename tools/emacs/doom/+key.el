@@ -3,7 +3,7 @@
 (define-leader! personal "s-,")
 (keymap! :personal
          (:prefix ("o" . "open")
-          :desc "Fruit basket" "f" (cmd! (+find-file `(,org-directory "projects" "fruit-basket.org"))))
+          :desc "Fruit basket" "f" (cmd! (find-file (expand-file-name "projects/fruit-basket.org" org-directory))))
          (:prefix ("f" . "files")
           :desc "Find in config" "p" (cmd! (doom-project-find-file personal/config-directory))
           :desc "Find in homework" "h" (cmd! (doom-project-find-file notes/homework-directory)))
@@ -14,7 +14,6 @@
          (:prefix ("p" . "Project")
           :desc "Open config" "c" (cmd! (let ((default-directory personal/config-directory))
                                           (magit)))))
-
 (map!
  ;; Normal mode
  (:map evil-normal-state-map
@@ -51,19 +50,6 @@
    :desc "Org Mode" "o" #'(lambda () (interactive)
                               (if (eq major-mode 'org-mode) (fundamental-mode) (org-mode))))
  :desc "Diff file" "g d" #'+magit-review-this-file
- :desc "Messages" "h e" #'+open-messages
- (:prefix ("b" . "Buffer")
-  :desc "Erase buffer" "e" #'erase-buffer
-  :desc "Rename buffer" "R" #'+rename-buffer
-  :desc "Clone buffer" "C" #'+clone-buffer)
- :desc "How do you..." "s h" #'howdoyou-query
  (:prefix ("o" . "Open")
   :desc "Treemacs" "t" #'treemacs
-  :desc "Re-Builder" "b" #'re-builder))
-
- ;; Global bindings
- (:desc "Jump forward" "C->" 'better-jumper-jump-forward
-  :desc "Jump back" "C-<" 'better-jumper-jump-backward
-  :vimerong "M-m" (eval `(general-simulate-key ,doom-localleader-key  :state 'normal)))
-
- )
+  :desc "Re-Builder" "b" #'re-builder)))

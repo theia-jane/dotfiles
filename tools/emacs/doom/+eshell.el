@@ -2,7 +2,7 @@
 
 
 (defun +eshell-get-contextual-buffer ()
-  (+ensure-buffer
+  (ensure-buffer
    (+doom-buffer-name "eshell")
    '(lambda () (eshell-mode))))
 
