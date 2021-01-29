@@ -298,7 +298,9 @@ I borrowed an awful lot of this config from doom-emacs to get me started.
       smtpmail-stream-type 'starttls
       message-kill-buffer-on-exit t ; close after sending
       mu4e-confirm-quit nil
-      mu4e-completing-read-function #'ivy-completing-read
+      mu4e-completing-read-function (cond
+                                     ((featurep 'ivy) #'ivy-completing-read)
+                                     (t #'completing-read))
       mu4e-context-policy 'pick-first
       mu4e-compose-context-policy 'ask-if-none)
 #+END_SRC
