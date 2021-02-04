@@ -34,12 +34,14 @@ PDFs colors match my themes.
             ;; Making 'midnight mode' into more of 'matches my theme mode'
             (setq pdf-view-midnight-colors (cons
                                             (face-attribute 'default :foreground)
-                                            (face-attribute 'default :background))
-                  ;; Fixes annoying blinking border (thanks doom-emacs!)
-                  evil-normal-state-cursor '(nil))
+                                            (face-attribute 'default :background)))
+
             ;; Actually enable midnight mode
             (pdf-view-midnight-minor-mode)))
 
+
+;; Fixes annoying blinking border (thanks doom-emacs!)
+(setq-hook! 'pdf-view-mode-hook evil-normal-state-cursor '(nil))
 
 (defadvice! pdf-view-next-page--top (&rest _)
   "After we move to the next page, we should start at the top of the page."
