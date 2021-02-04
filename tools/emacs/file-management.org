@@ -45,5 +45,6 @@ With this tramp will put all autosaves in a single directory. This supercedes `a
 * dired
 #+begin_src elisp
 (config! dired
+  (setq dired-dwim-target t)
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 #+end_src
