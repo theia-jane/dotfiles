@@ -12,6 +12,7 @@
         org-agenda-files `(,(f-join org-directory "projects"))
         org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
         org-refile-targets '((nil :maxlevel . 7)
+                             (org-directory-files :maxlevel . 1)
                              (org-agenda-files :maxlevel . 1))
         org-refile-allow-creating-parent-nodes t
         org-refile-use-outline-path 'file
@@ -19,6 +20,10 @@
         org-M-RET-may-split-line '((default . nil))
         org-plantuml-jar-path (expand-file-name "~/java/plantuml/plantuml.jar")
         org-list-allow-alphabetical t)
+
+  (defun org-directory-files ()
+    "List the org files in the current directory"
+    (directory-files default-directory nil "\\.org$"))
 
   (require! org-edit
             org-navigate
