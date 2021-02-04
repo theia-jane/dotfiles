@@ -44,6 +44,7 @@
  config-buffer
  config-pdf
  config-elisp
+ config-projects
  lean-config
  sagemath-config
  config-selection-completion)
