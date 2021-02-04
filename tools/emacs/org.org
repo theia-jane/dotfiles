@@ -427,6 +427,88 @@ Starred and \"displaymath\" environments are not numbered."
     '((shell . t)
       (emacs-lisp . t)))
 #+end_src
+** JIT elisp reference resolution
+Adding a feature to babel, that lets me resolve ==(+ 2 2)= as a nowebe reference (and it
+executes the function). Likewise =#+CALL: ==(+ 2 2)= works and you can even include header
+args like usual:  =#+CALL ==[:exports both](format "Hello!")=
+#+begin_src elisp
+(defun org-make-jit-elisp-lob (string-form)
+  "Generate an elisp library of babel entry JIT.
+
+This method does it's best to resolve the environment
+in which it is executed."
+  `(=
+    "elisp"
+    ,string-form
+    ,(append
+      '((:results . "replace")
+       (:exports . "results") ;; Export results
+       (:session . "none")
+       (:cache . "no")
+       (:noweb . "yes") ;; Most certainly allow noweb references magic^(magic^(magic))
+       (:hlines . "no")
+       (:tangle . "no")
+       (:lexical . "no"))
+
+      ;; Grab variables from the local env
+      (seq-filter
+       (lambda (x) (eq (car x) :var))
+       (car (org-babel-params-from-properties "elisp"))))
+
+    nil
+    nil
+    ,(point)
+    "(ref:%s)"))
+
+
+(defadvice! org-babel-ref-resolve-magic (fn ref)
+  "Resolves REF when it is a lisp ref."
+  :around #'org-babel-ref-resolve
+  (save-match-data
+    (let ((match-rx (rx line-start
+                        (group
+                         (or
+                          (and "[" (zero-or-more not-newline) "]")
+                          ""))
+                        "("
+                        (group
+                         (zero-or-more not-newline))
+                        ")" line-end)))
+
+    (if (and (string-match match-rx ref)
+             (not (equal (match-string 2 ref) "")))
+        (let ((org-babel-current-src-block-location (point))
+              (org-babel-library-of-babel (cons
+                                           (org-make-jit-elisp-lob
+                                            (format "(%s)" (match-string 2 ref)))
+                                           org-babel-library-of-babel)))
+          (funcall fn
+                   (format "=%s()" (match-string 1 ref))))
+      (funcall fn ref)))))
+
+(defadvice! org-babel-lob-elisp-call-magic (fn &optional datum)
+  :around #'org-babel-lob-get-info
+  (let* ((context (or datum (org-element-context)))
+         (type (org-element-type context))
+         (reference (org-element-property :call context))
+         (arguments (org-element-property :arguments context))
+         (org-babel-library-of-babel org-babel-library-of-babel))
+    (when (and (memq type '(babel-call inline-babel-call))
+               (not reference) ;; nil reference means we didn't start w/ a string
+               (stringp arguments)
+               (not (equal arguments "")))
+      (setq org-babel-library-of-babel (cons
+                                        (org-make-jit-elisp-lob
+                                         (format "(%s)" arguments))
+                                        org-babel-library-of-babel))
+      (setf (cadr context)
+            (plist-put (cadr context) :arguments nil)
+            (cadr context)
+            (plist-put (cadr context) :call "=")))
+
+    (funcall fn context)))
+
+#+end_src
 ** Footer
 #+begin_src elisp
 )
