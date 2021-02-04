@@ -14,6 +14,7 @@
 \RequirePackage[utf8]{inputenc}
 \RequirePackage{
   tikz-config,
+  orgmode-hacks,
   shorthand,
   biblatex,
   stmaryrd,
@@ -130,3 +131,29 @@
   el/.style = {inner sep=2pt, align=left, sloped}
 }
 #+end_src
+** Org Mode hacks
+#+BEGIN_SRC latex :tangle orgmode-hacks/orgmode-hacks.sty
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{orgmode-hacks}[Tyler Ware's Org Mode hacks]
+
+\RequirePackage{paracol}
+
+% \newcommand{\colsbegin}[1][]{%
+% \begin{paracol}{\ifthenelse{\equal{#1}{}}{2}{#1}}%
+% }
+
+\makeatletter
+\def\colsbegin{\expandafter\begin\expandafter{paracol}{2}}
+\makeatother
+
+% \newcommand{\colsend}{%
+% \end{paracol}%
+% }
+\makeatletter
+\def\colsend{\expandafter\end\expandafter{paracol}}
+\makeatother
+
+% \makeatletter
+% \def\endenv{\expandafter\end\expandafter{\@currenvir}}
+% \makeatother
+#+END_SRC
