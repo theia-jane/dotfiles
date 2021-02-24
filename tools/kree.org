@@ -61,8 +61,10 @@ global:
       j: xbacklight -dec 10
       k: xbacklight -inc 10
     v:
-      j: volume -20
-      k: volume +20
+      j: volume -5
+      Shift+j: volume -20
+      k: volume +5
+      Shift+k: volume +20
       m: volume 0
     r:
       k: kree.restart
