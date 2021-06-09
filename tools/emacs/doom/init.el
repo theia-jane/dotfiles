@@ -73,7 +73,7 @@
        :tools
        ;;ansible
        biblio
-       ;; debugger               ; FIXME stepping through code, to help you add bugs
+       debugger               ; FIXME stepping through code, to help you add bugs
        ;;direnv
        docker
        editorconfig           ; let someone else argue about tabs vs spaces
@@ -121,7 +121,7 @@
        ;; hy                  ; readability of scheme w/ speed of python
        ;;idris
        ;; (java +lsp)            ; the poster child for carpal tunnel syndrome
-       ;; (javascript +lsp)                 ; all(hope(abandon(ye(who(enter(here))))))
+       (javascript +lsp)                 ; all(hope(abandon(ye(who(enter(here))))))
        julia                  ; a better, faster MATLAB
        ;;kotlin               ; a better, slicker Java(Script)
        latex                  ; writing papers in Emacs has never been so fun

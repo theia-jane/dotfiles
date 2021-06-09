@@ -1,0 +1,8 @@
+#+TITLE: Snippet
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-snippet.el
+
+#+begin_src elisp
+(config! yasnippet
+         nil)
+#+end_src

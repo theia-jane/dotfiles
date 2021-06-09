@@ -7,7 +7,6 @@
 
 (setq doom-font (font-spec :family "Source Code Pro" :size 30)
       doom-variable-pitch-font (font-spec :family "Source Code Pro" :size 30)
-      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 30)
       doom-big-font (font-spec :family "Source Code Pro" :size 48))
 
 (load-theme 'doom-gruvbox t)

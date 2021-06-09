@@ -1,6 +1,17 @@
 #+TITLE: General
 #+PROPERTY: header-args :tangle-relative 'dir
 
+* Overview
+** Layers of packages
+*** System packages
+AKA 'site-lisp' directory. Installed under ~/usr/share/emacs/site-lisp~ on a unix system.
+*** User local packages
+For me located at ~~/.local/emacs/site-lisp~, which is enabled via ~EMACSLOADPATH~
+*** Repo packages
+For me located at ~$dot/tools/emacs/packages~, which is enabled via ~EMACSLOADPATH~
+*** User local "global" packages
+These packages are installed by =(global-packages/install-packages)= in ~~/.local/emacs/site-lisp/global-packages.el~ via =elpm=.
+
 * Building emacs
 ** Init Repository
 Get the repository and get it ready to build
@@ -766,6 +777,10 @@ Not sure this is the /best/ place for this, but it lives here for now
 (require 'personal-lib)
 (require 'global-packages)
 (require 'keymap)
+(defadvice! fuck-errors (fn &rest args)
+  "Fuck errors. Be quiet."
+  :around '(pdf-info-check-epdfinfo)
+  (ignore-errors (apply fn args)))
 #+END_SRC
 ** Config
 :PROPERTIES:
@@ -806,6 +821,7 @@ for now it's not so complex.
 :header-args+: :dir ${HOME}/.local/emacs/configs/personal
 :END:
 
+
 #+begin_src elisp :tangle init.el
 (elpm-use-packages '(ob-async
                      gruvbox-theme
@@ -814,8 +830,9 @@ for now it's not so complex.
                      marginalia
                      eros
                      magit
-                     pdf-tools
-                     org-pdftools
+                     yasnippet
+                     ;; pdf-tools
+                     ;; org-pdftools
                      php-mode)
                    user-emacs-directory
                    t)
@@ -835,8 +852,8 @@ for now it's not so complex.
           which-key
           helpful
 
-          pdf-tools
-          org-pdftools
+          ;; pdf-tools
+          ;; org-pdftools
           php-mode)
 
 (load "~/.local.el" t)
