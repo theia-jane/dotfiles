@@ -298,7 +298,7 @@ Simply requiring this will make all of my globally installed packages available 
 
 (defvar global-packages-required-packages
   '(evil evil-collection which-key general
-     helpful
+     helpful try
      counsel ivy ivy-rich
      use-package f s async dash
     auto-minor-mode
@@ -826,11 +826,13 @@ for now it's not so complex.
 (elpm-use-packages '(ob-async
                      gruvbox-theme
                      orderless
-                     selectrum
+                     vertico
                      marginalia
                      eros
                      magit
                      yasnippet
+                     corfu
+
                      ;; pdf-tools
                      ;; org-pdftools
                      php-mode)
@@ -841,14 +843,17 @@ for now it's not so complex.
 (require! config-main
           auth-source-pass
           gruvbox
+          try
 
           evil
           evil-collection
           eros
           magit
           orderless
-          selectrum
           marginalia
+          yasnippet
+          corfu
+          vertico
           which-key
           helpful
 
