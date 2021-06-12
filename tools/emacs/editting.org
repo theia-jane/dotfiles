@@ -13,3 +13,11 @@ Specifically, two spaces.
 (setq-default indent-tabs-mode nil
               tab-width 2)
 #+end_src
+
+* Keys
+#+begin_src elisp
+(define-leader! edit "H-e")
+#+end_src
+
+
+
