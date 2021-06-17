@@ -814,7 +814,9 @@ for now it's not so complex.
           config-editting
           config-pdf
           config-remote
-          config-file-management)
+          config-file-management
+          config-window
+          config-tab)
 #+END_SRC
 * Personal
 :PROPERTIES:

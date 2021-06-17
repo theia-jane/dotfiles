@@ -1,0 +1,16 @@
+#+TITLE: Tab
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-tab.el
+
+#+begin_src elisp
+(provide 'config-tab)
+
+(define-leader! tab "H-t")
+(keymap! :tab
+         "n" #'tab-new
+         "d" #'tab-close
+         "t" #'tab-next
+         "[" #'tab-previous
+         "]" #'tab-next
+         "b" #'tab-bar-mode)
+#+end_src
