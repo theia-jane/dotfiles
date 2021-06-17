@@ -17,6 +17,10 @@ Specifically, two spaces.
 * Keys
 #+begin_src elisp
 (define-leader! edit "H-e")
+(keymap! :edit
+         "s" #'(lambda () (interactive)
+                 (find-file
+                    (concat "/sudo::" (buffer-file-name)))))
 #+end_src
 
 
