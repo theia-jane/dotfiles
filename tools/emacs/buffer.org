@@ -20,7 +20,8 @@
                     (user-error "No name provided, buffer name unchanged"))
                   (rename-buffer name)))
         "e" #'erase-buffer
-        "R" #'revert-buffer)
+        "R" #'revert-buffer
+        "n" #'new-buffer-open)
 #+end_src 
 * Displaying 
 #+begin_src elisp
@@ -59,7 +60,7 @@ do as you say."
     (unless buffer
       (setq buffer (get-buffer-create name))
       (with-current-buffer buffer
-          (funcall setup-fn)))
+        (funcall setup-fn)))
     buffer))
 
 (defun force-clone-buffer (&optional newname display-flag)
@@ -68,7 +69,7 @@ do as you say."
 If the current buffer is visiting a file, then the clone
 will not be associated with the file.
 
-This is basically a pass through to `call-buffer'."
+This is basically a pass through to `clone-buffer'."
   (interactive)
   (let* ((buffer-file-name nil)
          (buffer-file-truename nil)
@@ -79,4 +80,23 @@ This is basically a pass through to `call-buffer'."
       (set-buffer-modified-p t))
     cloned-buffer))
 
+(defun new-buffer-open (&optional arg)
+  "Open a new buffer either to the right or below.
+
+It opens below by default and if the prefix is provided
+then it opens to the right.
+"
+  (interactive "P")
+  (let ((new-window (split-window (selected-window) nil 
+                                  (if arg 'right 'below))))
+    (balance-windows (window-parent))
+    (let ((buffer (new-buffer)))
+          (set-window-buffer new-window buffer)
+          (select-window new-window))))
+
+(defun new-buffer ()
+  "Create a new buffer with the default major mode." 
+  (with-current-buffer (generate-new-buffer "*new*")
+    (funcall (default-value 'major-mode))
+    (current-buffer)))
 #+end_src
