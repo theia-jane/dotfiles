@@ -838,7 +838,8 @@ for now it's not so complex.
 
                      ;; pdf-tools
                      ;; org-pdftools
-                     php-mode)
+                     php-mode
+                     web-mode)
                    user-emacs-directory
                    t)
 
@@ -864,7 +865,8 @@ for now it's not so complex.
 
           ;; pdf-tools
           ;; org-pdftools
-          php-mode)
+          php-mode
+          web-mode)
 
 (load "~/.local.el" t)
 #+end_src
