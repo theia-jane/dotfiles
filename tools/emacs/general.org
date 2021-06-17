@@ -834,6 +834,7 @@ for now it's not so complex.
                      magit
                      yasnippet
                      corfu
+                     consult
 
                      ;; pdf-tools
                      ;; org-pdftools
@@ -858,6 +859,8 @@ for now it's not so complex.
           vertico
           which-key
           helpful
+
+          consult
 
           ;; pdf-tools
           ;; org-pdftools
