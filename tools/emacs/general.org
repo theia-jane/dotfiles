@@ -830,6 +830,7 @@ for now it's not so complex.
                      orderless
                      vertico
                      marginalia
+                     embark
                      eros
                      magit
                      yasnippet
@@ -850,6 +851,7 @@ for now it's not so complex.
           try
 
           evil
+          embark
           evil-collection
           eros
           magit

@@ -57,7 +57,21 @@ Used for matching candidates in a completion framework. Works with standard emac
               #'counsel-projectile-switch-project-action-vc))))
 #+end_src
 
-* TODO Embark
+* Embark
+#+begin_src elisp
+(config! embark
+         (keymap!
+          :g "H-SPC" #'embark-act
+          :g "H-<return>" #'embark-dwim)))
+   
+'(config! '(which-key embark)
+    (setq embark-action-indicator
+        (lambda (map _target)
+            (which-key--show-keymap "Embark" map nil nil 'no-paging)
+            #'which-key--hide-popup-ignore-command)
+        embark-become-indicator embar-action-indicator))
+#+end_src
+
 * TODO Consult
 * Marginalia
 #+begin_src elisp
@@ -78,11 +92,11 @@ Used for matching candidates in a completion framework. Works with standard emac
                     "C-k" #'vertico-previous)
 ) 
 #+end_src
-* TODO Counsel
 * Company
 #+begin_src elisp
 (config! company
     (add-hook 'after-init-hook 'global-company-mode))
+
 #+end_src
 
 * Corfu 
