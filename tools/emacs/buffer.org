@@ -25,7 +25,7 @@
 
 (define-leader! insert "H-i")
 (keymap! :insert
-         "f" #'insert-file
+         "f" #'insert-file)
 #+end_src 
 * Displaying 
 #+begin_src elisp

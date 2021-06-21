@@ -62,7 +62,7 @@ Used for matching candidates in a completion framework. Works with standard emac
 (config! embark
          (keymap!
           :g "H-SPC" #'embark-act
-          :g "H-<return>" #'embark-dwim)))
+          :g "H-<return>" #'embark-dwim))
    
 '(config! '(which-key embark)
     (setq embark-action-indicator
