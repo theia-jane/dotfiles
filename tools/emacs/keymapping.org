@@ -327,5 +327,8 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 Probably should move this up and out
 #+begin_src elisp
 (keymap!
- :g "H-q" #'keyboard-quit)
+ :g "H-q" #'keyboard-quit
+ :g "H-h" #'help-command)
 #+end_src
+
+#+RESULTS:
