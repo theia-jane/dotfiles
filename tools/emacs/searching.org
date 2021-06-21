@@ -1,0 +1,11 @@
+#+TITLE: Searching
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-searching.el
+
+#+begin_src elisp
+(define-leader! search "H-/")
+(keymap! :search
+         (:after consult
+                 "/" #'consult-ripgrep))
+#+end_src
+
