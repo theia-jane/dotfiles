@@ -59,10 +59,11 @@ Used for matching candidates in a completion framework. Works with standard emac
 
 * Embark
 #+begin_src elisp
-(config! embark
-         (keymap!
+(keymap! (:after embark
           :g "H-SPC" #'embark-act
-          :g "H-<return>" #'embark-dwim))
+          :g "H-RET" #'embark-dwim
+          :nv "g RET" #'embark-dwim))
+
    
 '(config! '(which-key embark)
     (setq embark-action-indicator
