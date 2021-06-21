@@ -1,0 +1,53 @@
+#+TITLE: Programming
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-programming.el
+
+Setup things that are useful for programming modes
+#+begin_src elisp
+(provide 'config-programming)
+#+end_src
+
+* Setup language macro
+#+begin_src elisp
+(defmacro setup-prog-mode (lang &rest body)
+  "Setup a programming mode for LANG.
+
+Sets up advanced language features such language-server support,
+debugging, etc. Also executes BODY when the mode is entered.
+"
+  (let* ((lang (symbol-name lang))
+         (setup-fn-symb (intern
+                         (concat "setup-prog-mode:" lang))))
+  `(progn
+     (defun ,setup-fn-symb ()
+         (require! dap-mode
+                   dap-mouse
+                   dap-ui
+                   dap-hydra
+                   lsp-mode
+                   lsp-modeline 
+                   lsp-headerline
+                   ,(intern (concat "dap-" lang))
+                   ,(intern (concat "lsp-" lang)))
+
+         (dap-mode 1)
+         (dap-ui-mode 1)
+         (lsp-mode 1)
+        (,(intern (concat "dap-" lang "-setup")))
+         (message "Setting up lang: %s" ,lang) 
+         ,@body)
+
+     (add-hook ',(intern (concat lang "-mode-hook"))
+               #',setup-fn-symb))))
+
+#+end_src
+
+* PHP 
+Just do basic setup for php
+#+begin_src elisp
+(setup-prog-mode php)
+#+end_src
+
+
+
+
