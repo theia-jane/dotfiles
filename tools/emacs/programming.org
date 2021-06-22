@@ -17,7 +17,13 @@ debugging, etc. Also executes BODY when the mode is entered.
 "
   (let* ((lang (symbol-name lang))
          (setup-fn-symb (intern
-                         (concat "setup-prog-mode:" lang))))
+                         (concat "setup-prog-mode:" lang)))
+         (lsp-package-symb (intern
+                          (concat "lsp-" lang)))
+         (dap-package-symb (intern
+                          (concat "dap-" lang)))
+         (dap-setup-symb (intern
+                          (concat "dap-" lang "-setup"))))
   `(progn
      (defun ,setup-fn-symb ()
          (require! dap-mode
@@ -27,13 +33,15 @@ debugging, etc. Also executes BODY when the mode is entered.
                    lsp-mode
                    lsp-modeline 
                    lsp-headerline
-                   ,(intern (concat "dap-" lang))
-                   ,(intern (concat "lsp-" lang)))
+                   (,lsp-package-symb nil t)
+                   (,dap-package-symb nil t))
 
          (dap-mode 1)
          (dap-ui-mode 1)
          (lsp-mode 1)
-        (,(intern (concat "dap-" lang "-setup")))
+         (when (functionp ',dap-setup-symb)
+           (,dap-setup-symb))
+
          (message "Setting up lang: %s" ,lang) 
          ,@body)
 
@@ -49,5 +57,10 @@ Just do basic setup for php
 #+end_src
 
 
-
+* JavaScript / TypeScript 
+#+begin_src elisp
+(setup-prog-mode javascript)
+;; Make sure typescript gets the same setup as JS mode
+(add-hook 'typescript-mode-hook #'setup-prog-mode:javascript)
+#+end_src
 
