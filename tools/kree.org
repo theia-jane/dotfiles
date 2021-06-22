@@ -31,7 +31,6 @@ kree.stop
 kree.start
 #+END_SRC
 
-
 * Keymap
 :PROPERTIES:
 :header-args:yaml: :dir ${HOME} :tangle .kree.yaml :comments no
@@ -41,7 +40,7 @@ kree.start
 global:
   Super+x: rofi -show run -modi run
   Super+Enter: tmux-scratch
-  Super+Space:
+  Super+Semicolon:
     Enter: tilix
     n:
       n: org-capture
