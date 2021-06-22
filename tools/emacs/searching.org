@@ -3,6 +3,11 @@
 #+PROPERTY: header-args+ :tangle config-searching.el
 
 #+begin_src elisp
+(provide 'config-searching)
+#+END_SRC
+
+* Keymapping
+#+begin_src elisp
 (define-leader! search "H-/")
 (keymap! :search
          (:after consult
