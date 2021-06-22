@@ -816,13 +816,14 @@ for now it's not so complex.
           config-remote
           config-file-management
           config-window
-          config-tab)
+          config-tab
+          config-searching
+          config-programming)
 #+END_SRC
 * Personal
 :PROPERTIES:
 :header-args+: :dir ${HOME}/.local/emacs/configs/personal
 :END:
-
 
 #+begin_src elisp :tangle init.el
 (elpm-use-packages '(ob-async
@@ -837,10 +838,14 @@ for now it's not so complex.
                      corfu
                      consult
 
+                     dap-mode
+                     lsp-mode
+
                      ;; pdf-tools
                      ;; org-pdftools
                      php-mode
-                     web-mode)
+                     web-mode
+                     typescript-mode)
                    user-emacs-directory
                    t)
 
@@ -868,7 +873,9 @@ for now it's not so complex.
           ;; pdf-tools
           ;; org-pdftools
           php-mode
-          web-mode)
+          web-mode
+
+          typescript-mode)
 
 (load "~/.local.el" t)
 #+end_src
