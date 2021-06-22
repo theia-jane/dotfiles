@@ -61,7 +61,7 @@ Used for matching candidates in a completion framework. Works with standard emac
 #+begin_src elisp
 (keymap! (:after embark
           :g "H-SPC" #'embark-act
-          :g "H-RET" #'embark-dwim
+          :g "H-<return>" #'embark-dwim
           :nv "g RET" #'embark-dwim))
 
    
@@ -72,6 +72,7 @@ Used for matching candidates in a completion framework. Works with standard emac
             #'which-key--hide-popup-ignore-command)
         embark-become-indicator embar-action-indicator))
 #+end_src
+
 
 * TODO Consult
 * Marginalia
