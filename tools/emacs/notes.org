@@ -1,0 +1,27 @@
+#+TITLE: Notes
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-notes.el
+
+#+begin_src elisp
+(provide 'config-notes)
+#+END_SRC
+
+* Config
+#+begin_src elisp
+(defvar notes/directory (substitute-env-in-file-name "$HOME/notes/"))
+#+end_src
+
+* Keymapping
+#+begin_src elisp
+(define-leader! notes "H-n")
+(keymap! :notes
+         "f" #'(lambda () (interactive)
+                 (let ((default-directory notes/directory))
+                       (command-execute #'find-file)))
+         "d" #'(lambda () (interactive)
+                 (let ((default-directory notes/directory))
+                       (command-execute #'dired))))
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (interactive) | (let ((default-directory notes/directory)) (command-execute #'dired)) |
