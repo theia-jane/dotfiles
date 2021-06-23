@@ -49,7 +49,17 @@ With this tramp will put all autosaves in a single directory. This supercedes `a
 (config! dired
   (setq dired-dwim-target t)
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
+
+(keymap! :map dired-mode-map
+         :n "+" #'dired-create-empty-file)
+(defun +dired/create-dwim (arg)
+  (interactive "P")
+  (command-execute
+   (if arg
+       #'dired-create-empty-file
+     #'dired-create-directory)))
 #+end_src
+
 * File actions
 ** Rename
 #+begin_src elisp
