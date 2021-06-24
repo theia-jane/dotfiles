@@ -323,12 +323,76 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 #+end_src
 
+** HyperCtrl Map
+Sometimes I want to bulk remap control prefixed keys to be usable by the same hyper prefix keys,
+this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=
+#+begin_src elisp
+(defun hyper-ctrl--make-map ()
+  (let ((keymap (make-sparse-keymap)))
+    (set-keymap-parent keymap hyper--original)
+    (cl-loop for i from 33 to 126 
+             do
+            (let ((c (char-to-string i)))
+              (define-key keymap (kbd (concat "H-" c)) (kbd (concat "C-" c)))
+              (define-key keymap (kbd (concat "H-M-" c)) (kbd (concat "C-M-" c)))
+              (define-key keymap (kbd (concat "H-S-" c)) (kbd (concat "C-S-" c)))
+              (define-key keymap (kbd (concat "H-M-S-" c)) (kbd (concat "C-M-S-" c)))))
+    keymap))
+
+(defvar hyper--original key-translation-map)
+(defvar hyper--debug nil)
+(defvar hyper-ctrl-translation-map (hyper-ctrl--make-map))
+(defvar hyper--initial-command nil)
+
+(defun hyper-ctrl/off  ()
+  (interactive)
+  (setq key-translation-map (keymap-parent hyper-ctrl-translation-map))
+  (when (or (called-interactively-p) hyper--debug)
+      (message "[HyperCtrl] map is off.")))
+
+(defun hyper-ctrl/on ()
+  (interactive)
+  (setq key-translation-map hyper-ctrl-translation-map)
+  (when (or (called-interactively-p) hyper--debug) 
+    (message "[HyperCtrl] map is on.")))
+
+(defun hyper-ctrl--off-h ()
+  (unless (memq this-command `(,hyper--initial-command
+                               which-key-C-h-dispatch))
+    (when hyper--debug
+        (message "[HyperCtrl] this-command: %s" this-command))
+    (setq hyper--initial-command nil)
+    (hyper-ctrl/off)
+    (remove-hook 'post-command-hook #'hyper-ctrl--off-h)))
+
+(defun hyper-ctrl-on-until-next-command ()
+  (setq hyper--initial-command this-command)
+  (hyper-ctrl/on)
+  (add-hook 'post-command-hook #'hyper-ctrl--off-h))
+
+(defun hyper-ctrl-on-prefix (trigger-prefix target-prefix) 
+  (keymap! :g trigger-prefix `(lambda ()
+                      (interactive)
+                      (hyper-ctrl-on-until-next-command)
+                      (setq unread-command-events (listify-key-sequence (kbd ,target-prefix))))))
+
+(defun hyper-ctrl-on-prefix-key (key) 
+  (hyper-ctrl-on-prefix
+   (concat "H-" key) 
+   (concat "C-" key)))
+#+end_src
+
 ** General purpose
 Probably should move this up and out
 #+begin_src elisp
-(keymap!
- :g "H-q" #'keyboard-quit
- :g "H-h" #'help-command)
+;; Make hyper keys that always act like another key
+(define-key key-translation-map (kbd "H-;") (kbd "C-u"))
+(define-key key-translation-map (kbd "H-q") (kbd "C-g"))
+(define-key minibuffer-local-map (kbd "H-g") (kbd "C-g"))
+
+;; Make hyper work as control for C-c, C-x and C-h (and all subsequent keys)
+(dolist (key '("c" "x" "h"))
+    (hyper-ctrl-on-prefix-key key))
 #+end_src
 
-#+RESULTS:
+
