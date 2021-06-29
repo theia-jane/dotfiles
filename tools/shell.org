@@ -19,7 +19,8 @@ export lcl="${HOME}/.local"
 export cfg_sh="${cfg}/sh"
 export cfg_emacs="${dot}/tools/emacs"
 export DOOMDIR="${cfg_emacs}/doom"
-export EMACSLOADPATH="${lcl}/emacs/site-lisp:"
+export PERSONAL_EMACS_PACKAGES="$(find "$cfg_emacs/packages" -type d -maxdepth 1 -exec realpath {} \; | tr '\n' ':')"
+export EMACSLOADPATH="${lcl}/emacs/site-lisp:${PERSONAL_EMACS_PACKAGES}"
 
 export CLICOLOR=1
 export GTAGSLABEL="pygments"
