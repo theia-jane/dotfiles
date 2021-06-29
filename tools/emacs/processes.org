@@ -1,0 +1,11 @@
+#+TITLE: Processes
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-processes.el
+
+#+begin_src elisp
+(provide 'config-processes)
+(setq async-shell-command-buffer 'rename-buffer)
+#+end_src
+
+#+RESULTS:
+: rename-buffer

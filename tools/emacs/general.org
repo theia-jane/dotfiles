@@ -819,6 +819,7 @@ for now it's not so complex.
           config-tab
           config-searching
           config-notes
+          config-processes
           config-programming)
 #+END_SRC
 * Personal
