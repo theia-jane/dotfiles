@@ -7,13 +7,15 @@
 #+end_src
 
 * Magit
-Config sometime?
 #+begin_src elisp
 (define-leader! git "H-g")
 
 (config! magit
   (keymap! :git
            "g" #'magit-status))
+
+(config! evil
+  (add-hook 'git-commit-setup-hook #'evil-insert-state))
 #+end_src
 
 * VC
