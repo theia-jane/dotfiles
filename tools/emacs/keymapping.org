@@ -388,11 +388,33 @@ Probably should move this up and out
 ;; Make hyper keys that always act like another key
 (define-key key-translation-map (kbd "H-;") (kbd "C-u"))
 (define-key key-translation-map (kbd "H-q") (kbd "C-g"))
-(define-key minibuffer-local-map (kbd "H-g") (kbd "C-g"))
+
+(defun hyper-to-control-g (maps)
+  (dolist (map (enlist maps))
+    (define-key
+      (if (symbolp map) (symbol-value map) map)
+      (kbd "H-g")
+      (kbd "C-g"))))
+
+;; Bind H-g to C-g in special cases 
+(hyper-to-control-g '(minibuffer-local-map))
 
 ;; Make hyper work as control for C-c, C-x and C-h (and all subsequent keys)
 (dolist (key '("c" "x" "h" "w"))
     (hyper-ctrl-on-prefix-key key))
+
+
+
 #+end_src
+** Transient 
+Setup hyper-control mapping while using transient prefixes
+#+begin_src elisp 
+(after! transient
+    (defadvice! hyper-ctrl-transient-maps (&rest args)
+        :before 'transient--init-transient
+        (hyper-ctrl/on))
+    (add-hook 'transient-exit-hook #'hyper-ctrl/off))
+#+end_src
+
 
 
