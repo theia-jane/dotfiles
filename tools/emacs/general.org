@@ -741,6 +741,17 @@ From doom-emacs."
                    (delete-char -1))
                  (buffer-string)))
 #+end_src
+*** Debug 
+#+begin_src elisp
+(defmacro debug-sexps (&rest sexps)
+  "Prints SEXPS evaled and their results."
+  `(dolist (sexp ',sexps)
+    (message "%s => %s"
+             (s-trim (pp-to-string sexp))
+             (eval sexp))))
+#+end_src
+
+
 ** Commands
 :PROPERTIES:
 :header-args:elisp: :tangle commands-lib.el
