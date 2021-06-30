@@ -16,6 +16,11 @@ Config sometime?
            "g" #'magit-status))
 #+end_src
 
+* VC
+#+begin_src elisp
+(setq vc-follow-symlinks t)
+#+end_src
+
 * Config 
 #+begin_src elisp
 (after! config-editting
