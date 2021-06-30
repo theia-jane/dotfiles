@@ -509,9 +509,15 @@ Taken from doom-emacs."
   exp)
 
 (defun enlist (exp)
-  "Return EXP wrapped in a list, or as-is if already a list."
+  "Return EXP wrapped in a list, or as-is if already a list.
+
+Note: excludes keymaps as 'lists'"
   (declare (pure t) (side-effect-free t))
-  (if (listp exp) exp (list exp)))
+  (if (and (listp exp)
+           (not (keymapp exp)))
+      exp
+    (list exp)))
+
 
 (defun keyword-intern (str)
   "Converts STR (a string) into a keyword (`keywordp')."
