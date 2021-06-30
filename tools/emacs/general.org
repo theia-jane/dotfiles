@@ -388,6 +388,14 @@ cause a change in behavior.
 (put 'erase-buffer 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 #+end_src
+*** Yes or no 
+#+begin_src elisp
+(fset #'yes-or-no-p #'y-or-n-p)
+#+end_src
+
+#+RESULTS:
+: y-or-n-p
+
 ** Experiments
 :PROPERTIES:
 :header-args:elisp: :tangle experiment.el
