@@ -4,12 +4,6 @@
 
 #+begin_src elisp
 (provide 'config-window)
-
-(define-leader! window "H-w")
-(keymap! :window
-         "w" #'evil-window-next
-         "]" #'evil-window-next
-         "[" #'evil-window-prev)
 #+end_src
 
 

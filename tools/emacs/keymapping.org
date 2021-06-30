@@ -391,7 +391,7 @@ Probably should move this up and out
 (define-key minibuffer-local-map (kbd "H-g") (kbd "C-g"))
 
 ;; Make hyper work as control for C-c, C-x and C-h (and all subsequent keys)
-(dolist (key '("c" "x" "h"))
+(dolist (key '("c" "x" "h" "w"))
     (hyper-ctrl-on-prefix-key key))
 #+end_src
 
