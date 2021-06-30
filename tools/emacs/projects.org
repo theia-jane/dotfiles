@@ -23,6 +23,48 @@
 (setq vc-follow-symlinks t)
 #+end_src
 
+* Project roots 
+#+begin_src elisp
+(defvar project-root-file-markers '(".git" ".vscode" ".idea" ".project"))
+(defun project-root-dir-by-file-markers (&optional file)
+  (locate-dominating-file
+   (or file default-directory)
+   (lambda (dir)
+     (catch 'found
+       (dolist (name project-root-file-markers)
+         (when (and (file-exists-p (expand-file-name name dir)))
+            (throw 'found t)))))))
+
+
+(defvar project-root-global-list `(,(expand-file-name "~/notes/")))
+(defun project-root-dir-by-global-list (&optional file)
+  (let ((file (or file default-directory)))
+    (catch 'match
+      (dolist (project-root project-root-global-list)
+        (when (file-in-directory-p file project-root)
+          (throw 'match project-root))))))
+
+(defun make-project-transient (dir)
+  (when dir 
+    (cons 'transient dir)))
+
+;; Add to project find function hook
+(dolist (fn '(project-root-dir-by-global-list
+              project-root-dir-by-file-markers))
+
+    ;; Need to convert dir to project-find usable thing
+    (add-hook 'project-find-functions
+              (-compose #'make-project-transient fn)))
+
+;; Let consult consume the same functions!
+(after! consult
+  (setq consult-project-root-function
+        (lambda ()
+          (let ((h (list #'project-root-dir-by-global-list
+                         #'project-root-dir-by-file-markers)))
+            (run-hook-with-args-until-success 'h)))))
+#+end_src
+
 * Config 
 #+begin_src elisp
 (after! config-editting
