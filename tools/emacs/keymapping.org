@@ -402,18 +402,20 @@ Probably should move this up and out
 ;; Make hyper work as control for C-c, C-x and C-h (and all subsequent keys)
 (dolist (key '("c" "x" "h" "w"))
     (hyper-ctrl-on-prefix-key key))
-
-
-
 #+end_src
 ** Transient 
 Setup hyper-control mapping while using transient prefixes
 #+begin_src elisp 
-(after! transient
-    (defadvice! hyper-ctrl-transient-maps (&rest args)
-        :before 'transient--init-transient
-        (hyper-ctrl/on))
-    (add-hook 'transient-exit-hook #'hyper-ctrl/off))
+(defun hyper-ctrl-transient-on ()
+  (hyper-ctrl/on)
+  (add-hook 'transient-exit-hook #'hyper-ctrl-transient-off))
+
+(defun hyper-ctrl-transient-off ()
+      (unless transient--prefix
+        (hyper-ctrl/off)
+        (remove-hook 'transient-exit-hook #'hyper-ctrl-transient-off)))
+
+(advice-add #'transient--init-transient :before #'hyper-ctrl-transient-on) 
 #+end_src
 
 
