@@ -25,6 +25,7 @@
 
 * Project roots 
 #+begin_src elisp
+(require 'dash)
 (defvar project-root-file-markers '(".git" ".vscode" ".idea" ".project"))
 (defun project-root-dir-by-file-markers (&optional file)
   (locate-dominating-file
@@ -33,7 +34,7 @@
      (catch 'found
        (dolist (name project-root-file-markers)
          (when (and (file-exists-p (expand-file-name name dir)))
-            (throw 'found t)))))))
+           (throw 'found t)))))))
 
 
 (defvar project-root-global-list `(,(expand-file-name "~/notes/")))
@@ -51,18 +52,18 @@
 ;; Add to project find function hook
 (dolist (fn '(project-root-dir-by-global-list
               project-root-dir-by-file-markers))
-
-    ;; Need to convert dir to project-find usable thing
-    (add-hook 'project-find-functions
-              (-compose #'make-project-transient fn)))
+  
+  ;; Need to convert dir to project-find usable thing
+  (add-hook 'project-find-functions
+            (-compose #'make-project-transient fn)))
 
 ;; Let consult consume the same functions!
 (after! consult
-  (setq consult-project-root-function
-        (lambda ()
-          (let ((h (list #'project-root-dir-by-global-list
-                         #'project-root-dir-by-file-markers)))
-            (run-hook-with-args-until-success 'h)))))
+        (setq consult-project-root-function
+              (lambda ()
+                (let ((h (list #'project-root-dir-by-global-list
+                               #'project-root-dir-by-file-markers)))
+                  (run-hook-with-args-until-success 'h)))))
 #+end_src
 
 * Config 
