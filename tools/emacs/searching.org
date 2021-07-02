@@ -11,6 +11,7 @@
 (define-leader! search "H-/")
 (keymap! :search
          (:after consult
-                 "/" #'consult-ripgrep))
+                 "/" #'consult-ripgrep
+                 "l" #'consult-line))
 #+end_src
 
