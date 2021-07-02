@@ -64,13 +64,8 @@ Used for matching candidates in a completion framework. Works with standard emac
           :g "H-<return>" #'embark-dwim
           :nv "g RET" #'embark-dwim))
 
-   
-'(config! '(which-key embark)
-    (setq embark-action-indicator
-        (lambda (map _target)
-            (which-key--show-keymap "Embark" map nil nil 'no-paging)
-            #'which-key--hide-popup-ignore-command)
-        embark-become-indicator embar-action-indicator))
+(after! (embark consult)
+        (require 'embark-consult))
 #+end_src
 
 

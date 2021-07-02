@@ -859,6 +859,7 @@ for now it's not so complex.
                      vertico
                      marginalia
                      embark
+                     embark-consult
                      eros
                      magit
                      yasnippet
