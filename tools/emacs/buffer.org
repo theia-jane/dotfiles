@@ -11,6 +11,7 @@
 (define-leader! buffer "H-b")
 (keymap! :buffer
         "b" #'switch-to-buffer
+        (:after consult "b" #'consult-buffer)
         "d" #'kill-current-buffer
         "c" #'force-clone-buffer
         :desc "Rename" "r" #'(lambda ()
