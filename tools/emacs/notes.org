@@ -16,12 +16,12 @@
 (define-leader! notes "H-n")
 (keymap! :notes
          "f" #'(lambda () (interactive)
+                 (setq this-command #'project-find-file) ;; help embark out
                  (let ((default-directory notes/directory))
-                       (command-execute #'find-file)))
+                       (command-execute #'project-find-file)))
          "d" #'(lambda () (interactive)
                  (let ((default-directory notes/directory))
                        (command-execute #'dired))))
 #+end_src
 
-#+RESULTS:
-| lambda | nil | (interactive) | (let ((default-directory notes/directory)) (command-execute #'dired)) |
+

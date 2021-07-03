@@ -9,8 +9,8 @@
 #+begin_src elisp
 (define-leader! file "H-f")
 (keymap! :file
-         "H-f" #'find-file
          "f" #'find-file
+         "p" #'project-find-file
          "s" #'save-buffer
          "r" #'move-this-file
          "d" #'(lambda ()
