@@ -290,44 +290,54 @@ Simply requiring this will make all of my globally installed packages available 
 #+begin_src elisp :tangle global-packages.el
 (require 'elpm)
 (require 'seq)
+(require 'info)
+
 (defvar global-packages-dir
   (expand-file-name "~/.local/emacs/site-lisp/"))
 
-(defvar global-packages-load-paths-file
-  (concat global-packages-dir "global-packages-load-paths.el"))
+(defvar global-packages-cache-file
+  (concat global-packages-dir "global-packages-cache.el"))
 
 (defvar global-packages-required-packages
   '(evil evil-collection which-key general
-     helpful try
-     counsel ivy ivy-rich
+     helpful try magit
+     eros yasnippet
+     corfu 
+     orderless marginalia 
+     consult embark embark-consult
      use-package f s async dash
-    auto-minor-mode
+     auto-minor-mode
     ))
 
 (defvar global-packages-load-path '())
+(defvar global-packages-Info-directory-list '())
 
 (defun global-packages/install-packages ()
-  (let ((old-load-path load-path))
+  (let ((old-load-path load-path)
+        (old-Info-directory-list Info-directory-list))
     (elpm-use-packages global-packages-required-packages global-packages-dir t)
     (global-packages/add-load-paths (seq-difference load-path old-load-path))
-    (global-packages/save-load-paths-file)))
+    (global-packages/add-Info-directories (seq-difference Info-directory-list old-Info-directory-list))
+    (global-packages/save-cache-file)))
 
-(defun global-packages/save-load-paths-file ()
+(defun global-packages/save-cache-file ()
   (with-temp-buffer
-    (insert (pp-to-string global-packages-load-path))
-    (write-region (point-min) (point-max) global-packages-load-paths-file)))
+    (insert (pp-to-string (list :load-path global-packages-load-path
+                                :info-directory-list global-packages-Info-directory-list)))
+    (write-region (point-min) (point-max) global-packages-cache-file)))
 
-(defun global-packages/get-load-paths ()
-  (let* ((file-name global-packages-load-paths-file)
+(defun global-packages/load-cache-file ()
+  (let* ((file-name global-packages-cache-file)
          (file-contents (when (file-exists-p file-name)
                           (with-temp-buffer
                             (insert-file-contents file-name)
                             (buffer-string))))
-         (paths (and file-contents
+         (cache (and file-contents
                      (not (equal file-contents ""))
                      (car (read-from-string file-contents)))))
-    (when (listp paths)
-      paths)))
+    (when (listp cache)
+      (global-packages/add-Info-directories (plist-get cache :info-directory-list))
+      (global-packages/add-load-paths (plist-get cache :load-path)))))
 
 (defun global-packages/add-load-paths (load-path-additions)
   (dolist (path load-path-additions)
@@ -335,15 +345,21 @@ Simply requiring this will make all of my globally installed packages available 
       (add-to-list 'global-packages-load-path path)
       (add-to-list 'load-path path))))
 
+(defun global-packages/add-Info-directories (info-directory-additions)
+  (dolist (path info-directory-additions)
+    (when (stringp path)
+      (add-to-list 'global-packages-Info-directory-list path)
+      (add-to-list 'Info-directory-list path))))
+
 (defun global-packages/init ()
-  (if (file-exists-p global-packages-load-paths-file)
-      (global-packages/add-load-paths (global-packages/get-load-paths))
+  (if (file-exists-p global-packages-cache-file)
+      (global-packages/load-cache-file)
     (global-packages/install-packages))
   (require 'use-package)
   (require 'auto-minor-mode))
 
 ;; Better to ignore any errors since this loaded in every emacs session
-(ignore-errors (global-packages/init))
+(global-packages/init)
 
 (provide 'global-packages)
 #+end_src
@@ -437,6 +453,7 @@ this will provide a basic starting point for my emacs experiments.
 #+BEGIN_SRC elisp
 (provide 'personal-lib)
 (require 'commands-lib)
+(require 'use-package)
 #+END_SRC
 
 *** Loading
@@ -797,10 +814,10 @@ Not sure this is the /best/ place for this, but it lives here for now
 :END:
 #+BEGIN_SRC elisp
 (provide 'site-start)
+(require 'global-packages)
 (require 'global-settings)
 (require 'config-ui)
 (require 'personal-lib)
-(require 'global-packages)
 (require 'keymap)
 (defadvice! fuck-errors (fn &rest args)
   "Fuck errors. Be quiet."
@@ -855,17 +872,7 @@ for now it's not so complex.
 #+begin_src elisp :tangle init.el
 (elpm-use-packages '(ob-async
                      gruvbox-theme
-                     orderless
                      vertico
-                     marginalia
-                     embark
-                     embark-consult
-                     eros
-                     magit
-                     yasnippet
-                     corfu
-                     consult
-
                      dap-mode
                      lsp-mode
 
