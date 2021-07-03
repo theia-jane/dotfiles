@@ -20,7 +20,9 @@ Specifically, two spaces.
 (keymap! :edit
          "s" #'(lambda () (interactive)
                  (find-file
-                    (concat "/sudo::" (buffer-file-name)))))
+                  (concat "/sudo::" (buffer-file-name))))
+         "c" #'(lambda () (interactive)
+                 (find-file (substitute-env-vars "$dot"))))
 #+end_src
 
 

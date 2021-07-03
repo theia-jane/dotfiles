@@ -66,13 +66,7 @@
                   (run-hook-with-args-until-success 'h)))))
 #+end_src
 
-* Config 
-#+begin_src elisp
-(after! config-editting
-        (keymap! :edit
-                 "c" #'(lambda () (interactive)
-                         (find-file (substitute-env-vars "$dot"))))) 
-#+end_src
+
 
 
 
