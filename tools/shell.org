@@ -59,8 +59,7 @@ if [ -d "${ENV_DIR}" ]; then
 	done
 fi
 
-SHELL_NAME="$(echo $0 | grep -oh '[a-z]*sh')"
-source "${HOME}/.${SHELL_NAME}rc"
+SHELL_NAME="$(echo $SHELL | tr '/' ' ' | awk '{print $(NF)}')"
 #+END_SRC
 ** Tools
 *** go
