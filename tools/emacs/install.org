@@ -22,13 +22,6 @@ I don't think this will ever /technically/ need to be run -- files tangled in th
 [ ! -f "${HOME}/.local/emacs/site-lisp/elpm.el" ] \
     && ln -s "$(pwd)/elpm/elpm.el" "${HOME}/.local/emacs/site-lisp/elpm.el"
 #+end_src
-** Packages
-These are some packages I want to be /always/ available -- I can't live without them.
-#+BEGIN_SRC bash :dir ~/.local/emacs/site-lisp
-elpm use-package \
-    evil \
-    ivy
-#+end_src
 * Chemacs
 [[https://github.com/plexus/chemacs2][Chemacs]] is a bootloader that lets me switch between various emacs configs. It's useful for experimenting and trying things out.
 #+BEGIN_SRC bash :dir ~/.config
@@ -45,71 +38,12 @@ fi
 
 ** Profiles
 #+NAME: generate-profiles
-#+BEGIN_SRC emacs-lisp :var variants=doom-variants[,0]
+#+BEGIN_SRC emacs-lisp 
 (with-temp-buffer
   (let* ((distro-dir "~/.local/emacs/distros")
          (config-dir "~/.local/emacs/configs")
-         (profiles `(("default" . ((user-emacs-directory . ,(concat distro-dir "/doom-default"))))
-                     ("personal" . ((user-emacs-directory . ,(concat config-dir "/personal"))))
-                     ("spacemacs" . ((user-emacs-directory . ,(concat distro-dir "/spacemacs"))
-                                     (env . (("SPACEMACSDIR" . ,(concat config-dir "/spacemacs"))))))
-                     ,@(mapcar (lambda (variant)
-                                 (let ((variant (concat "doom-" variant)))
-                                   `(,variant . ((user-emacs-directory . ,(concat distro-dir "/" variant))
-                                                 (env . (("DOOMDIR" . ,(concat config-dir "/" variant))))))))
-                               variants))))
+         (profiles `(("personal" . ((user-emacs-directory . ,(concat config-dir "/personal")))))))
     (insert (pp-to-string profiles))
     (write-region (point-min) (point-max) "~/.emacs-profiles.el")))
 #+END_SRC
 
-* Doom
-:PROPERTIES:
-:header-args+: :var variants=doom-variants[,0]
-:END:
-** Variants
-My main home in emacs is in doom and I often want to play around with different setups and see how doom+emacs behave in different circumstances. That can make my main doom a little unstable, so I'll carve out separate instances
-
-#+NAME: doom-variants
-| default    | my daily driver                              |
-| no-modules | no modules (just config)                     |
-| no-config  | no config (just modules)                     |
-| sandbox    | where I play around. Probably for bug repros |
-
-** Get it
-#+BEGIN_SRC bash :dir ~/.local/emacs/distros :mkdirp yes
-[ ! -d "/tmp/doom-emacs" ] \
-  && git clone "https://github.com/hlissner/doom-emacs" /tmp/doom-emacs
-
-for VARIANT in "${variants[@]}"; do
-    [ ! -d $VARIANT ] \
-        && cp -r /tmp/doom-emacs "doom-${VARIANT}"
-done
-
-ls
-#+END_SRC
-
-** Sync
-This step takes a while. I should probably try to run these in parallel
-#+BEGIN_SRC bash
-for VARIANT in "${variants[@]}"; do
-    doom-profile $VARIANT sync
-done
-#+END_SRC
-
-#+RESULTS:
-
-* Spacemacs
-** Get it
-#+BEGIN_SRC bash :dir ~/.local/emacs/distros
-[ ! -d "spacemacs" ] \
-    && git clone "https://github.com/syl20bnr/spacemacs" "spacemacs"
-
-ls
-#+END_SRC
-** Setup config
-#+BEGIN_SRC bash :dir ~/.local/emacs/configs
-[ ! -d "spacemacs" ] \
-    && mkdir "spacemacs"
-
-ls
-#+END_SRC
