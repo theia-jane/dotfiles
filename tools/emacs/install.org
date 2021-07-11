@@ -42,7 +42,7 @@ fi
 (with-temp-buffer
   (let* ((distro-dir "~/.local/emacs/distros")
          (config-dir "~/.local/emacs/configs")
-         (profiles `(("personal" . ((user-emacs-directory . ,(concat config-dir "/personal")))))))
+         (profiles `(("default" . ((user-emacs-directory . ,(concat config-dir "/personal")))))))
     (insert (pp-to-string profiles))
     (write-region (point-min) (point-max) "~/.emacs-profiles.el")))
 #+END_SRC
