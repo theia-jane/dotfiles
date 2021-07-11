@@ -768,7 +768,6 @@ From doom-emacs."
              (eval sexp))))
 #+end_src
 
-
 ** Commands
 :PROPERTIES:
 :header-args:elisp: :tangle commands-lib.el
@@ -880,6 +879,8 @@ for now it's not so complex.
                      ;; org-pdftools
                      php-mode
                      web-mode
+                     rustic
+                     racer
                      typescript-mode)
                    user-emacs-directory
                    t)
@@ -909,6 +910,7 @@ for now it's not so complex.
           ;; org-pdftools
           php-mode
           web-mode
+          rustic
 
           typescript-mode)
 
