@@ -6,12 +6,27 @@
 (provide 'config-searching)
 #+END_SRC
 
+* Info pages
+#+begin_src elisp 
+(after! consult 
+        (defun consult-info ()
+          (interactive)
+          (let ((consult-ripgrep-command (concat consult-ripgrep-command
+                                                 " -z"
+                                                 " -g **/*info -g **/info.gz"
+                                                 " -g **/*info-? -g **/*info-?.gz"
+                                                 " -g **/*info-?? -g **/*info-??.gz " 
+                                                 (mapconcat #'identity Info-directory-list " "))))
+            (consult-ripgrep "/usr/share/info/"))))
+#+end_src
 * Keymapping
 #+begin_src elisp
 (define-leader! search "H-/")
 (keymap! :search
          (:after consult
                  "/" #'consult-ripgrep
-                 "l" #'consult-line))
+                 "l" #'consult-line
+                 "i" #'consult-info))
 #+end_src
+
 
