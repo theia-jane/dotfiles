@@ -54,8 +54,9 @@ debugging, etc. Also executes BODY when the mode is entered.
 Just do basic setup for php
 #+begin_src elisp
 (setup-prog-mode php)
+(after! org 
+        (require 'ob-php))
 #+end_src
-
 
 * JavaScript / TypeScript 
 #+begin_src elisp
