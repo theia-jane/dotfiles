@@ -14,14 +14,17 @@
 * Keymapping
 #+begin_src elisp
 (define-leader! notes "H-n")
+(defmacro notes-cmd (&rest body)
+  `#'(lambda () (interactive)
+       (let ((default-directory notes/directory))
+         ,@body)))
+
 (keymap! :notes
-         "f" #'(lambda () (interactive)
-                 (setq this-command #'project-find-file) ;; help embark out
-                 (let ((default-directory notes/directory))
-                       (command-execute #'project-find-file)))
-         "d" #'(lambda () (interactive)
-                 (let ((default-directory notes/directory))
-                       (command-execute #'dired))))
+         "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
+                        (command-execute #'project-find-file))
+         "d" (notes-cmd (command-execute #'dired))
+         "/" (notes-cmd (command-execute #'consult-ripgrep))))
 #+end_src
+
 
 
