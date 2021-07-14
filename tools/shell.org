@@ -2,9 +2,9 @@
 #+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}
 #+STARTUP: overview
 
-* Profile
+* Environment variables
 :PROPERTIES:
-:header-args+: :tangle .profile
+:header-args+: :tangle .environment
 :END:
 #+BEGIN_SRC bash
 export OS="$(uname | tr "[A-Z]" "[a-z]")"
@@ -12,7 +12,6 @@ export notes="${HOME}/notes"
 export docs="${HOME}/Documents"
 export org="${HOME}/org"
 export p="${HOME}/Projects"
-
 export dot="$p/dotfiles"
 export cfg="${HOME}/.config"
 export lcl="${HOME}/.local"
@@ -25,21 +24,20 @@ export EMACSLOADPATH="${lcl}/emacs/site-lisp:${PERSONAL_EMACS_PACKAGES}"
 export CLICOLOR=1
 export GTAGSLABEL="pygments"
 
-PATHS=(
-    "${HOME}/bin"
-    "${HOME}/.local/bin"
-    "${dot}/bin"
-    "/usr/local/bin"
-    "/usr/bin"
-    "/bin"
-    "/usr/sbin"
-    "/sbin"
-    "${HOME}/miniconda3/bin"
-    "${cfg}/emacs/bin"
-    "${HOME}/.cargo/bin"
-    "/usr/bin/vendor_perl"
-)
-export PATH="$(IFS=':'; echo "${PATHS[*]}")"
+export PATH="$(echo -n \
+"${HOME}/bin
+${HOME}/.local/bin
+${dot}/bin
+/usr/local/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
+${HOME}/miniconda3/bin
+${cfg}/emacs/bin
+${HOME}/.cargo/bin
+/usr/bin/vendor_perl" \
+    | tr '\n' ':')"
 
 if [ ! -z "$(which emacsdclient)" ]; then
   EDITOR="emacsdclient -c"
@@ -51,16 +49,8 @@ if [ ! -z "$(which nvim)" ]; then
 fi
 
 export EDITOR="${EDITOR:-vim}"
-
-ENV_DIR="$cfg/env"
-if [ -d "${ENV_DIR}" ]; then
-  for env_file in $(ls "${ENV_DIR}"); do
-		source "${ENV_DIR}/${env_file}"
-	done
-fi
-
-SHELL_NAME="$(echo $SHELL | tr '/' ' ' | awk '{print $(NF)}')"
 #+END_SRC
+
 ** Tools
 *** go
 #+BEGIN_SRC bash
@@ -77,12 +67,21 @@ if [ -d "${HOME}/perl5" ]; then
   export PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"
 fi
 #+END_SRC
+*** latex
+#+BEGIN_SRC bash
+export TEXMFHOME="${cfg}/texmf"
+#+END_SRC
 *** rust
 #+BEGIN_SRC bash
 if [ ! -z "$(which rustc)" ]; then
   # rustup component add rust-src
   export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 fi
+#+END_SRC
+
+*** ocaml
+#+BEGIN_SRC bash
+test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 #+END_SRC
 *** ruby
 #+BEGIN_SRC bash
@@ -97,6 +96,23 @@ if [ -d "${HOME}/.gem/ruby" ]; then
     export PATH="${PATH}$(printf ':%s' ${HOME}/.gem/ruby/*/bin)"
 fi
 #+END_SRC
+* Profile
+:PROPERTIES:
+:header-args+: :tangle .profile
+:END:
+#+BEGIN_SRC bash
+. ~/.environment
+
+ENV_DIR="$cfg/env"
+if [ -d "${ENV_DIR}" ]; then
+  for env_file in $(ls "${ENV_DIR}"); do
+		source "${ENV_DIR}/${env_file}"
+	done
+fi
+
+SHELL_NAME="$(echo $SHELL | tr '/' ' ' | awk '{print $(NF)}')"
+#+END_SRC
+** Tools
 *** fzf
 #+BEGIN_SRC bash
 if [ -e "${HOME}/.fzf.${SHELL_NAME}" ]; then
@@ -113,10 +129,6 @@ fi
 export NVM_DIR="${HOME}/.nvm"
 [ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
 #+END_SRC
-*** ocaml
-#+BEGIN_SRC bash
-test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-#+END_SRC
 *** vterm
 #+BEGIN_SRC bash
 function vterm_printf(){
@@ -131,10 +143,6 @@ function vterm_printf(){
         printf "\e]%s\e\\" "$1"
     fi
 }
-#+END_SRC
-*** latex
-#+BEGIN_SRC bash
-export TEXMFHOME="${cfg}/texmf"
 #+END_SRC
 * Shells
 ** bash
