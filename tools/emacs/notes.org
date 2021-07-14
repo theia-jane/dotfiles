@@ -23,7 +23,7 @@
          "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
                         (command-execute #'project-find-file))
          "d" (notes-cmd (command-execute #'dired))
-         "/" (notes-cmd (command-execute #'consult-ripgrep))))
+         "/" (notes-cmd (command-execute #'consult-ripgrep)))
 #+end_src
 
 
