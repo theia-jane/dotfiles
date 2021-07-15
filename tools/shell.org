@@ -124,6 +124,14 @@ if [ -e "${HOME}/.fzf.${SHELL_NAME}" ]; then
     export FZF_DEFAULT_OPTS='--bind="ctrl-alt-a:select-all+accept,alt-a:select-all,alt-u:deselect-all,alt-u:deselect-all+accept,alt-enter:print-query"'
 fi
 #+END_SRC
+*** java
+#+begin_src bash
+export M2_HOME="/opt/maven"
+export M2="${M2_HOME}/bin"
+export MAVEN_OPTS="-Xms256m -Xmx512m"
+export PATH="$M2:$PATH"
+export PATH="$JAVA_HOME/bin:$PATH"
+#+end_src
 *** node
 #+BEGIN_SRC bash
 export NVM_DIR="${HOME}/.nvm"

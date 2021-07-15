@@ -303,6 +303,7 @@ Simply requiring this will make all of my globally installed packages available 
      helpful try magit
      eros yasnippet
      corfu 
+     org org-contrib
      orderless marginalia 
      consult embark embark-consult
      use-package f s async dash

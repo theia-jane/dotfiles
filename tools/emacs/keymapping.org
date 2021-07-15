@@ -373,6 +373,10 @@ this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=
 (defun hyper-ctrl-on-prefix (trigger-prefix target-prefix) 
   (keymap! :g trigger-prefix `(lambda ()
                       (interactive)
+                      (setq this-command nil)
+                      (when (eq evil-state 'insert)
+                        (let ((evil-no-display t))
+                          (evil-execute-in-normal-state)))
                       (hyper-ctrl-on-until-next-command)
                       (setq unread-command-events (listify-key-sequence (kbd ,target-prefix))))))
 
