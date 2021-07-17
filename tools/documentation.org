@@ -1,0 +1,6 @@
+#+TITLE: Documentation
+
+* Man
+#+begin_src bash :tangle ~/bin/eman :shebang #!/bin/bash
+emacsclient -nw --eval "(let ((Man-notify-method 'pushy)) (man \"$*\"))"
+#+end_src
