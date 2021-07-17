@@ -553,6 +553,20 @@ in which it is executed."
     (funcall fn context)))
 
 #+end_src
+** Security
+#+begin_src elisp
+(defadvice! org-babel-execute-silence-a (fn &rest args)
+  "Messages that are produced as a result of org-babel-execution
+are unwanted. This silences (entirely) both `message' and `print'.
+This is useful for security purposes.
+
+If you're missing output then look no further :)"
+  :around 'org-babel-execute-src-block
+  (cl-letf (((symbol-function 'message) #'format)
+            ((symbol-function 'print) #'identity))
+    (apply fn args)))
+#+end_src
+
 ** Footer
 #+begin_src elisp
 )
