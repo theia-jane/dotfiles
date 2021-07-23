@@ -572,14 +572,11 @@ endif
     ["autozimu/LanguageClient-neovim", {"branch": "next", "do": "bash install.sh"}]
   ],
   "nvim": [
-    "Shougo/deoplete.nvim",
-    "zchee/deoplete-zsh",
     "Shougo/neoinclude.vim",
     "mklabs/split-term.vim",
     "chemzqm/denite-git",
     "Shougo/dein.vim",
-    "Shougo/denite.nvim",
-    "beeender/Comrade"
+    "Shougo/denite.nvim"
   ],
   "ignored": [
     "vim-scripts/taglist.vim",
@@ -617,29 +614,6 @@ call denite#custom#alias('source', 'file_rec/git', 'file_rec')
 call denite#custom#var('file_rec/git', 'command',
 \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
-#+END_SRC
-*** deoplete
-#+BEGIN_SRC vimrc :tangle plugins/deoplete.vim
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#file#enable_buffer_path = 1
-
-let g:deoplete#sources = {}
-let g:deoplete#sources._ = ['ultisnips', 'buffer']
-let g:deoplete#sources.php = ['buffer', 'tag']
-let g:deoplete#sources.js = ['buffer', 'tag']
-
-" let g:min_pattern_length = 1
-" inoremap <expr> <CR>
-"     \ pumvisible() ? deoplete#mappings#close_popup() :
-"     \ "\<CR>"
-
-" Use tab instead
-" inoremap <silent><expr> <Tab>
-"     \ pumvisible() ? "\<C-n>" :
-"     \ deoplete#mappings#manual_complete()
-" inoremap <silent><expr> <S-Tab>
-"     \ pumvisible() ? "\<C-p>" :
-"     \ deoplete#mappings#manual_complete()
 #+END_SRC
 *** editorconfig
 #+BEGIN_SRC vimrc :tangle plugins/editorconfig.vim
