@@ -64,3 +64,14 @@ else
   rm -rf $TMP
 fi
 #+END_SRC
+
+#+begin_src bash :tangle ensure-line :shebang #!/bin/bash 
+FILE="$1"
+[ ! -f "$FILE" ] && echo "No file provided.." >&2 && exit 1
+
+while read line; do
+  if [ -z "$(fgrep "${line}" $FILE)" ]; then
+      echo "$line" >> $FILE
+  fi 
+done
+#+end_src
