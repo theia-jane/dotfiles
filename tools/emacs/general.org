@@ -107,13 +107,16 @@ fi
 
 succeeded_in_launching=false
 for try_n in $(seq $max_tries); do
-  if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
-    sleep $sleep_length
-    continue
+  if [ ! -z "$(pgrep -f 'emacs --daemon')" ]; then
+    (emacsclient "$@" > /dev/null) \
+        && succeeded_in_launching=true \
+        && break 
   fi
 
-  (emacsclient "$@" > /dev/null) && succeeded_in_launching=true
-  break
+  sleep $sleep_length
+  if [ "$try_n" = "15" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
+      notify-send -t 1000 "emacs daemon is starting..." 
+  fi 
 done
 
 if ! $succeeded_in_launching; then
