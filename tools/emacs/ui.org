@@ -27,9 +27,12 @@ Turn off the bell
 * Fonts
 #+begin_src elisp
 (let ((my-font (font-spec :family "Source Code Pro" :size 27)))
-  (if (find-font my-font)
-      (set-frame-font my-font nil t)
-    (set-frame-font (font-spec :size 27) nil t)))
+  (custom-set-faces
+   `(fixed-pitch ((t (:font
+                      ,(if (find-font my-font) my-font (font-spec :size 27))
+                      :weight unspecified
+                      :slant unspecified
+                      :width unspecified))))))
 #+end_src
 * Non-program buffers
 #+begin_src elisp
