@@ -877,6 +877,8 @@ for now it's not so complex.
                      gruvbox-theme
                      vertico
                      dap-mode
+                    (evil-org-mode :host github
+                                   :repo "Somelauw/evil-org-mode")
                      lsp-mode
 
                      ;; pdf-tools

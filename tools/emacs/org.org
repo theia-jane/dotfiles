@@ -32,7 +32,8 @@
   <<org/source-blocks>>
   <<org/extensions>>
   <<org/keybindings>>
-  <<org/crypt>>)
+  <<org/crypt>>
+  <<org/evil>>)
 #+END_SRC
 
 ** Org source blocks
@@ -95,6 +96,15 @@
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt"))
         org-crypt-key nil))
+#+end_src
+** Evil
+#+NAME: org/evil
+#+begin_src elisp
+(after! evil (require 'evil-org))
+(config! evil-org
+         (add-hook 'org-mode-hook 'evil-org-mode)
+         (evil-org-set-key-theme '(navigation insert textobjects additional calendar)))
+
 #+end_src
 * Latex
 :PROPERTIES:
