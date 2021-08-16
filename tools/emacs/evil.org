@@ -14,8 +14,11 @@
              evil-want-keybinding nil))
 
 (config! evil
-  (evil-mode))
+         (evil-mode))
 
 (config! (evil evil-collection)
-  (evil-collection-init))
+         (evil-collection-init))
+
+(config! (evil evil-surround)
+         (global-evil-surround-mode 1))
 #+end_src
