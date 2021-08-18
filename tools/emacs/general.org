@@ -885,6 +885,8 @@ for now it's not so complex.
                      evil-exchange
                      lsp-mode
 
+                     git-gutter-fringe
+
                      ;; pdf-tools
                      ;; org-pdftools
                      php-mode
@@ -918,6 +920,7 @@ for now it's not so complex.
           which-key
           helpful
 
+          git-gutter-fringe
           consult
 
           ;; pdf-tools
