@@ -50,6 +50,13 @@ debugging, etc. Also executes BODY when the mode is entered.
 
 #+end_src
 
+* Comments
+#+begin_src elisp
+(keymap!
+ (:after evil-nerd-commenter
+         :nv "gc" #'evilnc-comment-operator
+         :textobj "c" #'evilnc-inner-comment #'evilnc-outer-commenter))
+#+end_src
 * PHP 
 Just do basic setup for php
 #+begin_src elisp

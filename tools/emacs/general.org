@@ -881,6 +881,7 @@ for now it's not so complex.
                                     :repo "Somelauw/evil-org-mode")
                      evil-surround
                      evil-args
+                     evil-nerd-commenter
                      evil-exchange
                      lsp-mode
 
@@ -906,6 +907,7 @@ for now it's not so complex.
           evil-surround
           evil-args
           evil-exchange
+          evil-nerd-commenter
           eros
           magit
           orderless
