@@ -21,4 +21,12 @@
 
 (config! (evil evil-surround)
          (global-evil-surround-mode 1))
+
+(config! (evil evil-exchange)
+         (evil-exchange-install))
+
+(keymap!
+ (:after evil-args
+         :textobj "a" #'evil-inner-arg #'evil-outer-arg))
+
 #+end_src

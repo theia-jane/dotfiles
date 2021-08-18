@@ -880,6 +880,8 @@ for now it's not so complex.
                      (evil-org-mode :host github
                                     :repo "Somelauw/evil-org-mode")
                      evil-surround
+                     evil-args
+                     evil-exchange
                      lsp-mode
 
                      ;; pdf-tools
@@ -902,6 +904,8 @@ for now it's not so complex.
           evil
           evil-collection
           evil-surround
+          evil-args
+          evil-exchange
           eros
           magit
           orderless
