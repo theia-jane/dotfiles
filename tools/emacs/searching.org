@@ -6,19 +6,46 @@
 (provide 'config-searching)
 #+END_SRC
 
-* Info pages
+* Custom consult ripgrep functions
 #+begin_src elisp 
-(after! consult 
-        (defun consult-info ()
-          (interactive)
-          (let ((consult-ripgrep-command (concat consult-ripgrep-command
-                                                 " -z"
-                                                 " -g **/*info -g **/info.gz"
-                                                 " -g **/*info-? -g **/*info-?.gz"
-                                                 " -g **/*info-?? -g **/*info-??.gz " 
-                                                 (mapconcat #'identity Info-directory-list " "))))
-            (consult-ripgrep "/usr/share/info/"))))
+(defmacro def-consult-rg (name &rest plist)
+  (let ((directories (plist-get plist :directories))
+        (matches (plist-get plist :matches))
+        (options (plist-get plist :options)))
+  `(defun ,(intern (concat "consult-rg-" (symbol-name name))) ()
+     (interactive)
+     (let* ((directories ,(if (symbolp directories)
+                              directories
+                            (cons 'list directories)))
+           (default-directory (car directories))
+           (consult-ripgrep-command (concat consult-ripgrep-command
+                                            " "
+                                            (s-join " "  
+                                                    (append 
+                                                     ,(cons 'list options)
+                                                     (mapcar (apply-partially #'concat "-g ") ,(cons 'list matches))
+                                                     (cdr directories))))))
+       (command-execute #'consult-ripgrep)))))
+
+(def-consult-rg info
+  :directories Info-directory-list
+  :options ("-z")
+  :matches ("**/*info" "**/*info.gz"
+            "**/*info?" "**/*info?.gz"
+            "**/*info??" "**/*info??.gz"))
+
+(def-consult-rg emacs-lisp-src
+  :directories ((expand-file-name "~/.local/emacs/site-lisp/")
+                (substitute-in-file-name "$p/emacs-lisp-src/")
+                (expand-file-name "~/.local/emacs/site-lisp/")
+                "/usr/share/emacs/site-lisp/"
+                "")
+  :matches ("**/*.el" "**/README*" "**/*.org"))
+
+(def-consult-rg dotfiles 
+  :directories ((substitute-in-file-name "$dot")))
 #+end_src
+
 * Keymapping
 #+begin_src elisp
 (define-leader! search "H-/")
@@ -26,7 +53,8 @@
          (:after consult
                  "/" #'consult-ripgrep
                  "l" #'consult-line
-                 "i" #'consult-info))
+                 "i" #'consult-rg-info
+                 "e" #'consult-rg-emacs-lisp-src
+                 "d" #'consult-rg-dotfiles))
 #+end_src
-
 
