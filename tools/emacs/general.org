@@ -931,5 +931,8 @@ for now it's not so complex.
 
           typescript-mode)
 
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file)
+
 (load "~/.local.el" t)
 #+end_src
