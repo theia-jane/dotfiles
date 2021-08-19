@@ -931,7 +931,9 @@ for now it's not so complex.
 
           typescript-mode)
 
-(setq custom-file "~/.emacs-custom.el")
+;; Handle custom file
+(setq custom-file (expand-file-name "~/.emacs-custom.el"))
+(when (not (f-exists-p custom-file)) (f-touch custom-file))
 (load custom-file)
 
 (load "~/.local.el" t)
