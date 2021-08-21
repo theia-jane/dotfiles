@@ -27,6 +27,8 @@
 
 (keymap!
  (:after evil-args
-         :textobj "a" #'evil-inner-arg #'evil-outer-arg))
+         :textobj "a" #'evil-inner-arg #'evil-outer-arg)
+ (:after evil
+         :map evil-motion-state-map "RET" nil))
 
 #+end_src
