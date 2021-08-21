@@ -31,6 +31,7 @@
 
   <<org/source-blocks>>
   <<org/extensions>>
+  <<org/dwim>>
   <<org/keybindings>>
   <<org/crypt>>
   <<org/evil>>)
@@ -66,6 +67,30 @@
      (org/goto-next-src-block)
      (org-babel-execute-src-block)))
   (org/goto-next-src-block))
+#+end_src
+*** DWIM
+#+NAME: org/dwim
+#+begin_src elisp
+(require 'dwim)
+
+(defun org-element-context-skipping (skip-list)
+  (let ((context (org-element-context)))
+    (while (and context (memq (org-element-type context) skip-list))
+      (setq context (org-element-property :parent context)))
+    context))
+
+(def-dwim org-enter
+  :interactive ("P")
+  :applies-when (eq major-mode 'org-mode)
+  :let ((context (org-element-context-skipping
+                  '(verbatim code bold italic underline strike-through subscript superscript)))
+        (type (org-element-type context)))
+  :default #'dwim-undefined
+
+  :case (eq type 'link) (org-open-at-point arg)
+  :case (or (org-at-item-checkbox-p)
+            (org-element-property :checkbox (org-element-lineage context '(item) t)))
+  (org-toggle-checkbox arg))
 #+end_src
 ** Keybindings
 #+NAME: org/keybindings
