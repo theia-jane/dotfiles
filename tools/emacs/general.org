@@ -897,6 +897,13 @@ for now it's not so complex.
                    user-emacs-directory
                    t)
 
+(require! config-evil
+          evil
+          evil-collection
+          evil-surround
+          evil-args
+          evil-exchange
+          evil-nerd-commenter)
 
 (require! config-main
           auth-source-pass
@@ -904,12 +911,6 @@ for now it's not so complex.
           try
 
           embark
-          evil
-          evil-collection
-          evil-surround
-          evil-args
-          evil-exchange
-          evil-nerd-commenter
           eros
           magit
           orderless
