@@ -107,13 +107,16 @@ fi
 
 succeeded_in_launching=false
 for try_n in $(seq $max_tries); do
-  if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
-    sleep $sleep_length
-    continue
+  if [ ! -z "$(pgrep -f 'emacs --daemon')" ]; then
+    (emacsclient "$@" > /dev/null) \
+        && succeeded_in_launching=true \
+        && break 
   fi
 
-  (emacsclient "$@" > /dev/null) && succeeded_in_launching=true
-  break
+  sleep $sleep_length
+  if [ "$try_n" = "15" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
+      notify-send -t 1000 "emacs daemon is starting..." 
+  fi 
 done
 
 if ! $succeeded_in_launching; then
@@ -874,7 +877,15 @@ for now it's not so complex.
                      gruvbox-theme
                      vertico
                      dap-mode
+                     (evil-org-mode :host github
+                                    :repo "Somelauw/evil-org-mode")
+                     evil-surround
+                     evil-args
+                     evil-nerd-commenter
+                     evil-exchange
                      lsp-mode
+
+                     git-gutter-fringe
 
                      ;; pdf-tools
                      ;; org-pdftools
@@ -892,9 +903,13 @@ for now it's not so complex.
           gruvbox
           try
 
-          evil
           embark
+          evil
           evil-collection
+          evil-surround
+          evil-args
+          evil-exchange
+          evil-nerd-commenter
           eros
           magit
           orderless
@@ -905,6 +920,7 @@ for now it's not so complex.
           which-key
           helpful
 
+          git-gutter-fringe
           consult
 
           ;; pdf-tools
@@ -914,6 +930,11 @@ for now it's not so complex.
           rustic
 
           typescript-mode)
+
+;; Handle custom file
+(setq custom-file (expand-file-name "~/.emacs-custom.el"))
+(when (not (f-exists-p custom-file)) (f-touch custom-file))
+(load custom-file)
 
 (load "~/.local.el" t)
 #+end_src

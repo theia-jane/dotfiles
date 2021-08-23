@@ -10,9 +10,14 @@
 #+begin_src elisp
 (define-leader! git "H-g")
 
-(config! magit
-  (keymap! :git
-           "g" #'magit-status))
+(keymap!
+ (:after magit
+         :git
+         "g" #'magit-status)
+ (:after git-gutter-fringe
+         :nv "]c" #'git-gutter:next-hunk
+         :nv "[c" #'git-gutter:previous-hunk
+         :git "-" #'git-gutter:revert-hunk))
 
 (config! evil
   (add-hook 'git-commit-setup-hook #'evil-insert-state))

@@ -31,8 +31,10 @@
 
   <<org/source-blocks>>
   <<org/extensions>>
+  <<org/dwim>>
   <<org/keybindings>>
-  <<org/crypt>>)
+  <<org/crypt>>
+  <<org/evil>>)
 #+END_SRC
 
 ** Org source blocks
@@ -66,27 +68,55 @@
      (org-babel-execute-src-block)))
   (org/goto-next-src-block))
 #+end_src
+*** DWIM
+#+NAME: org/dwim
+#+begin_src elisp
+(require 'dwim)
+
+(defun org-element-context-skipping (skip-list)
+  (let ((context (org-element-context)))
+    (while (and context (memq (org-element-type context) skip-list))
+      (setq context (org-element-property :parent context)))
+    context))
+
+(def-dwim org-enter
+  :interactive ("P")
+  :applies-when (eq major-mode 'org-mode)
+  :let ((context (org-element-context-skipping
+                  '(verbatim code bold italic underline strike-through subscript superscript)))
+        (type (org-element-type context)))
+  :default #'dwim-undefined
+
+  :case (eq type 'link) (org-open-at-point arg)
+  :case (or (org-at-item-checkbox-p)
+            (org-element-property :checkbox (org-element-lineage context '(item) t)))
+  (org-toggle-checkbox arg))
+#+end_src
 ** Keybindings
 #+NAME: org/keybindings
 #+begin_src elisp
 (keymap! (:map org-mode-map
-          "<S-return>" #'org-ctrl-c-ctrl-c
-          :ni "<C-S-return>" #'org/eval-src-block-then-next
-          :n "M-i" #'org-edit-special
-          :ni "M-o" #'org-cleave)
-          (:after evil-org :map evil-org-mode-map
-           :ni "<C-S-return>" #'org/eval-src-block-then-next
-           ;; evil-org text objects
-           :vo "ae" #'evil-org-an-object
-           :vo "ie" #'evil-org-inner-object
-           :vo "aE" #'evil-org-an-element
-           :vo "iE" #'evil-org-inner-element
-           :vo "ir" #'evil-org-inner-greater-element
-           :vo "ar" #'evil-org-a-greater-element
-           :vo "aR" #'evil-org-a-subtree
-           :vo "iR" #'evil-org-inner-subtree)
+               "<S-return>" #'org-ctrl-c-ctrl-c
+               :ni "<C-S-return>" #'org/eval-src-block-then-next
+               :n "M-i" #'org-edit-special
+               :ni "M-o" #'org-cleave
+               "RET" nil
+               :n [return] #'org-enter-dwim
+               :n "RET" #'org-enter-dwim)
+
+         (:after evil-org :map evil-org-mode-map
+                 :ni "<C-S-return>" #'org/eval-src-block-then-next
+                 ;; evil-org text objects
+                 :vo "ae" #'evil-org-an-object
+                 :vo "ie" #'evil-org-inner-object
+                 :vo "aE" #'evil-org-an-element
+                 :vo "iE" #'evil-org-inner-element
+                 :vo "ir" #'evil-org-inner-greater-element
+                 :vo "ar" #'evil-org-a-greater-element
+                 :vo "aR" #'evil-org-a-subtree
+                 :vo "iR" #'evil-org-inner-subtree)
          (:map org-server-manager-mode-map
-          :desc "Open dired to remote" "C-c s" #'org-server-manager-ssh-connect))
+               :desc "Open dired to remote" "C-c s" #'org-server-manager-ssh-connect))
 #+end_src
 ** Crypt
 #+NAME: org/crypt
@@ -95,6 +125,15 @@
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt"))
         org-crypt-key nil))
+#+end_src
+** Evil
+#+NAME: org/evil
+#+begin_src elisp
+(after! evil (require 'evil-org))
+(config! evil-org
+         (add-hook 'org-mode-hook 'evil-org-mode)
+         (evil-org-set-key-theme '(navigation insert textobjects additional calendar)))
+
 #+end_src
 * Latex
 :PROPERTIES:
