@@ -1,6 +1,7 @@
 #+TITLE: Documentation
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/bin
 
 * Man
-#+begin_src bash :tangle ~/bin/eman :shebang #!/bin/bash
-emacsclient -nw --eval "(let ((Man-notify-method 'pushy)) (man \"$*\"))"
+#+begin_src bash :tangle eman :shebang #!/bin/bash
+emacsdclient -nw --eval "(let ((Man-notify-method 'pushy)) (man \"$*\"))"
 #+end_src
