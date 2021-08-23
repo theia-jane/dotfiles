@@ -25,18 +25,14 @@
                   (var-table (split-string var-table " "))
                   (table-ref (car var-table))
                   (resolved-table (org-babel-ref-resolve table-ref))
-                  (names-column (or (ignore-error
-                                        (string-to-number (nth 1 var-table)))
-                                    0))
-                  (values-column (or (ignore-error
-                                         (string-to-number (nth 2 var-table)))
-                                     1))
+                  (names-column (string-to-number (nth 1 var-table)))
+                  (values-column (string-to-number (nth 2 var-table)))
                   (var-params
                    (seq-filter
                     (lambda (x) (eq :var (car x)))
                     (org-babel-process-params
                      (mapcar (lambda (row)
-                               (cons :var (format "%s=%s"
+                               (cons :var (format "%s=\"%s\""
                                                   (nth names-column row)
                                                   (nth values-column row))))
                              resolved-table)))))
