@@ -27,7 +27,11 @@
 
   (require! org-edit
             org-navigate
-            org-server-manager)
+            org-server-manager
+            ob-var-table
+            ob-script-exec
+            ob-async
+            ob-restclient)
 
   <<org/source-blocks>>
   <<org/extensions>>
