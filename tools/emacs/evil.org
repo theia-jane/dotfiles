@@ -14,7 +14,8 @@
              evil-want-keybinding nil))
 
 (config! evil
-         (evil-mode))
+         (evil-mode)
+         (require! evil-register))
 
 (config! (evil evil-collection)
          (evil-collection-init))
