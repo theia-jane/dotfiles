@@ -891,6 +891,7 @@ for now it's not so complex.
                      ;; org-pdftools
                      php-mode
                      web-mode
+                     yaml-mode
                      rustic
                      racer
                      typescript-mode)
@@ -927,6 +928,7 @@ for now it's not so complex.
           ;; pdf-tools
           ;; org-pdftools
           php-mode
+          yaml-mode
           web-mode
           rustic
 
