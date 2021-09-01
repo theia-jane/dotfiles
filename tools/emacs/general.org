@@ -879,6 +879,11 @@ for now it's not so complex.
                      dap-mode
                      (evil-org-mode :host github
                                     :repo "Somelauw/evil-org-mode")
+                     (eaf :host github
+                          :repo "emacs-eaf/emacs-application-framework"
+                          :files ("*" "app")
+                          :post-build (("sed" "-i" "s/'sudo', 'pacman'/'yay'/" "install-eaf.py")
+                                       ("python" "install-eaf.py" "--install-all-apps")))
                      evil-surround
                      evil-args
                      evil-nerd-commenter
@@ -887,8 +892,6 @@ for now it's not so complex.
 
                      git-gutter-fringe
 
-                     ;; pdf-tools
-                     ;; org-pdftools
                      php-mode
                      web-mode
                      yaml-mode
@@ -905,6 +908,28 @@ for now it's not so complex.
           evil-args
           evil-exchange
           evil-nerd-commenter)
+
+(require! eaf
+          eaf-markdown-previewer
+         ;; eaf-mermaid
+          eaf-org-previewer
+          eaf-netease-cloud-music
+          eaf-file-sender
+          eaf-image-viewer
+          eaf-video-player
+          eaf-file-browser
+          eaf-music-player
+          eaf-system-monitor
+          eaf-vue-demo
+          eaf-airshare
+          eaf-mindmap
+          eaf-demo
+          eaf-pdf-viewer
+          eaf-jupyter
+          eaf-browser
+          eaf-file-manager
+          eaf-terminal
+          eaf-camera)
 
 (require! config-main
           auth-source-pass
@@ -925,8 +950,6 @@ for now it's not so complex.
           git-gutter-fringe
           consult
 
-          ;; pdf-tools
-          ;; org-pdftools
           php-mode
           yaml-mode
           web-mode
