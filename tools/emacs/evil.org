@@ -14,7 +14,8 @@
              evil-want-keybinding nil))
 
 (config! evil
-         (evil-mode))
+         (evil-mode)
+         (require! evil-register))
 
 (config! (evil evil-collection)
          (evil-collection-init))
@@ -32,3 +33,40 @@
          :map evil-motion-state-map "RET" nil))
 
 #+end_src
+** Next file 
+#+begin_src elisp
+;;; ]f / [f
+(defun evil--next-file (n)
+  (unless buffer-file-name
+    (user-error "Must be called from a file-visiting buffer"))
+  (let* ((directory (file-name-directory buffer-file-name))
+         (filename (file-name-nondirectory buffer-file-name))
+         (files (f-glob "[!.]*" (file-name-directory buffer-file-name)))
+         (index (cl-position filename files :test #'file-equal-p)))
+    (when (null index)
+      (user-error "Couldn't find this file in current directory"))
+    (let ((index (+ index n)))
+      (cond ((>= index (length files))
+             (user-error "No files after this one"))
+            ((< index 0)
+             (user-error "No files before this one"))
+            ((expand-file-name (nth index files) directory))))))
+
+;;;###autoload
+(defun evil/next-file (count)
+  "Open file following this one, alphabetically, in the same directory."
+  (interactive "p")
+  (find-file (evil--next-file count)))
+
+;;;###autoload
+(defun evil/previous-file (count)
+  "Open file preceding this one, alphabetically, in the same directory."
+  (interactive "p")
+  (find-file (evil--next-file (- count))))
+
+(keymap! 
+      :n  "]f"    #'evil/next-file
+      :n  "[f"    #'evil/previous-file)
+#+end_src
+
+#+RESULTS:
