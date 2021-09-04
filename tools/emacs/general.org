@@ -883,7 +883,13 @@ for now it's not so complex.
                           :repo "emacs-eaf/emacs-application-framework"
                           :files ("*" "app")
                           :post-build (("sed" "-i" "s/'sudo', 'pacman'/'yay'/" "install-eaf.py")
-                                       ("python" "install-eaf.py" "--install-all-apps")))
+                                       ("python" "install-eaf.py"
+                                        "--install"
+                                        "markdown-previewer"
+                                        "org-previewer"
+                                        "pdf-viewer"
+                                        "jupyter"
+                                        "browser")))
                      evil-surround
                      evil-args
                      evil-nerd-commenter
@@ -911,25 +917,10 @@ for now it's not so complex.
 
 (require! eaf
           eaf-markdown-previewer
-         ;; eaf-mermaid
           eaf-org-previewer
-          eaf-netease-cloud-music
-          eaf-file-sender
-          eaf-image-viewer
-          eaf-video-player
-          eaf-file-browser
-          eaf-music-player
-          eaf-system-monitor
-          eaf-vue-demo
-          eaf-airshare
-          eaf-mindmap
-          eaf-demo
           eaf-pdf-viewer
           eaf-jupyter
-          eaf-browser
-          eaf-file-manager
-          eaf-terminal
-          eaf-camera)
+          eaf-browser)
 
 (require! config-main
           auth-source-pass
