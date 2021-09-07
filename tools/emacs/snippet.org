@@ -4,5 +4,11 @@
 
 #+begin_src elisp
 (config! yasnippet
-         nil)
+         (add-to-list 'yas-snippet-dirs (substitute-env-vars "$dot/tools/emacs/snippets") 'append)
+         (yas-global-mode 1))
+#+END_SRC
+
+#+begin_src elisp
+(provide 'config-snippet)
 #+end_src
+
