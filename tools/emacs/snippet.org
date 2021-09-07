@@ -6,6 +6,28 @@
 (config! yasnippet
          (add-to-list 'yas-snippet-dirs (substitute-env-vars "$dot/tools/emacs/snippets") 'append)
          (yas-global-mode 1))
+
+(define-leader! snippet "H-s")
+(keymap! :snippet
+         :desc "New snippet" "n" #'yas-new-snippet 
+         :desc "Documentation" "d" #'yassnippet-docs
+         ;; :desc "Edit snippet" "e" #'+snippets/edit
+         ;; :desc "Make alias snippet" "a" #'+snippets/new-alias
+         ;; (:prefix ("f" . "find")
+         ;;          :desc "Find" "f" #'+snippets/find-for-current-mode
+         ;;          :desc "Find mine" "m" #'+snippets/find-private
+         ;;          :desc "Find all" "a" #'+snippets/find)
+)
+
+(defun yasnippet-docs ()
+  ""
+  (interactive)
+  (find-file
+   (concat
+    (file-name-directory
+     (file-truename
+      (locate-file "yasnippet.el" load-path)))
+    "doc/index.org")))
 #+END_SRC
 
 #+begin_src elisp
