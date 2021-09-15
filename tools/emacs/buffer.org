@@ -105,3 +105,10 @@ then it opens to the right.
     (funcall (default-value 'major-mode))
     (current-buffer)))
 #+end_src
+
+* Movement
+#+begin_src elisp
+(defadvice! buffer-movement--recenter-afterward (&rest _)
+  :after '(evil-ex-search)
+  (recenter nil t))
+#+end_src

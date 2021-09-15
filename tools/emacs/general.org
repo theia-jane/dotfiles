@@ -862,6 +862,7 @@ for now it's not so complex.
           config-file-management
           config-window
           config-tab
+          config-snippet
           config-searching
           config-notes
           config-processes
@@ -879,17 +880,6 @@ for now it's not so complex.
                      dap-mode
                      (evil-org-mode :host github
                                     :repo "Somelauw/evil-org-mode")
-                     (eaf :host github
-                          :repo "emacs-eaf/emacs-application-framework"
-                          :files ("*" "app")
-                          :post-build (("sed" "-i" "s/'sudo', 'pacman'/'yay'/" "install-eaf.py")
-                                       ("python" "install-eaf.py"
-                                        "--install"
-                                        "markdown-previewer"
-                                        "org-previewer"
-                                        "pdf-viewer"
-                                        "jupyter"
-                                        "browser")))
                      evil-surround
                      evil-args
                      evil-nerd-commenter
@@ -917,13 +907,6 @@ for now it's not so complex.
           evil-args
           evil-exchange
           evil-nerd-commenter)
-
-(require! eaf
-          eaf-markdown-previewer
-          eaf-org-previewer
-          eaf-pdf-viewer
-          eaf-jupyter
-          eaf-browser)
 
 (require! config-main
           auth-source-pass
