@@ -310,6 +310,7 @@ Simply requiring this will make all of my globally installed packages available 
      orderless marginalia 
      consult embark embark-consult
      use-package f s async dash
+     setup
      auto-minor-mode
     ))
 
@@ -359,6 +360,7 @@ Simply requiring this will make all of my globally installed packages available 
   (if (file-exists-p global-packages-cache-file)
       (global-packages/load-cache-file)
     (global-packages/install-packages))
+  (require 'setup)
   (require 'use-package)
   (require 'auto-minor-mode))
 
