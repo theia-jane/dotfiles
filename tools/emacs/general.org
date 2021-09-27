@@ -76,7 +76,6 @@ I think you can create a dump file that emacs can load up /quickly/ into memory.
 :header-args:bash: :shebang #!/bin/bash
 :header-args:elisp: :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 :END:
-
 ** Daemon
 #+BEGIN_SRC bash :tangle emacsd.start
 echo "Starting emacs daemon..." >> /tmp/emacsd.log
@@ -293,6 +292,10 @@ Simply requiring this will make all of my globally installed packages available 
 #+begin_src elisp :tangle global-packages.el
 (require 'package-utils)
 
+;; Make sure load path has all current dirs
+(update-repo-load-path)
+
+;; Packages to keey installed in one spot
 (global-packages!
  evil evil-collection which-key general
  helpful try magit
@@ -305,6 +308,7 @@ Simply requiring this will make all of my globally installed packages available 
  setup
  auto-minor-mode)
 
+;; Always loaded
 (require!
  setup
  use-package
@@ -312,7 +316,6 @@ Simply requiring this will make all of my globally installed packages available 
 
 (provide 'global-packages)
 #+end_src
-*** TODO make =global-packages/init= an autoloaded fn
 ** Global settings
 :PROPERTIES:
 :header-args:elisp: :tangle global-settings.el
@@ -357,9 +360,6 @@ cause a change in behavior.
 #+begin_src elisp
 (fset #'yes-or-no-p #'y-or-n-p)
 #+end_src
-
-#+RESULTS:
-: y-or-n-p
 
 ** Experiments
 :PROPERTIES:
