@@ -10,7 +10,7 @@ For me located at ~~/.local/emacs/site-lisp~, which is enabled via ~EMACSLOADPAT
 *** Repo packages
 For me located at ~$dot/tools/emacs/packages~, which is enabled via ~EMACSLOADPATH~
 *** User local "global" packages
-These packages are installed by =(global-packages/install-packages)= in ~~/.local/emacs/site-lisp/global-packages.el~ via =elpm=.
+These packages are installed by ~(require 'global-packages)~ found at ~~/.local/emacs/site-lisp/global-packages.el~ via =straight.el=.
 
 * Building emacs
 ** Init Repository
@@ -291,81 +291,24 @@ el $FORWARD_ARGS -mx "$1"
 ** Global packages
 Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
 #+begin_src elisp :tangle global-packages.el
-(require 'elpm)
-(require 'seq)
-(require 'info)
+(require 'package-utils)
 
-(defvar global-packages-dir
-  (expand-file-name "~/.local/emacs/site-lisp/"))
+(global-packages!
+ evil evil-collection which-key general
+ helpful try magit
+ eros yasnippet
+ corfu 
+ org org-contrib
+ orderless marginalia 
+ consult embark embark-consult
+ use-package f s async dash
+ setup
+ auto-minor-mode)
 
-(defvar global-packages-cache-file
-  (concat global-packages-dir "global-packages-cache.el"))
-
-(defvar global-packages-required-packages
-  '(evil evil-collection which-key general
-     helpful try magit
-     eros yasnippet
-     corfu 
-     org org-contrib
-     orderless marginalia 
-     consult embark embark-consult
-     use-package f s async dash
-     setup
-     auto-minor-mode
-    ))
-
-(defvar global-packages-load-path '())
-(defvar global-packages-Info-directory-list '())
-
-(defun global-packages/install-packages ()
-  (let ((old-load-path load-path)
-        (old-Info-directory-list Info-directory-list))
-    (elpm-use-packages global-packages-required-packages global-packages-dir t)
-    (global-packages/add-load-paths (seq-difference load-path old-load-path))
-    (global-packages/add-Info-directories (seq-difference Info-directory-list old-Info-directory-list))
-    (global-packages/save-cache-file)))
-
-(defun global-packages/save-cache-file ()
-  (with-temp-buffer
-    (insert (pp-to-string (list :load-path global-packages-load-path
-                                :info-directory-list global-packages-Info-directory-list)))
-    (write-region (point-min) (point-max) global-packages-cache-file)))
-
-(defun global-packages/load-cache-file ()
-  (let* ((file-name global-packages-cache-file)
-         (file-contents (when (file-exists-p file-name)
-                          (with-temp-buffer
-                            (insert-file-contents file-name)
-                            (buffer-string))))
-         (cache (and file-contents
-                     (not (equal file-contents ""))
-                     (car (read-from-string file-contents)))))
-    (when (listp cache)
-      (global-packages/add-Info-directories (plist-get cache :info-directory-list))
-      (global-packages/add-load-paths (plist-get cache :load-path)))))
-
-(defun global-packages/add-load-paths (load-path-additions)
-  (dolist (path load-path-additions)
-    (when (stringp path)
-      (add-to-list 'global-packages-load-path path)
-      (add-to-list 'load-path path))))
-
-(defun global-packages/add-Info-directories (info-directory-additions)
-  (dolist (path info-directory-additions)
-    (when (stringp path)
-      (add-to-list 'global-packages-Info-directory-list path)
-      (add-to-list 'Info-directory-list path))))
-
-(defun global-packages/init ()
-  (if (file-exists-p global-packages-cache-file)
-      (global-packages/load-cache-file)
-    (global-packages/install-packages))
-  (require 'setup)
-  (require 'use-package)
-  (require 'auto-minor-mode))
-
-;; Better to ignore any errors since this loaded in every emacs session
-(global-packages/init)
+(require!
+ setup
+ use-package
+ auto-minor-mode)
 
 (provide 'global-packages)
 #+end_src
@@ -432,8 +375,7 @@ this will provide a basic starting point for my emacs experiments.
 (setq experiment-directory (or (and (boundp 'experiment-directory)
                                     experiment-directory)
                                (make-temp-file "/tmp/emacs-experiment" t))
-      user-emacs-directory experiment-directory
-      elpm-directory experiment-directory)
+      user-emacs-directory experiment-directory)
 
 ;; Minimal setup
 (require! config-evil
@@ -449,7 +391,7 @@ this will provide a basic starting point for my emacs experiments.
           helpful)
 
 ;; Init packages
-(elpm-use-packages '())
+(packages!)
 #+END_SRC
 
 ** Personal lib
@@ -517,43 +459,8 @@ Taken from doom-emacs."
            (add-hook 'after-load-functions #',fn)))))
 #+END_SRC
 
+*** Hooks
 #+BEGIN_SRC elisp
-(defmacro require! (&rest requires)
-  `(dolist (rargs ',requires)
-     (apply #'require `,(enlist rargs))))
-#+END_SRC
-*** General helpers
-#+BEGIN_SRC elisp
-(defun unquote (exp)
-  "Return EXP unquoted."
-  (declare (pure t) (side-effect-free t))
-  (while (memq (car-safe exp) '(quote function))
-    (setq exp (cadr exp)))
-  exp)
-
-(defun enlist (exp)
-  "Return EXP wrapped in a list, or as-is if already a list.
-
-Note: excludes keymaps as 'lists'"
-  (declare (pure t) (side-effect-free t))
-  (if (and (listp exp)
-           (not (keymapp exp)))
-      exp
-    (list exp)))
-
-
-(defun keyword-intern (str)
-  "Converts STR (a string) into a keyword (`keywordp')."
-  (declare (pure t) (side-effect-free t))
-  (cl-check-type str string)
-  (intern (concat ":" str)))
-
-(defun keyword-name (keyword)
-  "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
-  (declare (pure t) (side-effect-free t))
-  (cl-check-type keyword keyword)
-  (substring (symbol-name keyword) 1))
-
 (defun resolve-hook-forms (hooks)
   "Converts a list of modes into a list of hook symbols.
 
@@ -587,9 +494,8 @@ list is returned as-is."
                     (list var val hook
                           (intern (format "--setq-%s-for-%s-h"
                                           var mode))))))
-#+END_SRC
-*** Hooks
-#+BEGIN_SRC elisp
+
+
 (defmacro add-hook-trigger! (hook-var &rest targets)
   "TODO"
   `(let ((fn (intern (format "%s-h" ,hook-var))))
@@ -876,31 +782,32 @@ for now it's not so complex.
 :END:
 
 #+begin_src elisp :tangle init.el
-(elpm-use-packages '(ob-async
-                     gruvbox-theme
-                     vertico
-                     dap-mode
-                     (evil-org-mode :host github
-                                    :repo "Somelauw/evil-org-mode")
-                     evil-surround
-                     evil-args
-                     evil-nerd-commenter
-                     evil-exchange
-                     lsp-mode
+(packages! ob-async
+           gruvbox-theme
+           vertico
+           dap-mode
+           (evil-org-mode :host github
+                          :repo "Somelauw/evil-org-mode")
+           evil-surround
+           evil-args
+           evil-nerd-commenter
+           evil-exchange
+           lsp-mode
 
-                     git-gutter-fringe
+           git-gutter-fringe
 
-                     php-mode
-                     web-mode
-                     yaml-mode
+           php-mode
+           web-mode
+           yaml-mode
 
-                     powershell
+           restclient
+           ob-restclient
 
-                     rustic
-                     racer
-                     typescript-mode)
-                   user-emacs-directory
-                   t)
+           powershell
+
+           rustic
+           racer
+           typescript-mode)
 
 (require! config-evil
           evil

@@ -3,25 +3,18 @@
 
 * Packages
 ** Local packages
-=~/.local/emacs/site-lisp= is the a desitnation I'm adding to my =EMACSLOADPATH=
+=~/.local/emacs/site-lisp= is the a destination I'm adding to my =EMACSLOADPATH=
 #+BEGIN_SRC bash :dir ~/.local/emacs
 [ ! -d site-lisp ] \
  && mkdir site-lisp
 #+END_SRC
 
-I don't think this will ever /technically/ need to be run -- files tangled in this directory will probably exist.
-** elpm
-=elpm= helps me manage packages from a context outside of particular emacs config.
-#+begin_src bash :dir ~/.local/src
-[ ! -d elpm ] \
-    && git clone https://github.com/tylerware/elpm
 
-[ ! -f "${HOME}/bin/elpm" ] \
-    && ln -s "$(pwd)/elpm/bin/elpm" "${HOME}/bin/elpm"
-
-[ ! -f "${HOME}/.local/emacs/site-lisp/elpm.el" ] \
-    && ln -s "$(pwd)/elpm/elpm.el" "${HOME}/.local/emacs/site-lisp/elpm.el"
-#+end_src
+** Straight 'global-packages'
+#+BEGIN_SRC bash :dir ~/.local/emacs
+[ ! -d site-lisp/global-packages ] \
+ && mkdir site-lisp/global-packages
+#+END_SRC
 * Chemacs
 [[https://github.com/plexus/chemacs2][Chemacs]] is a bootloader that lets me switch between various emacs configs. It's useful for experimenting and trying things out.
 #+BEGIN_SRC bash :dir ~/.config
