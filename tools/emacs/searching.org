@@ -12,21 +12,33 @@
   (let ((directories (plist-get plist :directories))
         (matches (plist-get plist :matches))
         (options (plist-get plist :options)))
-  `(defun ,(intern (concat "consult-rg-" (symbol-name name))) ()
-     (interactive)
-     (let* ((directories ,(if (symbolp directories)
-                              directories
-                            (cons 'list directories)))
-           (default-directory (car directories))
-           (consult-ripgrep-command (concat consult-ripgrep-command
-                                            " "
-                                            (s-join " "  
-                                                    (append 
-                                                     ,(cons 'list options)
-                                                     (mapcar (apply-partially #'concat "-g ") ,(cons 'list matches))
-                                                     (cdr directories))))))
-       (command-execute #'consult-ripgrep)))))
+    `(defun ,(intern (concat "consult-rg-" (symbol-name name))) ()
+       (interactive)
+       (let* ((directories ,(if (symbolp directories)
+                                directories
+                              (cons 'list directories)))
+              (default-directory (car directories))
+              (orig-builder (symbol-function 'consult--ripgrep-builder))
+              (extra-options (append 
+                              ,(cons 'list options)
+                              (cl-loop for opt in ,(cons 'list matches)
+                                       append (list "-g" opt))
+                              (cdr directories))))
+         (cl-letf (((symbol-function 'consult--ripgrep-builder)
+                    (lambda (input)
+                      (let ((results (funcall orig-builder input)))
+                        (plist-put results
+                                   :command
+                                   (append (plist-get results :command)
+                                           extra-options))))))
+           (command-execute #'consult-ripgrep))))))
 
+#+END_SRC
+
+** TODO Submit PR for the extra directories feature ^
+
+* RG Consult
+#+begin_src elisp 
 (def-consult-rg info
   :directories Info-directory-list
   :options ("-z")
