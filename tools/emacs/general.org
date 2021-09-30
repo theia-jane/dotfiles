@@ -730,10 +730,6 @@ Not sure this is the /best/ place for this, but it lives here for now
 (require 'config-ui)
 (require 'personal-lib)
 (require 'keymap)
-(defadvice! fuck-errors (fn &rest args)
-  "Fuck errors. Be quiet."
-  :around '(pdf-info-check-epdfinfo)
-  (ignore-errors (apply fn args)))
 #+END_SRC
 ** Config
 :PROPERTIES:
@@ -753,6 +749,7 @@ for now it's not so complex.
           config-auth
           config-buffer
           config-email
+          config-yank
           config-projects
           config-ui
           config-elisp

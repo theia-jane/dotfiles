@@ -1,0 +1,28 @@
+#+TITLE: Yank
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-yank.el
+
+#+begin_src elisp
+(provide 'config-yank)
+#+end_src
+* yank file
+#+begin_src elisp
+(defun yank-file-path (&optional root)
+  "Copy the current buffer's path to the kill ring."
+  (interactive)
+  (if-let (filename (or (buffer-file-name (buffer-base-buffer))
+                        (bound-and-true-p list-buffers-directory)))
+      (message "Copied path to clipboard: %s"
+               (kill-new (abbreviate-file-name
+                          (if root
+                              (file-relative-name filename root)
+                            filename))))
+    (error "Couldn't find filename in current buffer")))
+#+end_src
+* yank leader
+#+begin_src elisp
+(define-leader! yank "H-y")
+(keymap! :yank
+         "f" #'yank-file-path)
+#+end_src
+
