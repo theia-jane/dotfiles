@@ -16,7 +16,6 @@ and update them (if they are setup for that)
 I used doom for a while and a lot of my code comes from doom, so naturally, I want
 to reference it!
 #+CALL: git(SUBDIR="doom-emacs", REPO="https://github.com/hlissner/doom-emacs")
-
 ** Protesilaos Stavrou 
 I appreciate Prot's content and emacs chops.
 
@@ -29,9 +28,10 @@ rm -f protesilaos
 ln -s ~/Projects/protesilaos-dotfiles/emacs/.emacs.d protesilaos
 #+end_src
 
+#+RESULTS:
+
 ** Spacemacs
 #+CALL: git(SUBDIR="spacemacs", REPO="https://github.com/syl20bnr/spacemacs")
-
 ** abo-abo
 #+CALL: git(SUBDIR="abo-abo", REPO="https://github.com/abo-abo/oremacs")
 
@@ -44,9 +44,6 @@ ln -s ~/Projects/protesilaos-dotfiles/emacs/.emacs.d protesilaos
 
 ** jwiegley
 #+CALL: git(SUBDIR="jwiegley", REPO="https://github.com/jwiegley/dot-emacs")
-
-#+RESULTS:
-
 ** IvanMalison
 #+CALL: git(SUBDIR="IvanMalison", REPO="https://github.com/IvanMalison/dotfiles")
 
@@ -54,14 +51,20 @@ ln -s ~/Projects/protesilaos-dotfiles/emacs/.emacs.d protesilaos
 
 ** Joodie
 #+CALL: git(SUBDIR="joodie", REPO="https://github.com/joodie/emacs-literal-config")
-
-#+RESULTS:
-
 ** expez
 #+CALL: git(SUBDIR="expez", REPO="https://github.com/expez/.emacs.d")
-
-#+RESULTS:
-
+** Purcell
+#+CALL: git(SUBDIR="purcell", REPO="https://github.com/purcell/emacs.d")
+** Prelude
+#+CALL: git(SUBDIR="prelude", REPO="https://github.com/bbatsov/prelude")
+** Emacs Doom Themes
+#+CALL: git(SUBDIR="doom-themes", REPO="https://github.com/hlissner/emacs-doom-themes")
+** Cabbage
+#+CALL: git(SUBDIR="cabbage", REPO="https://github.com/senny/cabbage")
+** Centaur Emacs
+#+CALL: git(SUBDIR="centaur-emacs", REPO="https://github.com/seagle0128/.emacs.d")
+** Better Defaults
+#+CALL: git(SUBDIR="better-defaults", REPO="https://github.com/technomancy/better-defaults")
 * Lib
 #+NAME: git
 #+begin_src bash :var SUBDIR="" REPO="" :dir ~/Projects
