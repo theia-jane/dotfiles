@@ -23,6 +23,8 @@
 #+begin_src elisp
 (define-leader! yank "H-y")
 (keymap! :yank
-         "f" #'yank-file-path)
+         "f" #'yank-file-path
+         "r" #'browse-at-remote-kill
+         "h" #'browse-at-remote-kill-homepage)
 #+end_src
 

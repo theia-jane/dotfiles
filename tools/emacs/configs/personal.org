@@ -6,6 +6,7 @@
 (packages! ob-async
            gruvbox-theme
            vertico
+           browse-at-remote
            dap-mode
            (evil-org-mode :host github
                           :repo "Somelauw/evil-org-mode")
@@ -51,6 +52,7 @@
           embark
           eros
           magit
+          browse-at-remote
           orderless
           marginalia
           yasnippet
@@ -84,3 +86,4 @@
 #+begin_src elisp :tangle init.el
 (load "~/.local.el" t)
 #+end_src
+
