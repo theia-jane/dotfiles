@@ -1,4 +1,6 @@
-;;; ~/Projects/dotfiles/src/config/doom/+eval-context.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t; -*-
+(provide 'eval-context)
+(require 'personal-lib)
 
 (defvar eval-context-default-mode 'emacs-lisp-mode)
 
@@ -65,9 +67,7 @@
 
 (defun eval-context-set-buffer (&optional buffer)
   (interactive (list (eval-context-buffer-select)))
-  (setq eval-context-buffer (and buffer
-                                 (bufferp buffer)
-                                 (get-buffer buffer)))
+  (setq eval-context-buffer (and buffer (get-buffer buffer)))
   (eval-context-update-mode-maybe))
 
 (defun eval-context-update-mode-maybe ()
@@ -84,11 +84,11 @@
 (defun eval-context-buffer-select ()
   (let ((prompt (format "Choose context buffer%s: "
                         (if eval-context-buffer
-                            (format " (%s)" (buffer-name eval-context-buffer))))))
-    (ivy-read prompt #'internal-complete-buffer
-              :preselect (buffer-name (other-buffer (current-buffer))))))
+                            (format " (%s)" (buffer-name eval-context-buffer))
+                          ""))))
+    (completing-read prompt #'internal-complete-buffer)))
 
-(defun +open-elisp-repl-in-eval-context (&optional buffer)
+(defun open-elisp-repl-in-eval-context (&optional buffer)
   (interactive (list (current-buffer)))
-  (with-current-buffer (+emacs-lisp/open-repl)
-    (eval-context-set-buffer buffer)))
+  (ielm)
+  (eval-context-set-buffer buffer))

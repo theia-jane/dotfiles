@@ -7,15 +7,15 @@ Future me says I want it :P
 * DONE Kill elpm 
 Figure out a better pattern for global packages. Might drag some of elpm into my config, but for now.. kill it.
 * DONE Break out some of general.org
-* TODO Cleanup doom/ [0/18]
-** TODO Migrate doom/+bookmark.el to package
-** TODO Migrate doom/+c.el to config
+* STARTED Cleanup doom/ [4/18]
+** DONE Migrate doom/+bookmark.el to package
+** DONE Migrate doom/+c.el to config
 Prob need to install and require 'ob-C
-** TODO Migrate doom/+color.el to config 
+** DONE Migrate doom/+color.el to config 
 ** TODO Migrate doom/+dsl.el to package
 Not finished, so might just delete
 ** TODO Migrate doom/+eshell.el to config
-** TODO Migrate doom/+eval-context.el to package
+** DONE Migrate doom/+eval-context.el to package
 ** TODO Migrate doom/+files.el to config
 Looks like need to pull in doom/copy-this-file
 ** TODO Migrate doom/+helpful.el to config
