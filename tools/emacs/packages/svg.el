@@ -1,10 +1,11 @@
-;;; ~/Projects/dotfiles/src/config/doom/+svg.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t; -*-
+
+(provide 'svg)
 
 (require 'dash-functional)
 (require 's)
-
-(load! "+xml.el")
-(load! "+color.el")
+(require 'xml-lib)
+(require 'color-lib)
 
 (defun svg: (&rest args)
   "Create a svg string using ARGS.

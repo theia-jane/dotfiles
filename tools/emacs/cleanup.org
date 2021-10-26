@@ -7,27 +7,27 @@ Future me says I want it :P
 * DONE Kill elpm 
 Figure out a better pattern for global packages. Might drag some of elpm into my config, but for now.. kill it.
 * DONE Break out some of general.org
-* STARTED Cleanup doom/ [4/18]
+* DONE Cleanup doom/ [18/18]
 ** DONE Migrate doom/+bookmark.el to package
 ** DONE Migrate doom/+c.el to config
 Prob need to install and require 'ob-C
 ** DONE Migrate doom/+color.el to config 
-** TODO Migrate doom/+dsl.el to package
+** DONE Migrate doom/+dsl.el to package
 Not finished, so might just delete
-** TODO Migrate doom/+eshell.el to config
+** DONE Migrate doom/+eshell.el to config
 ** DONE Migrate doom/+eval-context.el to package
-** TODO Migrate doom/+files.el to config
+** DONE Migrate doom/+files.el to config
 Looks like need to pull in doom/copy-this-file
-** TODO Migrate doom/+helpful.el to config
-** TODO Migrate doom/+key.el to config
-** TODO Migrate doom/+magit.el to config
-** TODO Migrate doom/+notes.el to config
-** TODO Migrate doom/+org.el to config
-** TODO Migrate doom/packages.el to config
+** DONE Migrate doom/+helpful.el to config
+** DONE Migrate doom/+key.el to config
+** DONE Migrate doom/+magit.el to config
+** DONE Migrate doom/+notes.el to config
+** DONE Migrate doom/+org.el to config
+** DONE Migrate doom/packages.el to config
 Might not want any of the packages, but some of them were interesting, so might circle back
-** TODO Migrate doom/+pretty-stuff.el to config
-** TODO Migrate doom/+scheme.el to config
-** TODO Migrate doom/+svg.el to package
-** TODO Migrate doom/+ui.el to config
+** DONE Migrate doom/+pretty-stuff.el to config
+** DONE Migrate doom/+scheme.el to config
+** DONE Migrate doom/+svg.el to package
+** DONE Migrate doom/+ui.el to config
 I believe some of this has already been moved over, but would be good to verify
-** TODO Migrate doom/+xml.el to package
+** DONE Migrate doom/+xml.el to package
