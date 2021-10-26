@@ -6,7 +6,7 @@ Just kill it. I don't use it and it adds bloat
 Future me says I want it :P
 * DONE Kill elpm 
 Figure out a better pattern for global packages. Might drag some of elpm into my config, but for now.. kill it.
-* TODO Break out some of general.org
+* DONE Break out some of general.org
 * TODO Cleanup doom/ [0/18]
 ** TODO Migrate doom/+bookmark.el to package
 ** TODO Migrate doom/+c.el to config

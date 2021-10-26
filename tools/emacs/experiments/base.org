@@ -1,0 +1,34 @@
+#+TITLE: Base Experiment
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args:elisp :tangle experiment.el
+
+It's useful to perform experiments to learn new things. To be somewhat effective
+it's best to isolate variables and have a stable environment to do so. Hopefully
+this will provide a basic starting point for my emacs experiments.
+
+#+BEGIN_SRC elisp
+(provide 'experiment)
+(require 'global-packages)
+(setq experiment-directory (or (and (boundp 'experiment-directory)
+                                    experiment-directory)
+                               (make-temp-file "/tmp/emacs-experiment" t))
+      user-emacs-directory experiment-directory)
+
+;; Minimal setup
+(require! config-evil
+          evil
+
+          config-selection-completion
+          ivy
+          counsel
+          ivy-rich
+
+          config-introspection
+          which-key
+          helpful)
+
+;; Init packages
+(packages!)
+#+END_SRC
+
+
