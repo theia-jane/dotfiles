@@ -600,6 +600,14 @@ If you're missing output then look no further :)"
 
 #+RESULTS:
 
+** Tangle 
+Extended tangle is important as it allows more concise tangling
+#+BEGIN_SRC elisp 
+;; Possibly defer this on a command that gets run (like tangling)
+(require 'ob-extended-tangle)
+#+END_SRC
+
+
 ** Footer
 #+begin_src elisp
 )
