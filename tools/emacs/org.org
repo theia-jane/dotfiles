@@ -586,7 +586,7 @@ in which it is executed."
 #+end_src
 ** Security
 #+begin_src elisp
-(undefadvice! org-babel-execute-silence-a (fn &rest args)
+(defadvice! org-babel-execute-silence-a (fn &rest args)
   "Messages that are produced as a result of org-babel-execution
 are unwanted. This silences (entirely) both `message' and `print'.
 This is useful for security purposes.
