@@ -1,3 +1,4 @@
 src/config/systemd/user/default.target.wants
 .local
 tmp
+build

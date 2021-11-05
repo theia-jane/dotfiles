@@ -1,0 +1,13 @@
+#+TITLE: ob-lobx
+
+* ob-lob-cache
+Add cache to =org-babel-lob-ingest= to speed up ingesting multiple files. To use it:
+
+#+begin_src elisp
+(require 'ob-lob-cache)
+(setq ob-lob-cache-enabled t)
+(ob-lob-cache-store-init)
+#+end_src
+
+** TODO Add ingest messaging when using cache
+** TODO Add comments

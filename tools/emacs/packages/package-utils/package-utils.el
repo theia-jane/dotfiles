@@ -72,12 +72,19 @@
          `(straight-use-package ',recipe))
        recipes)))
 
-(defun update-repo-load-path ()
+(defun update-repo-load-path (&optional config-dir)
   (interactive)
   (add-all-to-list 'load-path
                    (seq-filter
                     #'file-directory-p
-                    (directory-files-recursively (substitute-env-vars "$dot/tools/emacs/packages") "" t))))
+                    (directory-files-recursively
+                     (concat 
+                      (or config-dir (substitute-env-vars "$dot"))
+                      "/tools/emacs/packages")
+                     ""
+                     t))))
+
+
 
 (provide 'package-utils)
 ;;; package-utils.el ends here

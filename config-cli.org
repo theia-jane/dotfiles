@@ -61,14 +61,31 @@ This project will exclusively utilize emacs org-mode's capability to tangle file
 We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
 #+BEGIN_SRC elisp
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
-(add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
 
-(require 'ob-tangle)
-(require 'ob-extended-tangle)
-(require 'ob-text-var-expansion)
-(require 'ob-load-namespaced-libraries)
-(require 'ob-var-table)
-(require 'notifications)
+(require 'package-utils
+         (concat config-root "tools/emacs/packages/package-utils/package-utils.el"))
+
+(update-repo-load-path)
+
+(require! ob-tangle
+          ob-extended-tangle
+          ob-text-var-expansion
+          ob-load-namespaced-libraries
+          ob-var-table
+          notifications)
+#+END_SRC
+
+Turn on using cache
+#+BEGIN_SRC elisp
+(require 'obt-cache)
+(setq obt-cache-enabled t
+      obt-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-tangle-cache.el"))
+(obt-cache-store-init)
+
+(require 'ob-lob-cache)
+(setq ob-lob-cache-enabled t
+      ob-lob-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-lob-cache.el"))
+(ob-lob-cache-store-init)
 #+END_SRC
 
 Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
