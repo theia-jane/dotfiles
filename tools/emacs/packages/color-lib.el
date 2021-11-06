@@ -1,8 +1,10 @@
-;;; ~/Projects/dotfiles/src/config/doom/+color.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t; -*-
+
+(provide 'color-lib)
 
 (require 'color)
+(require 'dash)
 
-;;; Color stuff
 (defun hex-to-rgb (hex)
   (when (equal "#" (substring hex 0 1))
     (setq hex (substring hex 1)))
@@ -15,7 +17,6 @@
         (/ (float num) 255))
       (-rpartial #'string-to-number 16))
       (list red green blue))))
-
 
 (defun hex-to-hsl (hex)
   (apply #'color-rgb-to-hsl

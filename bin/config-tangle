@@ -1,17 +1,33 @@
 #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;; [[file:../config-cli.org::*Tangle][Tangle:1]]
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
-(add-to-list 'load-path (concat config-root "tools/emacs/packages/"))
 
-(require 'ob-tangle)
-(require 'ob-extended-tangle)
-(require 'ob-text-var-expansion)
-(require 'ob-load-namespaced-libraries)
-(require 'ob-var-table)
-(require 'notifications)
+(require 'package-utils
+         (concat config-root "tools/emacs/packages/package-utils/package-utils.el"))
+
+(update-repo-load-path)
+
+(require! ob-tangle
+          ob-extended-tangle
+          ob-text-var-expansion
+          ob-load-namespaced-libraries
+          ob-var-table
+          notifications)
 ;; Tangle:1 ends here
 
 ;; [[file:../config-cli.org::*Tangle][Tangle:2]]
+(require 'obt-cache)
+(setq obt-cache-enabled t
+      obt-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-tangle-cache.el"))
+(obt-cache-store-init)
+
+(require 'ob-lob-cache)
+(setq ob-lob-cache-enabled t
+      ob-lob-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-lob-cache.el"))
+(ob-lob-cache-store-init)
+;; Tangle:2 ends here
+
+;; [[file:../config-cli.org::*Tangle][Tangle:3]]
 (setq org-babel-default-header-args `((:session         . "none")
                                       (:noweb           . "yes")
                                       (:root-dir        . ,config-root)
@@ -19,21 +35,21 @@
                                       (:tangle-relative . dir)
                                       (:tangle          . "no")
                                       (:comments        . "yes")))
-;; Tangle:2 ends here
+;; Tangle:3 ends here
 
-;; [[file:../config-cli.org::*Tangle][Tangle:3]]
+;; [[file:../config-cli.org::*Tangle][Tangle:4]]
 (setq org-confirm-babel-evaluate nil)
 (org-babel-do-load-languages 'org-babel-load-languages
     '((shell . t)
       (emacs-lisp . t)))
-;; Tangle:3 ends here
-
-;; [[file:../config-cli.org::*Tangle][Tangle:4]]
-(add-hook 'after-save-hook
-  'executable-make-buffer-file-executable-if-script-p)
 ;; Tangle:4 ends here
 
 ;; [[file:../config-cli.org::*Tangle][Tangle:5]]
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+;; Tangle:5 ends here
+
+;; [[file:../config-cli.org::*Tangle][Tangle:6]]
 (defun config-file-filter (file)
   (string-match
    (rx line-start
@@ -62,4 +78,4 @@
 (config-tangle)
 
 (kill-emacs 0)
-;; Tangle:5 ends here
+;; Tangle:6 ends here

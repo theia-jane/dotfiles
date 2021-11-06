@@ -423,6 +423,7 @@ Starred and \"displaymath\" environments are not numbered."
                               expand-body
                               prep-edit
                               prep-session
+                              default-header-args
                               header-args
                               lang
                               file-ext)
@@ -430,13 +431,23 @@ Starred and \"displaymath\" environments are not numbered."
   (unless execute
     (error "Must at least provide a babel execute function."))
 
-  `(let ((header-args ,header-args)
+  `(let ((default-header-args ,default-header-args)
+         (header-args ,header-args)
          (lang ,lang)
+         (expand-body ,expand-body)
          (file-ext ,file-ext))
 
      (defun ,(define-ob--make-symbol "org-babel-execute:%s" name)
          (body params)
        (funcall ,execute body params))
+
+     (when expand-body
+       (defun ,(define-ob--make-symbol "org-babel-expand-body:%s" name)
+         (body params)
+       (funcall expand-body body params)))
+     
+     (when default-header-args
+       (defvar ,(define-ob--make-symbol "org-babel-default-header-args:%s" name) default-header-args ""))
 
      (when header-args
        (defconst ,(define-ob--make-symbol "org-babel-header-args:%s" name) header-args ""))
@@ -446,28 +457,44 @@ Starred and \"displaymath\" environments are not numbered."
 
      (when file-ext
        (add-to-list 'org-babel-tangle-lang-exts (cons (symbol-name ',name) file-ext)))))
+#+END_SRC
 
+*** cat
+#+begin_src elisp
 (define-ob! cat
   :execute (lambda (body params)
              (format body))
   :lang "text")
-
-(use-package ob-async
-  :defer t)
-(defun ob-src-execute-by-method ()
-  "Choose how you want to execute the src block."
-  (interactive)
-  (let* ((element (org-element-at-point))
-         (element-type (org-element-type element)))
-    (when (eq element-type 'src-block)
-      (funcall-interactively
-       (let ((method (ivy-read "Execute: " (list "repl" "default" "async"))))
-         (cond
-          ((equal method "async") #'(lambda ()
-                                      (org-babel-execute-src-block nil nil '((:async "yes")))))
-          ((equal method "repl") #'+org/babel-eval-in-repl)
-          (t #'org-babel-execute-src-block)))))))
-#+END_SRC
+#+end_src
+*** setup.el
+#+begin_src elisp
+(define-ob! setup-el
+  :lang "emacs-lisp"
+  :execute (lambda (body params)
+    (org-babel-execute:emacs-lisp
+     (org-babel-expand-body:setup-el body params)
+     (list '(:lexical . "yes")
+           `,@(assoc-delete-all :lexical params))))
+  :expand-body (lambda (body params)
+                 (when-let ((setup (alist-get :setup params)))
+                   (let* ((keywords (mapcar #'car setup-macros))
+                          (setup-keywords (seq-filter (lambda (x) (memq (car x) keywords)) params))
+                          (setup-forms (mapcar (lambda (x)
+                                                 (list (car x)
+                                                       `,@(when-let ((form (cdr x)))
+                                                            (if (stringp form)
+                                                                (car (read-from-string form))
+                                                              form))))
+                                               setup-keywords)))
+                     (format
+                      (pp-to-string
+                       `(setup ,(if (stringp setup)
+                                    (car (read-from-string setup))
+                                  setup)
+                         ,@setup-forms
+                         %s))
+                      (org-babel-expand-body:emacs-lisp body params))))))
+#+end_src
 
 ** Allowed languages
 #+begin_src elisp
@@ -570,6 +597,16 @@ If you're missing output then look no further :)"
             ((symbol-function 'print) #'identity))
     (apply fn args)))
 #+end_src
+
+#+RESULTS:
+
+** Tangle 
+Extended tangle is important as it allows more concise tangling
+#+BEGIN_SRC elisp 
+;; Possibly defer this on a command that gets run (like tangling)
+(require 'ob-extended-tangle)
+#+END_SRC
+
 
 ** Footer
 #+begin_src elisp

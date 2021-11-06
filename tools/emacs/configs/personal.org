@@ -1,0 +1,89 @@
+#+TITLE: Personal
+#+PROPERTY: header-args :dir ${HOME}/.local/emacs/configs/personal :tangle-relative 'dir
+
+* Packages 
+#+begin_src elisp :tangle init.el
+(packages! ob-async
+           gruvbox-theme
+           vertico
+           browse-at-remote
+           dap-mode
+           (evil-org-mode :host github
+                          :repo "Somelauw/evil-org-mode")
+           evil-surround
+           evil-args
+           evil-nerd-commenter
+           evil-exchange
+           lsp-mode
+
+           git-gutter-fringe
+
+           php-mode
+           web-mode
+           yaml-mode
+
+           restclient
+           ob-restclient
+
+           powershell
+
+           rustic
+           racer
+           typescript-mode)
+
+#+END_SRC
+
+* Load
+#+begin_src elisp :tangle init.el
+(require! config-evil
+          evil
+          evil-collection
+          evil-surround
+          evil-args
+          evil-exchange
+          evil-nerd-commenter)
+
+(require! config-main
+          auth-source-pass
+          gruvbox
+          try
+
+          powershell
+          embark
+          eros
+          magit
+          browse-at-remote
+          orderless
+          marginalia
+          yasnippet
+          corfu
+          vertico
+          which-key
+          helpful
+
+          git-gutter-fringe
+          consult
+
+          php-mode
+          yaml-mode
+          web-mode
+          rustic
+
+          typescript-mode)
+
+#+END_SRC
+
+* Handle custom file
+#+begin_src elisp :tangle init.el
+(setq custom-file (expand-file-name "~/.emacs-custom.el"))
+(when (not (f-exists-p custom-file)) (f-touch custom-file))
+(load custom-file)
+
+
+#+END_SRC
+
+* Load local 
+#+begin_src elisp :tangle init.el
+(load "~/.local.el" t)
+#+end_src
+

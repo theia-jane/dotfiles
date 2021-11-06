@@ -1,6 +1,85 @@
 #+TITLE: elisp
 #+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
 
+* Examples
+:PROPERTIES:
+:header-args:bash: :dir ~/Projects/emacs-lisp-src :mkdirp t :tangle no
+:END:
+
+Finding examples of what other's are doing is always useful to me. Generally,
+I have a search function =#'consult-rg-emacs-lisp-src=, which will search various
+folders for emacs-lisp files. One of these is a 'third-party' style folder, which I
+will maintain here. Run =C-c C-v s= to execute this subtree to set them all up
+and update them (if they are setup for that)
+
+** Doom emacs
+I used doom for a while and a lot of my code comes from doom, so naturally, I want
+to reference it!
+#+CALL: git(SUBDIR="doom-emacs", REPO="https://github.com/hlissner/doom-emacs")
+** Protesilaos Stavrou 
+I appreciate Prot's content and emacs chops.
+
+To start pull down all of his dotfiles
+#+CALL: git[:dir ~/Projects](SUBDIR="protesilaos-dotfiles", REPO="https://gitlab.com/protesilaos/dotfiles")
+
+Then include the emacs-lisp parts
+#+begin_src bash 
+rm -f protesilaos
+ln -s ~/Projects/protesilaos-dotfiles/emacs/.emacs.d protesilaos
+#+end_src
+
+#+RESULTS:
+
+** Spacemacs
+#+CALL: git(SUBDIR="spacemacs", REPO="https://github.com/syl20bnr/spacemacs")
+** abo-abo
+#+CALL: git(SUBDIR="abo-abo", REPO="https://github.com/abo-abo/oremacs")
+
+#+RESULTS:
+
+** Howard Abrams
+#+CALL: git(SUBDIR="howardabrams", REPO="https://github.com/howardabrams/dot-files")
+
+#+RESULTS:
+
+** jwiegley
+#+CALL: git(SUBDIR="jwiegley", REPO="https://github.com/jwiegley/dot-emacs")
+** IvanMalison
+#+CALL: git(SUBDIR="IvanMalison", REPO="https://github.com/IvanMalison/dotfiles")
+
+#+RESULTS:
+
+** Joodie
+#+CALL: git(SUBDIR="joodie", REPO="https://github.com/joodie/emacs-literal-config")
+** expez
+#+CALL: git(SUBDIR="expez", REPO="https://github.com/expez/.emacs.d")
+** Purcell
+#+CALL: git(SUBDIR="purcell", REPO="https://github.com/purcell/emacs.d")
+** Prelude
+#+CALL: git(SUBDIR="prelude", REPO="https://github.com/bbatsov/prelude")
+** Emacs Doom Themes
+#+CALL: git(SUBDIR="doom-themes", REPO="https://github.com/hlissner/emacs-doom-themes")
+** Cabbage
+#+CALL: git(SUBDIR="cabbage", REPO="https://github.com/senny/cabbage")
+** Centaur Emacs
+#+CALL: git(SUBDIR="centaur-emacs", REPO="https://github.com/seagle0128/.emacs.d")
+** Better Defaults
+#+CALL: git(SUBDIR="better-defaults", REPO="https://github.com/technomancy/better-defaults")
+* Lib
+#+NAME: git
+#+begin_src bash :var SUBDIR="" REPO="" :dir ~/Projects
+[ -z "$REPO" -o -z "$SUBDIR" ] && exit
+
+if [ ! -d $SUBDIR ]; then 
+    git clone $REPO $SUBDIR
+else
+    cd $SUBDIR
+    git pull
+fi
+#+end_src
+
+#+RESULTS: git
+
 * Extras
 :PROPERTIES:
 :header-args+: :tangle config-elisp.el

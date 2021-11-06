@@ -1,0 +1,30 @@
+#+TITLE: obtx
+
+* obt-cache
+Add 'cache' to =org-babel-tangle= to speed up tangling. This looks at the hash of
+the file being tangled and doesn't re-tangle if the hash matches what's in the
+'cache'. This isn't a true cache, because it doesn't retangle.. it mostly is a shortcut
+to guess which files don't need to be tangled.
+
+To use it:
+#+begin_src elisp
+(require 'obt-cache)
+(setq obt-cache-enabled t)
+(obt-cache-store-init)
+#+end_src
+
+The cache file =obt-cache-record.el= lives in your config dir.
+
+** TODO reverse tangle problem
+- do the dest files look like the ones prev tangled? 
+- or maybe just mtime check?
+** TODO partial file cache / tangle
+- if larger than a certain size?
+- leverage git (vc)?
+- subtree hashing?
+** TODO take into account ref dependencies
+** TODO beyond?? take into account
+- system vars
+- dest files? (good idea, but probably not part of this)  
+** TODO Add tangle messaging when using cache
+** TODO Add comments

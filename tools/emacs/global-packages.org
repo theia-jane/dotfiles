@@ -1,0 +1,31 @@
+#+TITLE: Global Packages
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp 
+
+Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
+#+begin_src elisp :tangle global-packages.el
+(require 'package-utils)
+
+;; Make sure load path has all current dirs
+(update-repo-load-path)
+
+;; Packages to keey installed in one spot
+(global-packages!
+ evil evil-collection which-key general
+ helpful try magit
+ eros yasnippet
+ corfu 
+ org org-contrib
+ orderless marginalia 
+ consult embark embark-consult
+ use-package f s async dash
+ setup
+ auto-minor-mode)
+
+;; Always loaded
+(require!
+ setup
+ use-package
+ auto-minor-mode)
+
+(provide 'global-packages)
+#+end_src

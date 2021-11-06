@@ -1,0 +1,212 @@
+#+TITLE: Scripts
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/bin
+#+PROPERTY: header-args:elisp :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
+#+PROPERTY: header-args:bash :shebang #!/bin/bash
+
+* Daemon
+#+BEGIN_SRC bash :tangle emacsd.start
+echo "Starting emacs daemon..." >> /tmp/emacsd.log
+emacs --daemon >> /tmp/emacsd.log 2>&1 &
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsd.stop
+echo "Stopping emacs daemon..." >> /tmp/emacsd.log
+
+(emacsdclient -e "(kill-emacs)"; \
+  pkill ^emacs$) >> /tmp/emacsd.log 2>&1
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsd.restart
+emacsd.stop
+emacsd.start
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsdclient
+# Wait a max of 100s
+sleep_length="0.1s"
+max_tries=1000
+
+# If there is no daemon.. let's try to get it started and then launch the client
+if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
+  emacsd.start
+fi
+
+succeeded_in_launching=false
+for try_n in $(seq $max_tries); do
+  if [ ! -z "$(pgrep -f 'emacs --daemon')" ]; then
+    (emacsclient "$@" > /dev/null) \
+        && succeeded_in_launching=true \
+        && break 
+  fi
+
+  sleep $sleep_length
+  if [ "$try_n" = "15" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
+      notify-send -t 1000 "emacs daemon is starting..." 
+  fi 
+done
+
+if ! $succeeded_in_launching; then
+  echo 'Error: emacs daemon had an issue starting up.' 1>&2
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle emacsdclient-bg
+d emacsdclient "$@"
+#+END_SRC
+* Launch
+#+BEGIN_SRC bash :tangle i3.dd.emacs
+# Toggle floating emacs frame in i3, or start if non-existing.
+
+name='Dropdown: Emacs'
+if [ ! -z "$@" ]; then
+  name="${name} ($(echo "$@" | md5sum | cut -f1 -d' '))"
+fi
+
+if xwininfo -tree -root | grep "\"${name}\": (";
+then
+	echo "Window detected."
+	i3-msg "[title=\"^${name}\"] scratchpad show"
+else
+	echo "Window not detected... spawning."
+  emacsdclient -c -F '((width . 120) (height . 40) (name . "'"$name"'"))' "$@"
+fi
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle dired
+DIR="${1:-$(pwd)}"
+emacsdclient-bg -ce \
+"
+(progn
+ (dired \"$DIR\"))
+"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle magit
+el "(magit)"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.f
+el "(counsel-find-file)"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle e.emacs
+files_to_edit="$@"
+if [ -z "$files_to_edit" ]; then
+  files_to_edit="."
+fi
+
+dir=""
+lisp=""
+for file_name in $files_to_edit; do
+  # Resolve file name (expand env vars and deal with tilda)
+  file_name="$(expand-file-name "$file_name")"
+
+  if [ -d "$file_name" ]; then
+    dir="$file_name"
+    lisp="
+(if (projectile-project-p)
+  (+ivy/projectile-find-file)
+  (counsel-find-file))) "
+    break;
+  fi
+
+  lisp+='(find-file "'$file_name'")'
+done
+
+lisp="(progn ${lisp})"
+
+if [ ! -z "$dir" ]; then
+  cd "$dir"
+fi
+emacsdclient-bg -c -e "$lisp"
+#+END_SRC
+
+#+begin_src bash :tangle emacs-from-dir
+# To work this requires a version of chemacs that allows for loading the config from the CLI
+DIR="$1"
+shift
+[ -d "$DIR" ] \
+    && emacs --with-profile '((user-emacs-directory . "'$DIR'"))' $@
+#+end_src
+
+#+BEGIN_SRC bash :tangle try-emacs-config :comments no
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+(require 'url)
+(defconst repos-dir "/tmp/emacs-try")
+
+(defun ensure-repos-dir ()
+  "Make sure the repos dir exists"
+  (or (file-exists-p repos-dir)
+      (mkdir repos-dir t)))
+
+(defun get-repo-link ()
+  (let ((link (with-temp-buffer
+                (shell-command "v" (current-buffer))
+                (url-get-url-at-point (point-min)))))
+    (or link "")))
+
+(defun get-repo-name (repo-link)
+  (save-match-data
+    (and (string-match "\\([^/]+\\)*/\\([^/]+\\)$" repo-link)
+         (format "%s__%s" (match-string 1 repo-link) (match-string 2 repo-link)))))
+
+(when-let ((repo-link (get-repo-link)))
+        (ensure-repos-dir)
+        (let ((default-directory repos-dir)
+              (repo-name (get-repo-name repo-link)))
+          (unless (file-exists-p repo-name)
+                (shell-command-to-string (format "git clone %s %s" repo-link repo-name)))
+          (shell-command-to-string (format "d emacs-from-dir %s" repo-name))))
+#+end_src
+
+* Eval
+#+BEGIN_SRC bash :tangle el
+EXTRA_PARAMS=""
+NO_FRAME="false"
+CALL_INTERACTIVELY="false"
+while true; do
+  case "$1" in
+    -nf|--no-frame)
+      NO_FRAME="true"
+      shift 1
+      ;;
+    -mx)
+      CALL_INTERACTIVELY="true"
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+if [ "${CALL_INTERACTIVELY}" = "true" ]; then
+  ELISP="(funcall-interactively #'${1})"
+else
+  ELISP="$@"
+fi
+
+
+if [ "${NO_FRAME}" = "false" ]; then
+  EXTRA_PARAMS+="-c "
+fi
+
+emacsdclient-bg $EXTRA_PARAMS -e "${ELISP}"
+#+END_SRC
+
+#+BEGIN_SRC bash :tangle mx
+FORWARD_ARGS=""
+while true; do
+  case "$1" in
+    -nf|--no-frame)
+      FORWARD_ARGS+="$1 "
+      shift 1
+      ;;
+      *)
+      break
+      ;;
+  esac
+done
+
+el $FORWARD_ARGS -mx "$1"
+#+END_SRC
