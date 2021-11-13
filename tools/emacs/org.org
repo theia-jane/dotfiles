@@ -135,6 +135,7 @@
 #+begin_src elisp
 (after! evil (require 'evil-org))
 (config! evil-org
+         (setq evil-org-use-additional-insert t)
          (add-hook 'org-mode-hook 'evil-org-mode)
          (evil-org-set-key-theme '(navigation insert textobjects additional calendar)))
 
