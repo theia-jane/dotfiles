@@ -1,0 +1,9 @@
+#+TITLE: Zathura
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.config/zathura :tangle zathurarc
+
+By default zathura isn't using the system clipboard, so let's enable that
+#+begin_src conf
+set selection-clipboard clipboard
+#+end_src
+
+Possibly [[https://unix.stackexchange.com/questions/524360/copying-the-filename-to-clipboard-in-zathura][look]] at adding a binding to copy the file path.
