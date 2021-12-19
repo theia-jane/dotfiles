@@ -21,6 +21,8 @@
            php-mode
            web-mode
            yaml-mode
+           
+           bookmark-view
 
            restclient
            ob-restclient
