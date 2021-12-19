@@ -1,0 +1,24 @@
+#+TITLE: Bookmark
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-bookmark.el
+
+#+begin_src elisp
+(provide 'config-bookmark)
+#+end_src
+
+* Packages
+#+begin_src elisp 
+(require! bookmark-view
+          bookmark-extras)
+#+end_src
+* Keymap
+#+begin_src elisp 
+(define-leader! bookmark "H-d") ;; copying bookmark association from firefox
+(keymap! :bookmark
+         :desc "Save" "s" #'bookmark-save
+         :desc "Load" "l" #'bookmark-load
+         :desc "Find" "f" #'bookmark-jump
+         :desc "Bookmark Edit" "e" #'bookmark-bmenu-list ;; Handy for managing bookmarks
+         :desc "New" "n" #'bookmark-set)
+         
+#+end_src

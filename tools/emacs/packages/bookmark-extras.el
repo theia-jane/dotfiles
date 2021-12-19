@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
+(provide 'bookmark-extras)
+
 (defvar bookmark-org-store-link-modes nil "")
 
 (defun bookmark-org--get-record (bookmark-record-or-name)
