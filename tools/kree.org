@@ -58,6 +58,7 @@ global:
       t: d config-tangle
     b:
       j: xbacklight -dec 10
+      m: xbacklight -set 1 
       k: xbacklight -inc 10
     v:
       j: volume -5
