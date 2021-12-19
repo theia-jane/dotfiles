@@ -8,7 +8,7 @@
 ** Homework
 #+BEGIN_SRC latex :tangle homework/homework.sty
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{homework}[Tyler Ware's Homework Package]
+\ProvidesPackage{homework}[Theia Ware's Homework Package]
 
 \RequirePackage[usenames]{color}
 \RequirePackage[utf8]{inputenc}
@@ -74,7 +74,7 @@
 ** Shortcuts
 #+begin_src latex :tangle shorthand/shorthand.sty
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{shorthand}[Tyler Ware's shorthand]
+\ProvidesPackage{shorthand}[Theia Ware's shorthand]
 
 \RequirePackage{
   amssymb,
@@ -118,7 +118,7 @@
 ** TikZ config
 #+begin_src latex :tangle tikz-config/tikz-config.sty
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-config}[Tyler Ware's tikz configuration]
+\ProvidesPackage{tikz-config}[Theia Ware's tikz configuration]
 
 \RequirePackage{tikz}
 
@@ -134,7 +134,7 @@
 ** Org Mode hacks
 #+BEGIN_SRC latex :tangle orgmode-hacks/orgmode-hacks.sty
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{orgmode-hacks}[Tyler Ware's Org Mode hacks]
+\ProvidesPackage{orgmode-hacks}[Theia Ware's Org Mode hacks]
 
 \RequirePackage{paracol}
 

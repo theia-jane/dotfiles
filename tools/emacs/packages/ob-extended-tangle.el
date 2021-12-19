@@ -1,8 +1,8 @@
 ;;; ob-extended-tangle.el --- extend ob header args -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2020 Tyler Ware
+;; Copyright (C) 2020 Theia Ware
 ;;
-;; Author: Tyler Ware
+;; Author: Theia Ware
 ;; Created: August 16, 2020
 ;; Modified: August 16, 2020
 ;; Version: 0.0.1
