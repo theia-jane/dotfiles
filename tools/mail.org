@@ -259,7 +259,7 @@ I borrowed an awful lot of this config from doom-emacs to get me started.
 #+BEGIN_SRC elisp
 (setq mu4e-contexts `(,(make-mu4e-context
                         :name "personal"
-                        :vars '((user-full-name         . "Tyler Ware")
+                        :vars '((user-full-name         . "Theia Ware")
                                 (user-mail-address      . "<<personal-email-address()>>")
                                 (smtpmail-smtp-user     . "<<personal-email-address()>>")
                                 (smtpmail-smtp-server   . "smtp.gmail.com")
@@ -268,10 +268,10 @@ I borrowed an awful lot of this config from doom-emacs to get me started.
                                 (mu4e-drafts-folder     . "/gmail/Drafts")
                                 (mu4e-refile-folder     . "/gmail/All Mail")
                                 (mu4e-trash-folder      . "/gmail/Trash")
-                                (mu4e-compose-signature . "Tyler Ware")))
+                                (mu4e-compose-signature . "Theia Ware")))
                       ,(make-mu4e-context
                         :name "school"
-                        :vars '((user-full-name         . "Tyler Ware")
+                        :vars '((user-full-name         . "Theia Ware")
                                 (user-mail-address      . "<<school-email-address()>>")
                                 (smtpmail-smtp-user     . "<<school-email-address()>>")
                                 (smtpmail-smtp-server   . "smtp.gmail.com")
@@ -280,7 +280,7 @@ I borrowed an awful lot of this config from doom-emacs to get me started.
                                 (mu4e-drafts-folder     . "/school/Drafts")
                                 (mu4e-refile-folder     . "/school/All Mail")
                                 (mu4e-trash-folder      . "/school/Trash")
-                                (mu4e-compose-signature . "Tyler Ware")))
+                                (mu4e-compose-signature . "Theia Ware")))
                       ))
 #+END_SRC
 ** Behavior

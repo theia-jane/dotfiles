@@ -1,9 +1,9 @@
 #+TITLE: Personal Details
 
 #+NAME: contact-info
-| Full Name       | Tyler Ware               |
-| Email           | tyler.ware.777@gmail.com |
-| Github Username | tylerware                |
+| Full Name       | Theia Ware             |
+| Email           | theia.j.ware@gmail.com |
+| Github Username | theia-jane             |
 
 #+NAME: contact
 #+BEGIN_SRC elisp :var field='nil :noweb yes

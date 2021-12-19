@@ -1,6 +1,6 @@
 ;;; ob-load-namespaced-libraries.el --- Allows importing of namespaced babel libraries -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2020 Tyler Ware
+;; Copyright (C) 2020 Theia Ware
 ;;
 ;; Created: August 18, 2020
 ;; Modified: August 18, 2020

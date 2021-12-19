@@ -5,7 +5,7 @@
 # condition: t                   
 # --
 #+TITLE: ${1:`(if-let ((file-name (buffer-file-name))) (file-name-base file-name) "Homework")`}
-#+AUTHOR: Tyler Ware
+#+AUTHOR: Theia Ware
 #+LATEX_HEADER: \usepackage{homework}
 
 $0
