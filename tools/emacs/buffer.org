@@ -22,7 +22,8 @@
                   (rename-buffer name)))
         "e" #'erase-buffer
         "R" #'revert-buffer
-        "n" #'new-buffer-open)
+        "n" #'new-buffer-open
+        "m" #'buffer-menu)
 
 (define-leader! insert "H-i")
 (keymap! :insert
