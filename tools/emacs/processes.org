@@ -9,21 +9,3 @@
 
 #+end_src
 
-
-#+begin_src elisp :tangle process-helpers.el
-(provide 'process-helpers)
-
-(defun process-running-p (p)
-  (equal (process-status p) 'run))
-
-(defun at-least-one-process-running-p ()
-  (seq-some #'process-running-p (process-list)))
-
-(defun wait-for-process (p)
-  (while (process-running-p p) 
-    (sleep-for 1)))
-
-(defun wait-for-processes ()
-  (while (at-least-one-process-running-p) 
-    (sleep-for 1)))
-#+end_src
