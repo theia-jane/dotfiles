@@ -4,6 +4,14 @@
 
 #+begin_src elisp
 (provide 'config-window)
+#+END_SRC
+
+#+begin_src elisp
+(winner-mode)
+(keymap! :map evil-window-map
+         "u" #'winner-undo
+         ;; "r" #'winner-redo ;; didn't work
+)
 #+end_src
 
 
