@@ -9,6 +9,7 @@
 * Packages
 #+begin_src elisp 
 (require! bookmark-view
+          bookmark+
           bookmark-extras)
 #+end_src
 * Keymap
@@ -21,4 +22,21 @@
          :desc "Bookmark Edit" "e" #'bookmark-bmenu-list ;; Handy for managing bookmarks
          :desc "New" "n" #'bookmark-set)
          
+#+end_src
+* Python
+#+begin_src elisp
+(defun bookmarkx-inf-py-make-record ()
+  `(,(bookmark-buffer-name)
+    (buffer . ,(buffer-name))
+    (directory . ,default-directory)
+    (handler . ,#'bookmarkx-inf-py-jump-handler)))
+  
+
+(defun bookmarkx-inf-py-jump-handler (bookmark)
+  (let ((default-directory (bookmark-prop-get bookmark 'directory)))
+    (run-python)))
+
+(add-hook 'inferior-python-mode-hook
+          (lambda () (set (make-local-variable 'bookmark-make-record-function)
+                          'bookmarkx-inf-py-make-record)))
 #+end_src

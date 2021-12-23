@@ -18,6 +18,7 @@ Simply requiring this will make all of my globally installed packages available 
  orderless marginalia 
  consult embark embark-consult
  use-package f s async dash
+ dash-functional
  setup
  auto-minor-mode)
 

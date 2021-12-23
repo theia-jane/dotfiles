@@ -59,6 +59,7 @@ for now it's not so complex.
           config-file-management
           config-window
           config-tab
+          config-bookmark
           config-snippet
           config-searching
           config-notes

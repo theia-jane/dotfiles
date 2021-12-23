@@ -22,6 +22,9 @@
            web-mode
            yaml-mode
            
+
+           (bookmark+ :host github
+                      :repo "emacsmirror/bookmark-plus")
            bookmark-view
 
            restclient
