@@ -267,5 +267,9 @@ From doom-emacs."
              (s-trim (pp-to-string sexp))
              (eval sexp))))
 
+(defmacro cmd (&rest body)
+  `#'(lambda () (interactive)
+         ,@body))
+
 (provide 'personal-lib)
 ;;; personal-lib.el ends here
