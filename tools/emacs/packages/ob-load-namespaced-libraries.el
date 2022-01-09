@@ -41,8 +41,10 @@
    (lambda (entry)
      (let* ((old-name (symbol-name (car entry)))
             (new-name (concat namespace "/" old-name)))
-       (setf (car entry) (intern new-name)
-             (nth 5 entry) new-name)
+       (unless (string-prefix-p namespace old-name)
+         (setf (car entry) (intern new-name)
+               (nth 5 entry) new-name))
+
        entry))
    library))
 
