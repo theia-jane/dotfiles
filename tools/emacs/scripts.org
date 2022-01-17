@@ -5,20 +5,37 @@
 
 * Daemon
 #+BEGIN_SRC bash :tangle emacsd.start
-echo "Starting emacs daemon..." >> /tmp/emacsd.log
-emacs --daemon >> /tmp/emacsd.log 2>&1 &
+LOGFILE="/tmp/emacsd.log"
+FLAG="daemon"
+
+if ! [ -z "$1" ]; then
+    LOGFILE="/tmp/emacsd.${1}.log"
+    FLAG="daemon=$1"
+fi
+
+echo "Starting emacs ${FLAG}..." >> $LOGFILE
+emacs --$FLAG >> $LOGFILE 2>&1 &
 #+END_SRC
 
 #+BEGIN_SRC bash :tangle emacsd.stop
-echo "Stopping emacs daemon..." >> /tmp/emacsd.log
+LOGFILE="/tmp/emacsd.log"
+SERVER_FLAG=""
+DAEMON_FLAG="daemon"
 
-(emacsdclient -e "(kill-emacs)"; \
-  pkill ^emacs$) >> /tmp/emacsd.log 2>&1
+if ! [ -z "$1" ]; then
+    LOGFILE="/tmp/emacsd.${1}.log"
+    SERVER_FLAG="-s $1"
+    DAEMON_FLAG="daemon=$1"
+fi
+echo "Stopping emacs ${DAEMON_FLAG}..." >> $LOGFILE
+
+(emacsdclient $SERVER_FLAG -e "(kill-emacs)"; \
+ pkill -f "emacs --${DAEMON_FLAG}") >> $LOGFILE 2>&1
 #+END_SRC
 
 #+BEGIN_SRC bash :tangle emacsd.restart
-emacsd.stop
-emacsd.start
+emacsd.stop "$1"
+emacsd.start "$1"
 #+END_SRC
 
 #+BEGIN_SRC bash :tangle emacsdclient
@@ -26,27 +43,38 @@ emacsd.start
 sleep_length="0.1s"
 max_tries=1000
 
+FLAG="daemon"
+NAME=""
+case "$1" in
+    -s|--socket-name)
+        FLAG="daemon=${2}"
+        NAME="${2}"
+        ;;
+    ,*)
+        ;;
+esac
+
 # If there is no daemon.. let's try to get it started and then launch the client
-if [ -z "$(pgrep -f 'emacs --daemon')" ]; then
-  emacsd.start
+if [ -z "$(pgrep -f "emacs --${FLAG}")" ]; then
+  emacsd.start $NAME
 fi
 
 succeeded_in_launching=false
 for try_n in $(seq $max_tries); do
-  if [ ! -z "$(pgrep -f 'emacs --daemon')" ]; then
-    (emacsclient "$@" > /dev/null) \
+  if [ ! -z "$(pgrep -f "emacs --${FLAG}")" ]; then
+    (emacsclient "$@" 2> /dev/null) \
         && succeeded_in_launching=true \
         && break 
   fi
 
   sleep $sleep_length
-  if [ "$try_n" = "15" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
-      notify-send -t 1000 "emacs daemon is starting..." 
+  if [ "$try_n" = "50" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
+      notify-send -t 1000 "emacs ${FLAG} is starting..." 
   fi 
 done
 
 if ! $succeeded_in_launching; then
-  echo 'Error: emacs daemon had an issue starting up.' 1>&2
+  echo 'Error: emacs ${FLAG} had an issue starting up.' 1>&2
 fi
 #+END_SRC
 
