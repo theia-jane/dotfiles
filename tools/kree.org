@@ -40,6 +40,7 @@ kree.start
 global:
   Super+x: rofi -show run -modi run
   Super+Enter: tmux-scratch
+  Super+Apostrophe: emacsdclient -s everywhere -e '(emacs-everywhere)'
   Super+Semicolon:
     Enter: tilix
     n:

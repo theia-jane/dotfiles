@@ -5,6 +5,7 @@
 #+begin_src elisp :tangle init.el
 (packages! ob-async
            gruvbox-theme
+           emacs-everywhere
            vertico
            browse-at-remote
            dap-mode
@@ -18,10 +19,13 @@
 
            git-gutter-fringe
 
+           markdown-mode
            php-mode
            web-mode
            yaml-mode
+           haskell-mode
            
+           ox-gfm
 
            (bookmark+ :host github
                       :repo "emacsmirror/bookmark-plus")
@@ -53,6 +57,7 @@
           gruvbox
           try
 
+          emacs-everywhere
           powershell
           embark
           eros
@@ -68,10 +73,13 @@
 
           git-gutter-fringe
           consult
+          ox-gfm
 
           php-mode
+          haskell-mode
           yaml-mode
           web-mode
+          markdown-mode
           rustic
 
           typescript-mode)
@@ -91,4 +99,5 @@
 #+begin_src elisp :tangle init.el
 (load "~/.local.el" t)
 #+end_src
+
 
