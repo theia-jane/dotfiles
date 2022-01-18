@@ -51,6 +51,7 @@ for now it's not so complex.
           config-org-babel
           config-org-latex
           config-org-export
+          config-org-links
           config-selection-completion
           config-introspection
           config-editting

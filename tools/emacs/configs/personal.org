@@ -38,7 +38,9 @@
 
            rustic
            racer
-           typescript-mode)
+           typescript-mode
+
+           orglink)
 
 #+END_SRC
 
@@ -82,8 +84,9 @@
           markdown-mode
           rustic
 
-          typescript-mode)
+          typescript-mode
 
+          orglink)
 #+END_SRC
 
 * Handle custom file
@@ -91,8 +94,6 @@
 (setq custom-file (expand-file-name "~/.emacs-custom.el"))
 (when (not (f-exists-p custom-file)) (f-touch custom-file))
 (load custom-file)
-
-
 #+END_SRC
 
 * Load local 

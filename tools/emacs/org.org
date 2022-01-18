@@ -613,6 +613,14 @@ Extended tangle is important as it allows more concise tangling
 #+begin_src elisp
 )
 #+end_src
+* Links
+#+BEGIN_SRC emacs-lisp :tangle config-org-links.el
+(after! orglink
+        (setq orglink-activate-in-modes '(prog-mode))
+        (global-orglink-mode))
+(provide 'config-org-links)
+#+END_SRC
+
 * Export
 :PROPERTIES:
 :header-args+: :tangle config-org-export.el
