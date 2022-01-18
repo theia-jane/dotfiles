@@ -20,4 +20,5 @@ d kree.start
 d emacsd.start
 d -l deadd-notification-center
 d udiskie
+d /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 #+END_SRC

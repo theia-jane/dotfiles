@@ -1,0 +1,28 @@
+#+TITLE: Network
+
+* Scripts
+:PROPERTIES:
+:header-args:bash: :comments yes :dir $HOME/bin :shebang #!/usr/bin/env bash
+:END:
+** netctl with profile selection
+#+begin_src bash :tangle netctl-profilef
+cd /etc/netctl
+NETWORK="$(ls | sed -n '/^wlp/s/^[^-]\+-//p' | `fuzzy-ui-provider`)"
+
+if [ -z "$NETWORK" ]; then
+    echo "No network selected."
+    echo "Selected to: ${NETWORK}"
+fi
+
+setsid netctl $@ "$(ls | fgrep "${NETWORK}")"
+#+end_src
+
+** connect to wifi
+#+begin_src bash :tangle wifi-connect
+netctl-profilef restart
+#+end_src
+
+#+begin_src bash :tangle wifi-disconnect
+netctl-profilef stop
+#+end_src
+
