@@ -155,7 +155,7 @@ echo "${COMMAND}"
 # If TERM is set to anything other than 'linux' we will consider it 'in the terminal'
 # This isn't super reliable, but gives the best behavior. Depending on what TERM is set
 # to at the time this is called more might need to added to this condition.
-if [[ -z "${TERM}" ]] || [[ "${TERM}" = "linux" ]]; then
+if [[ -z "${TERM}" ]] || [[ "${TERM}" = "linux" ]] || [[ "${TERM}" = "dumb" ]]; then
   echo 'false'
 else
   echo 'true'
