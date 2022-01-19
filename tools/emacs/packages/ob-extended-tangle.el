@@ -49,6 +49,10 @@ if specified, then:
              (root-dir (substitute-env-vars (or (alist-get :root-dir prop-alist) "")))
              (tangle (alist-get :tangle prop-alist))
              (tangle-relative (alist-get :tangle-relative prop-alist)))
+        ;; Probably should 'consume' root-dir and unset it in this advice
+        ;; ideally, :dir just gets set
+        (setf (alist-get :dir prop-alist) dir
+              (alist-get :root-dir prop-alist) root-dir)
         (when (and (stringp tangle)
                    (not (equal tangle "yes"))
                    (not (equal tangle "no"))
