@@ -28,7 +28,9 @@
   (require! org-edit
             org-navigate
             org-server-manager
+            ob-extended-tangle
             ob-var-table
+            ob-text-var-expansion
             ob-script-exec
             ob-async
             ob-restclient)
