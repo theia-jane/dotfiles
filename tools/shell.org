@@ -120,6 +120,43 @@ scripts and binaries this is useful for scripts that override existing binaries.
 export PATH="$NONUSERPATH"
 $@
 #+end_src
+
+** With environment 
+#+begin_src bash :tangle with-env 
+if [ ! -e "$1" ]; then
+    DIR="${HOME}/.local/environment"
+    if [ -d "$DIR" ]; then
+        cd $DIR
+    fi
+
+    if [ ! -e "$1" ]; then
+        echo "Invalid environment file" >&2
+        exit 0
+    fi
+fi
+FILE="$1"
+shift
+
+EXPORTS=""
+while read -r LINE; do
+    ASSIGNMENT="$(echo "$LINE" \
+                    | sed -nr '/[^=]+=".*"[[:space:]]*$/s/(^[[:space:]]*)|(^[[:space:]]*)$//p')"
+    if [ ! -z "$ASSIGNMENT" ]; then
+        EXPORTS="$(echo -en "${EXPORTS}\nexport ${ASSIGNMENT}")"
+    fi
+done <<< "$(cat "$FILE")" 
+
+if [ -z "$@" ]; then
+    echo eval "$EXPORTS"
+else
+    eval "$EXPORTS"
+    eval "$@"
+fi
+#+end_src
+#+begin_src bash :tangle with-envs 
+for e in $@; do 
+    with-env "$e"
+done
 #+end_src
 * Profile
 :PROPERTIES:
