@@ -33,8 +33,9 @@
  (:after evil
          :map evil-motion-state-map "RET" nil)
  (:after evil-numbers
-         :n "g-" #'evil-numbers/dec-at-pt
-         :n "g=" #'evil-numbers/inc-at-pt))
+         :map evil-normal-state-map
+         "g-" #'evil-numbers/dec-at-pt
+         "g=" #'evil-numbers/inc-at-pt))
 
 #+end_src
 ** Next file 
