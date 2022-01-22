@@ -665,6 +665,22 @@ TODO Might create a 'double-advice' macro this is basically doing that..."
 
 #+END_SRC
 
+* Remark
+#+begin_src elisp :tangle config-org-remark.el
+(after! org-remark
+        (keymap! :map (evil-normal-state-map
+                       evil-visual-state-map)
+                 (:prefix "gm"
+                          "m" #'org-remark-mark 
+                          "o" #'org-remark-open
+                          "x" #'org-remark-remove)
+                 "]r" #'org-remark-view-next
+                 "[r" #'org-remark-view-prev))
+
+(provide 'config-org-remark)
+#+end_src
+** TODO Might play with different pens and customize coloring
+See =org-remark-change= & =org-remark-create=
 * User Interface
 :PROPERTIES:
 :header-args+: :tangle config-org-ui.el
@@ -895,3 +911,4 @@ If ARG is non-nil, open `eshell' instead of `dired'."
 #+BEGIN_SRC elisp
 (provide 'org-server-manager)
 #+END_SRC
+

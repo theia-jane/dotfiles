@@ -52,6 +52,7 @@ for now it's not so complex.
           config-org-latex
           config-org-export
           config-org-links
+          config-org-remark
           config-selection-completion
           config-introspection
           config-editting
