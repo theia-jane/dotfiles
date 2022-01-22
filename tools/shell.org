@@ -104,6 +104,11 @@ export MAVEN_OPTS="-Xms256m -Xmx512m"
 export PATH="$M2:$PATH"
 # export PATH="$JAVA_HOME/bin:$PATH"
 #+end_src
+** Github
+#+begin_src bash
+GITHUB_TOKEN="$(pass-detail github-env)"
+[ ! -z "${GITHUB_TOKEN}" ] && export GITHUB_TOKEN
+#+end_src
 * Scripts
 :PROPERTIES:
 :header-args+: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
