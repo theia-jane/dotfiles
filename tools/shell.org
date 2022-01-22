@@ -24,10 +24,8 @@ export EMACSLOADPATH="${lcl}/emacs/site-lisp:${PERSONAL_EMACS_PACKAGES}"
 export CLICOLOR=1
 export GTAGSLABEL="pygments"
 
-export PATH="$(echo -n \
-"${HOME}/bin
-${HOME}/.local/bin
-${dot}/bin
+export NONUSERPATH="$(echo -n \
+"${dot}/bin
 /usr/local/bin
 /usr/bin
 /bin
@@ -38,6 +36,8 @@ ${cfg}/emacs/bin
 ${HOME}/.cargo/bin
 /usr/bin/vendor_perl" \
     | tr '\n' ':')"
+
+export PATH="${HOME}/bin:${HOME}/.local/bin:${NONUSERPATH}"
 
 if [ ! -z "$(which emacsdclient)" ]; then
   EDITOR="emacsdclient -c"
@@ -102,7 +102,19 @@ export M2_HOME="/opt/maven"
 export M2="${M2_HOME}/bin"
 export MAVEN_OPTS="-Xms256m -Xmx512m"
 export PATH="$M2:$PATH"
-export PATH="$JAVA_HOME/bin:$PATH"
+# export PATH="$JAVA_HOME/bin:$PATH"
+#+end_src
+* Scripts
+:PROPERTIES:
+:header-args+: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
+:END:
+** Non-user path
+Basic script that lets you use the nonuser path, which basically excludes local
+scripts and binaries this is useful for scripts that override existing binaries.
+#+begin_src bash :tangle useNonUserPath
+export PATH="$NONUSERPATH"
+$@
+#+end_src
 #+end_src
 * Profile
 :PROPERTIES:
