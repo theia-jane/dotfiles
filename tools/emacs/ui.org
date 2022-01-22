@@ -38,7 +38,6 @@ Turn off the bell
         left-margin-width 5
         right-margin-width 5
         header-line-format " "
-        evil-respect-visual-line-mode nil
         line-spacing 14
         fill-column 80)
   (pcase major-mode

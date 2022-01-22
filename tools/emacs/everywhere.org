@@ -1,0 +1,15 @@
+#+TITLE: Everywhere
+#+PROPERTY: header-args :tangle-relative 'dir
+#+PROPERTY: header-args:elisp :tangle config-everywhere.el :dir ${HOME}/.local/emacs/site-lisp/
+
+Config for =emacs-everywhere=
+#+begin_src elisp
+(after! emacs-everywhere
+        (delq 'emacs-everywhere-set-frame-position
+              emacs-everywhere-init-hooks)
+
+        (setf (alist-get 'height emacs-everywhere-frame-parameters)
+              30))
+
+(provide 'config-everywhere)
+#+end_src

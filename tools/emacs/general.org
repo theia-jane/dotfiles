@@ -60,6 +60,7 @@ for now it's not so complex.
           config-file-management
           config-window
           config-tab
+          config-everywhere
           config-bookmark
           config-snippet
           config-searching

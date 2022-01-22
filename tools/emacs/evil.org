@@ -11,6 +11,7 @@
 
 (init! evil
        (setq evil-want-integration t
+             evil-respect-visual-line-mode t
              evil-want-keybinding nil))
 
 (config! evil
