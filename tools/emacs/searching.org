@@ -51,6 +51,7 @@
                 (substitute-in-file-name "$p/emacs-lisp-src/")
                 (expand-file-name "~/.local/emacs/site-lisp/")
                 "/usr/share/emacs/site-lisp/"
+                (expand-file-name user-emacs-directory)
                 "")
   :matches ("**/*.el" "**/README*" "**/*.org"))
 
