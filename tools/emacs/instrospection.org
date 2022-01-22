@@ -28,3 +28,10 @@
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable))
 #+end_src
+
+* Keymap
+#+begin_src elisp
+(define-leader! introspection "H-,")
+(keymap! :introspection
+         "s" (cmd (message "Servername: %s" server-name)))
+#+end_src
