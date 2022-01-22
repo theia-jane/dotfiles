@@ -79,3 +79,12 @@ Turn off the bell
 (config! gruvbox
   (load-theme 'gruvbox t))
 #+end_src
+
+* Keys
+#+begin_src elisp
+(define-leader! ui "H-u")
+(keymap! :ui
+         "=" #'text-scale-increase
+         "-" #'text-scale-decrease
+         "0" (cmd (text-scale-set 0)))
+#+end_src
