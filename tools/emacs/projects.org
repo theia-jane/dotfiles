@@ -23,6 +23,11 @@
   (add-hook 'git-commit-setup-hook #'evil-insert-state))
 #+end_src
 
+* Git Gutter
+#+begin_src elisp
+(after! git-gutter
+        (global-git-gutter-mode +1))
+#+end_src
 * VC
 #+begin_src elisp
 (setq vc-follow-symlinks t)
@@ -70,8 +75,6 @@
                                #'project-root-dir-by-file-markers)))
                   (run-hook-with-args-until-success 'h)))))
 #+end_src
-
-
 
 
 
