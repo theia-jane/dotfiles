@@ -19,9 +19,9 @@ These packages are installed by ~(require 'global-packages)~ found at ~~/.local/
 (provide 'site-start)
 (require 'global-packages)
 (require 'global-settings)
-(require 'config-ui)
 (require 'personal-lib)
 (require 'keymap)
+(require 'config-ui)
 #+END_SRC
 * Config index
 :PROPERTIES:
