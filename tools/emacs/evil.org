@@ -73,3 +73,22 @@
 #+end_src
 
 #+RESULTS:
+
+** TODO Bufler
+This should be merged into evil-collection
+#+begin_src emacs-lisp
+(after! (evil-collection bufler)
+        (defconst evil-collection-bufler-maps '(bufler-list-mode-map))
+        (defun evil-collection-bufler-setup ()
+          "Set up `evil' bindings for `bufler'.."
+          (evil-set-initial-state 'bufler-mode 'normal)
+
+          (evil-collection-define-key 'normal 'bufler-list-mode-map
+            "gr" 'bufler
+            "x" 'bufler-list-buffer-kill
+            "?" 'hydra:bufler/body
+            (kbd "SPC") 'bufler-list-buffer-peek
+            (kbd "TAB") 'magit-section-toggle))
+
+        (evil-collection-bufler-setup))
+#+end_src
