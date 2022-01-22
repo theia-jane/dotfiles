@@ -23,7 +23,7 @@
         "e" #'erase-buffer
         "R" #'revert-buffer
         "n" #'new-buffer-open
-        "m" #'buffer-menu)
+        "m" #'bufler)
 
 (define-leader! insert "H-i")
 (keymap! :insert

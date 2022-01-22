@@ -7,6 +7,7 @@
            gruvbox-theme
            emacs-everywhere
            vertico
+
            browse-at-remote
            dap-mode
            (evil-org-mode :host github
@@ -18,6 +19,7 @@
            evil-exchange
            lsp-mode
 
+           bufler
            git-gutter-fringe
 
            markdown-mode
@@ -79,6 +81,7 @@
           consult
           ox-gfm
 
+          bufler
           php-mode
           haskell-mode
           yaml-mode
