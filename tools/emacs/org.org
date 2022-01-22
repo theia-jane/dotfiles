@@ -506,7 +506,7 @@ Starred and \"displaymath\" environments are not numbered."
       (emacs-lisp . t)))
 #+end_src
 ** JIT elisp reference resolution
-Adding a feature to babel, that lets me resolve ==(+ 2 2)= as a nowebe reference (and it
+Adding a feature to babel, that lets me resolve ==(+ 2 2)= as a noweb reference (and it
 executes the function). Likewise =#+CALL: ==(+ 2 2)= works and you can even include header
 args like usual:  =#+CALL ==[:exports both](format "Hello!")=
 #+begin_src elisp
