@@ -505,6 +505,8 @@ Starred and \"displaymath\" environments are not numbered."
 #+begin_src elisp
 (org-babel-do-load-languages 'org-babel-load-languages
     '((shell . t)
+      (sqlite .t)
+      (python .t)
       (emacs-lisp . t)))
 #+end_src
 ** JIT elisp reference resolution
