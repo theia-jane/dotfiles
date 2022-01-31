@@ -96,7 +96,9 @@
   :case (eq type 'link) (org-open-at-point arg)
   :case (or (org-at-item-checkbox-p)
             (org-element-property :checkbox (org-element-lineage context '(item) t)))
-  (org-toggle-checkbox arg))
+  (org-toggle-checkbox arg)
+  :case (memq type '(latex-fragment latex-environment))
+        (org-latex-preview arg))
 #+end_src
 ** Keybindings
 #+NAME: org/keybindings
