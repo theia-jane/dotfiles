@@ -51,7 +51,8 @@ With this tramp will put all autosaves in a single directory. This supercedes `a
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 
 (keymap! :map dired-mode-map
-         :n "+" #'dired-create-empty-file)
+         :n "+" #'dired-create-directory
+         :n "g+" #'dired-create-empty-file
          (:after dired-rsync
                  :n "gs" #'dired-rsync))
 (defun +dired/create-dwim (arg)
