@@ -11,6 +11,8 @@
 (keymap! :file
          "f" #'find-file
          "p" #'project-find-file
+         "R" #'recover-this-file
+         "D" #'make-directory
          "s" #'save-buffer
          "r" #'move-this-file
          "d" #'(lambda ()
