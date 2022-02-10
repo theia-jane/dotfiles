@@ -8,6 +8,8 @@
            emacs-everywhere
            vertico
 
+           dired-rsync
+
            browse-at-remote
            dap-mode
            (evil-org-mode :host github
@@ -62,6 +64,8 @@
           auth-source-pass
           gruvbox
           try
+
+          dired-rsync
 
           emacs-everywhere
           powershell
