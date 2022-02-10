@@ -43,6 +43,8 @@ global:
   Super+Apostrophe: emacsdclient -s everywhere -e '(emacs-everywhere)'
   Super+Semicolon:
     Enter: tilix
+    k:
+      r: xmodmap ${HOME}/.Xmodmap
     n:
       n: org-capture
     c:
