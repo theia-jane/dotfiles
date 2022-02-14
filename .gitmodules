@@ -1,0 +1,3 @@
+[submodule "emacs-async"]
+	path = tools/emacs/packages/async
+	url = https://github.com/jwiegley/emacs-async

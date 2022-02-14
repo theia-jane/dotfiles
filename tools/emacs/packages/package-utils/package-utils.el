@@ -8,33 +8,17 @@
 (require 'bootstrap-straight) 
 (require 'process-helpers) 
 (require 'info)
+(require 'async (file-name-concat (file-name-directory load-file-name) "../async/async.el"))
 
+(defconst global-packages--running-env-var "EMACS_GLOBAL_PACKAGES_RUNNING")
+(defconst global-packages--running-p (equal (getenv global-packages--running-env-var) "TRUE"))
 (defvar global-packages-dir
   (expand-file-name "~/.local/emacs/site-lisp/global-packages/"))
 
-(defun bootstrap-global-packages ()
-  (message 
-   (shell-command-to-string
-    (format "emacs -Q --batch --eval %s"
-            (shell-quote-argument
-             (prin1-to-string
-              (macroexpand-all
-               '(global-packages--intern (straight-use-package 'async))))))))
-  (unless (global-packages--load-async)
-    (error "Failed to load async")))
-
-
-(defun global-packages--load-async ()
-  (or (require 'async nil t)
-      (let ((path (concat (file-name-as-directory global-packages-dir)
-                          "straight/build/async")))
-        (when (locate-library "async" nil (list path))
-          (add-to-list 'load-path path)
-          (require 'async nil t)))))
-
 (defmacro global-packages--intern (&rest body) 
   `(progn 
-     (setq user-emacs-directory ,global-packages-dir)
+     (setq user-emacs-directory ,global-packages-dir
+           global-packages--in-session-p t)
      (require 'bootstrap-straight) 
      (require 'info) 
      (eject-differences ,global-packages-save-variables
@@ -44,12 +28,15 @@
 (defconst global-packages-save-variables '(load-path Info-directory-list))
 
 (defmacro global-packages (&rest body)
-  (unless (global-packages--load-async)
-    (bootstrap-global-packages))
-  `(let ((p (async-start
-    (lambda () (global-packages--intern ,@body))
-    #'add-all-to-lists)))
-     (wait-for-process p)))
+  (unless global-packages--running-p
+    `(progn 
+       ;; (write-region "Global packages called...\n" nil "/tmp/test-log" 'append)
+       (setenv global-packages--running-env-var "TRUE")
+       (let ((p (async-start
+                 (lambda () (global-packages--intern ,@body))
+                 #'add-all-to-lists)))
+         (wait-for-process p)
+         (setenv global-packages--running-env-var "FALSE")))))
 
 (defmacro global-packages! (&rest recipes)
   `(global-packages
@@ -67,10 +54,10 @@
 (defmacro packages! (&rest recipes)
   `(progn
      (bootstrap-straight)
-    ,@(mapcar
-       (lambda (recipe)
-         `(straight-use-package ',recipe))
-       recipes)))
+     ,@(mapcar
+        (lambda (recipe)
+          `(straight-use-package ',recipe))
+        recipes)))
 
 (defun update-repo-load-path (&optional config-dir)
   (interactive)
