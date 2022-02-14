@@ -12,7 +12,6 @@ Used for matching candidates in a completion framework. Works with standard emac
         orderless-component-separator " +"
         orderless-matching-styles '(orderless-prefixes
                                     orderless-literal
-                                    orderless-strict-leading-initialism
                                     orderless-regexp
                                     orderless-flex)
         orderless-style-dispatchers '((lambda (p &rest _)
