@@ -40,5 +40,7 @@ cause a change in behavior.
 #+end_src
 * Yes or no 
 #+begin_src elisp
-(fset #'yes-or-no-p #'y-or-n-p)
+;;(fset #'yes-or-no-p #'y-or-n-p)
 #+end_src
+** TODO Fix this...
+This is broken in emacs29
