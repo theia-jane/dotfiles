@@ -20,7 +20,7 @@ These packages are installed by ~(require 'global-packages)~ found at ~~/.local/
 (require 'global-packages)
 (require 'global-settings)
 (require 'personal-lib)
-(require 'keymap)
+(require 'keymapx)
 (require 'config-ui)
 #+END_SRC
 * Config index

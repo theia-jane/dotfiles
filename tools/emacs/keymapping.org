@@ -3,7 +3,7 @@
 
 * Keymap package
 :PROPERTIES:
-:header-args:elisp: :tangle keymap.el :dir ${HOME}/.local/emacs/site-lisp
+:header-args:elisp: :tangle keymapx.el :dir ${HOME}/.local/emacs/site-lisp
 :END:
 
 This is mostly stolen from doom, but with my own modifications.
@@ -11,7 +11,7 @@ This is mostly stolen from doom, but with my own modifications.
 A centralized keybinds system, integrated with =which-key= to preview
 available keybindings. All built into one powerful macro: =keymap!= . If evil is never loaded, then evil bindings set with =keymap!=  are ignored (i.e. omitted entirely for performance reasons).
 #+BEGIN_SRC elisp
-(provide 'keymap)
+(provide 'keymapx)
 (require 'general)
 #+END_SRC
 
@@ -29,6 +29,7 @@ with the syntactic sugar of my =keymap!=  macro.
 
 Much of this was once part of =doom-emacs= (as there are many notes of in here!).
 #+begin_src elisp
+;;;###autoload
 (defmacro define-leader! (name key &rest _args)
   "Define a leader key with NAME and KEY.
 
@@ -86,8 +87,8 @@ leader later."
             (append (and wkforms `((config! which-key ,@(nreverse wkforms))))
                     (nreverse forms)))))
 
-       (unless (plist-get keymap-extra-mapping-fns ,keyword-symbol)
-         (setq keymap-extra-mapping-fns (append keymap-extra-mapping-fns
+       (unless (plist-get keymapx-extra-mapping-fns ,keyword-symbol)
+         (setq keymapx-extra-mapping-fns (append keymapx-extra-mapping-fns
                                                   '(,keyword-symbol
                                                         ,define-fn-symbol))))
        (config! which-key
@@ -143,12 +144,12 @@ States
   Don't
     (keymap! :n :leader :desc \"Description\" \"C-c\" #'dosomething)
     (keymap! :leader :n :desc \"Description\" \"C-c\" #'dosomething)"
-  (keymap-process rest))
+  (keymapx-process rest))
 #+end_src
 ** Internal methods
-Again, mostly copy paste from =doom-emacs=, however, =keymap-process= does diverge.
+Again, mostly copy paste from =doom-emacs=, however, =keymapx-process= does diverge.
 #+begin_src elisp
-(defvar keymap-evil-state-alist
+(defvar keymapx-evil-state-alist
   '((?n . normal)
     (?v . visual)
     (?i . insert)
@@ -159,57 +160,57 @@ Again, mostly copy paste from =doom-emacs=, however, =keymap-process= does diver
     (?g . global))
   "A list of cons cells that map a letter to a evil state symbol.")
 
-(defun keymap-keyword-to-states (keyword)
+(defun keymapx-keyword-to-states (keyword)
   "Convert a KEYWORD into a list of evil state symbols.
 
 For example, :nvi will map to (list 'normal 'visual 'insert). See
-`keymap-evil-state-alist' to customize this."
+`keymapx-evil-state-alist' to customize this."
   (cl-loop for l across (keyword-name keyword)
-           if (assq l keymap-evil-state-alist) collect (cdr it)
+           if (assq l keymapx-evil-state-alist) collect (cdr it)
            else do (error "not a valid state: %s" l)))
 
 
 ;; specials
-(defvar keymap-forms nil)
-(defvar keymap-fn nil)
-(defvar keymap-batch-forms nil)
-(defvar keymap-state '(:dummy t))
-(defvar keymap-parent-state nil)
-(defvar keymap-evil-p nil)
-(config! evil (setq keymap-evil-p t))
+(defvar keymapx-forms nil)
+(defvar keymapx-fn nil)
+(defvar keymapx-batch-forms nil)
+(defvar keymapx-state '(:dummy t))
+(defvar keymapx-parent-state nil)
+(defvar keymapx-evil-p nil)
+(config! evil (setq keymapx-evil-p t))
 
-(defvar keymap-extra-mapping-fns nil)
-(defun keymap-extra-mapping-key-p (key)
-  (plist-get keymap-extra-mapping-fns key))
+(defvar keymapx-extra-mapping-fns nil)
+(defun keymapx-extra-mapping-key-p (key)
+  (plist-get keymapx-extra-mapping-fns key))
 
-(defun keymap-process (rest)
-  (let ((keymap-fn keymap-fn)
-        keymap-state
-        keymap-forms
+(defun keymapx-process (rest)
+  (let ((keymapx-fn keymapx-fn)
+        keymapx-state
+        keymapx-forms
         desc)
     (while rest
       (let ((key (pop rest)))
         (cond ((listp key)
-               (keymap-nested nil key))
+               (keymapx-nested nil key))
               ((keywordp key)
                (pcase key
-                 ((pred keymap-extra-mapping-key-p)
-                  (keymap-commit)
-                  (setq keymap-fn (plist-get keymap-extra-mapping-fns key)))
+                 ((pred keymapx-extra-mapping-key-p)
+                  (keymapx-commit)
+                  (setq keymapx-fn (plist-get keymapx-extra-mapping-fns key)))
                  (:after
-                  (keymap-nested (list 'config! (pop rest)) rest)
+                  (keymapx-nested (list 'config! (pop rest)) rest)
                   (setq rest nil))
                  (:desc
                   (setq desc (pop rest)))
                  (:map
-                  (keymap-set :keymaps `(quote ,(enlist (pop rest)))))
+                  (keymapx-set :keymaps `(quote ,(enlist (pop rest)))))
                  (:mode
                   (push (cl-loop for m in (enlist (pop rest))
                                  collect (intern (concat (symbol-name m) "-map")))
                         rest)
                   (push :map rest))
                  ((or :when :unless)
-                  (keymap-nested (list (intern (keyword-name key)) (pop rest)) rest)
+                  (keymapx-nested (list (intern (keyword-name key)) (pop rest)) rest)
                   (setq rest nil))
                  (:prefix-map
                   (cl-destructuring-bind (prefix . desc)
@@ -220,11 +221,11 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                           :prefix prefix)
                                     rest))
                       (push `(defvar ,keymap (make-sparse-keymap))
-                            keymap-forms))))
+                            keymapx-forms))))
                  (:prefix
                   (cl-destructuring-bind (prefix . desc)
                       (enlist (pop rest))
-                    (keymap-set (if keymap-fn :infix :prefix)
+                    (keymapx-set (if keymapx-fn :infix :prefix)
                                    prefix)
                     (when (stringp desc)
                       (setq rest (append (list :desc desc "" nil) rest)))))
@@ -234,43 +235,43 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                          (outer (pop rest)))
                     (push `(keymap! (:map evil-inner-text-objects-map ,key ,inner)
                                  (:map evil-outer-text-objects-map ,key ,outer))
-                          keymap-forms)))
+                          keymapx-forms)))
                  (_
                   (condition-case _
-                      (keymap-def (pop rest) (pop rest)
-                                     (keymap-keyword-to-states key)
+                      (keymapx-def (pop rest) (pop rest)
+                                     (keymapx-keyword-to-states key)
                                      desc)
                     (error
                      (error "Not a valid `keymap!' property: %s" key)))
                   (setq desc nil))))
 
-              ((keymap-def key (pop rest) nil desc)
+              ((keymapx-def key (pop rest) nil desc)
                (setq desc nil)))))
 
-    (keymap-commit)
-    (macroexp-progn (nreverse (delq nil keymap-forms)))))
+    (keymapx-commit)
+    (macroexp-progn (nreverse (delq nil keymapx-forms)))))
 
-(defun keymap-append-keys (prop)
-  (let ((a (plist-get keymap-parent-state prop))
-        (b (plist-get keymap-state prop)))
+(defun keymapx-append-keys (prop)
+  (let ((a (plist-get keymapx-parent-state prop))
+        (b (plist-get keymapx-state prop)))
     (if (and a b)
         `(general--concat t ,a ,b)
       (or a b))))
 
-(defun keymap-nested (wrapper rest)
-  (keymap-commit)
-  (let ((keymap-parent-state (keymap-state)))
+(defun keymapx-nested (wrapper rest)
+  (keymapx-commit)
+  (let ((keymapx-parent-state (keymapx-state)))
     (push (if wrapper
-              (append wrapper (list (keymap-process rest)))
-            (keymap-process rest))
-          keymap-forms)))
+              (append wrapper (list (keymapx-process rest)))
+            (keymapx-process rest))
+          keymapx-forms)))
 
-(defun keymap-set (prop &optional value)
-  (unless (equal (plist-get keymap-state prop) value)
-    (keymap-commit))
-  (setq keymap-state (plist-put keymap-state prop value)))
+(defun keymapx-set (prop &optional value)
+  (unless (equal (plist-get keymapx-state prop) value)
+    (keymapx-commit))
+  (setq keymapx-state (plist-put keymapx-state prop value)))
 
-(defun keymap-def (key def &optional states desc)
+(defun keymapx-def (key def &optional states desc)
   (when (or (memq 'global states)
             (null states))
     (setq states (cons 'nil (delq 'global states))))
@@ -287,29 +288,29 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
                                           :which-key desc))))))))
   (dolist (state states)
     (push (list key def)
-          (alist-get state keymap-batch-forms)))
+          (alist-get state keymapx-batch-forms)))
   t)
 
-(defun keymap-commit ()
-  (when keymap-batch-forms
-    (cl-loop with attrs = (keymap-state)
-             for (state . defs) in keymap-batch-forms
-             if (or keymap-evil-p (not state))
-             collect `(,(or keymap-fn 'general-define-key)
+(defun keymapx-commit ()
+  (when keymapx-batch-forms
+    (cl-loop with attrs = (keymapx-state)
+             for (state . defs) in keymapx-batch-forms
+             if (or keymapx-evil-p (not state))
+             collect `(,(or keymapx-fn 'general-define-key)
                        ,@(if state `(:states ',state)) ,@attrs
                        ,@(mapcan #'identity (nreverse defs)))
              into forms
-             finally do (push (macroexp-progn forms) keymap-forms))
-    (setq keymap-batch-forms nil)))
+             finally do (push (macroexp-progn forms) keymapx-forms))
+    (setq keymapx-batch-forms nil)))
 
-(defun keymap-state ()
+(defun keymapx-state ()
   (let ((plist
-         (append (list :prefix (keymap-append-keys :prefix)
-                       :infix  (keymap-append-keys :infix)
+         (append (list :prefix (keymapx-append-keys :prefix)
+                       :infix  (keymapx-append-keys :infix)
                        :keymaps
-                       (append (plist-get keymap-parent-state :keymaps)
-                               (plist-get keymap-state :keymaps)))
-                 keymap-state
+                       (append (plist-get keymapx-parent-state :keymaps)
+                               (plist-get keymapx-state :keymaps)))
+                 keymapx-state
                  nil))
         newplist)
     (while plist
