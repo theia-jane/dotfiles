@@ -68,11 +68,15 @@
 (cl-defmethod obt-cache-store-init ((store obt-cache-store))
   (oset store storage (make-hash-table :test 'equal)))
 
-(defun obt-cache-store-init ()
+(defun obt-cache-store-init (&optional clean)
   ;; Make sure dir exists
   (let ((dir (file-name-directory obt-cache-store-path)))
     (unless (file-exists-p dir)
       (make-directory dir t)))
+  
+  (when (and clean
+             (file-exists-p obt-cache-store-path))
+  (delete-file obt-cache-store-path))
 
   (setq obt-cache-store-object
         (obt-cache-store :persistance-path obt-cache-store-path

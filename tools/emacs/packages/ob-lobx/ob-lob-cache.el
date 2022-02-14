@@ -80,11 +80,15 @@
 (cl-defmethod ob-lob-cache-store-init ((store ob-lob-cache-store))
   (oset store storage (make-hash-table :test 'equal)))
 
-(defun ob-lob-cache-store-init ()
+(defun ob-lob-cache-store-init (&optional clean)
   ;; Make sure dir exists
   (let ((dir (file-name-directory ob-lob-cache-store-path)))
     (unless (file-exists-p dir)
       (make-directory dir t)))
+  
+  (when (and clean
+             (file-exists-p ob-lob-cache-store-path))
+  (delete-file ob-lob-cache-store-path))
 
   (setq ob-lob-cache-store-object
         (ob-lob-cache-store :persistance-path ob-lob-cache-store-path

@@ -60,7 +60,30 @@ This project will exclusively utilize emacs org-mode's capability to tangle file
 
 We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
 #+BEGIN_SRC elisp
+(require 'subr-x)
+(require 'rx)
+
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
+(defvar config-dry-run nil)
+(defvar config-clean nil)
+(defvar config-tangle-exclude-patterns 
+  '("README" "^tools/emacs/file-templates"))
+(defvar config-tangle-include-patterns 
+  `(,(rx line-start
+         (or "literate/"
+             "tools/"
+             (and (+ (not "/")) ".org")))))
+
+(while argv
+  (setq arg (pop argv))
+  (pcase arg
+  ("--exclude" (when argv
+    (add-to-list 'config-tangle-exclude-patterns (pop argv))))
+  ("--include" (when argv
+    (add-to-list 'config-tangle-include-patterns (pop argv))))
+  ("--dry-run" (setq config-dry-run t))
+  ("--clean" (setq config-clean t))
+  (_ (message "Unknown argument: %s" arg))))
 
 (require 'package-utils
          (concat config-root "tools/emacs/packages/package-utils/package-utils.el"))
@@ -79,13 +102,13 @@ Turn on using cache
 #+BEGIN_SRC elisp
 (require 'obt-cache)
 (setq obt-cache-enabled t
-      obt-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-tangle-cache.el"))
-(obt-cache-store-init)
+      obt-cache-store-path (concat config-root "/build/config-tangle-cache.el"))
+(obt-cache-store-init config-clean)
 
 (require 'ob-lob-cache)
 (setq ob-lob-cache-enabled t
-      ob-lob-cache-store-path (concat (substitute-env-vars "$dot") "/build/config-lob-cache.el"))
-(ob-lob-cache-store-init)
+      ob-lob-cache-store-path (concat config-root "/build/config-lob-cache.el"))
+(ob-lob-cache-store-init config-clean)
 #+END_SRC
 
 Now we can tangle! The default behavior tangles files relatively to the org file being tangled. I don't want to litter my literate config with the output files. To accomplish that with the default behavior I have two options: use a bunch of =../../..= when naming the files I tangle /or/ using absolute file paths. I don't really like either options, so I'll be using my custom org-babel source header, =:tangle-relative= which let's enables me to specify where to tangle the file relatively.
@@ -121,29 +144,39 @@ I want my tangled scripts to automatically be executable, so I'll make sure it's
 Finally, actually tangle the files that in the =literate/= & =tools/=
 #+BEGIN_SRC elisp
 (defun config-file-filter (file)
-  (string-match
-   (rx line-start
-       (eval (file-name-as-directory config-root))
-       (or "literate/"
-           "tools/"
-           (and (+ (not "/")) ".org")))
-   file))
+  (and
+   (not 
+    (seq-reduce 
+     (lambda (carry pattern) 
+       (or carry (string-match-p pattern file)))
+     config-tangle-exclude-patterns
+     nil))
+   (seq-reduce 
+    (lambda (carry pattern) 
+      (and carry (string-match-p pattern file)))
+    config-tangle-include-patterns
+    t)))
 
 (defun config-files ()
   (seq-filter
    #'config-file-filter
-   (directory-files-recursively config-root "\\.org$")))
+   (mapcar 
+    (apply-partially #'string-remove-prefix (file-name-as-directory config-root))
+    (directory-files-recursively config-root "\\.org$"))))
 
 (defun config-tangle ()
-  (let ((files (config-files)))
-    (message "Tangling files: %s" files)
-    (with-ob-global-lib
-     (ob-make-lib-from-files files t (lambda (file)
-                                  (setq file (string-remove-prefix (file-name-as-directory config-root) file))
-                                  (string-remove-suffix ".org" file)))
-     (ob-tangle-files files))
-    (notifications-notify :title "Config tangled"
-                          :timeout 1500)))
+  (let ((default-directory config-root)
+        (files (config-files)))
+    (message "Tangling files: \n%s\n" 
+             (mapconcat (apply-partially #'concat "  ") files "\n"))
+
+    (if config-dry-run
+        (message "This was a dry run. Nothing was tangled.")
+      (with-ob-global-lib
+       (ob-make-lib-from-files files t (apply-partially #'string-remove-suffix ".org"))
+       (ob-tangle-files files))
+      (notifications-notify :title "Config tangled"
+                            :timeout 1500))))
 
 (config-tangle)
 
