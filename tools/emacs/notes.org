@@ -22,6 +22,7 @@
 (keymap! :notes
          "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
                         (command-execute #'project-find-file))
+         "g" (notes-cmd (find-file "goals.org"))
          "d" (notes-cmd (command-execute #'dired))
          "/" (notes-cmd (command-execute #'consult-ripgrep)))
 #+end_src
