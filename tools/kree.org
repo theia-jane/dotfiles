@@ -41,6 +41,16 @@ global:
   Super+x: rofi -show run -modi run
   Super+Enter: tmux-scratch
   Super+Apostrophe: emacsdclient -s everywhere -e '(emacs-everywhere)'
+  Super+Slash:
+    a: emacsdclient -e "(search-online (clipboard-yank-to-string) 'archwiki)" 
+    g: emacsdclient -e "(search-online (clipboard-yank-to-string) 'github)" 
+    Shift+g: emacsdclient -e "(search-online (clipboard-yank-to-string) 'google)" 
+    w: emacsdclient -e "(search-online (clipboard-yank-to-string) 'wikipedia)" 
+    m: emacsdclient -e "(search-online (clipboard-yank-to-string) 'melpa)" 
+    d: emacsdclient -e "(search-online (clipboard-yank-to-string) 'dictionary)" 
+    y: emacsdclient -e "(search-online (clipboard-yank-to-string) 'youtube)" 
+    t: emacsdclient -e "(search-online (clipboard-yank-to-string) 'translate)" 
+    Slash: emacsdclient -e "(search-online (clipboard-yank-to-string))" 
   Super+Semicolon:
     Enter: tilix
     k:

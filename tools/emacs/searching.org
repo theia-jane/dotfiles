@@ -37,6 +37,24 @@
 
 ** TODO Submit PR for the extra directories feature ^
 
+* Search online
+#+begin_src elisp
+(defun search-online (query &optional type)
+  (let* ((query query)
+         (type (or type 'duckduckgo))
+         (url (pcase type
+                ('dictionary "https://en.wiktionary.org/w/index.php?search=%s")
+                ('wikipedia "https://en.wikipedia.org/w/index.php?search=%s")
+                ('duckduckgo "https://duckduckgo.com/?q=%s")
+                ('translate "https://translate.google.com/?text=%s&op=translate")
+                ('google "https://www.google.com/search?q=%s")
+                ('github "https://github.com/search?q=%s")
+                ('youtube "https://www.youtube.com/results?search_query=%s")
+                ('archwiki "https://wiki.archlinux.org/index.php?search=%s")
+                ('melpa "https://melpa.org/#/?q=%s"))))
+    (firefox (format url query))))
+#+end_src
+
 * RG Consult
 #+begin_src elisp 
 (def-consult-rg info
