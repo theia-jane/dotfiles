@@ -16,6 +16,12 @@
   (which-key-mode))
 #+END_SRC
 
+* Man 
+#+begin_src elisp
+(setq Man-notify-method 'pushy
+      Man-fontify-manpage-flag t)
+#+end_src
+
 * Helpful
 #+begin_src elisp
 (config! helpful
