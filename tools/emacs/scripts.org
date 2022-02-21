@@ -47,37 +47,48 @@ emacsd.start "$1"
 sleep_length="0.1s"
 max_tries=1000
 
+
 FLAG="daemon"
+CALL_FLAG=""
 NAME=""
 case "$1" in
     -s|--socket-name)
         FLAG="daemon=${2}"
+        CALL_FLAG="-s ${2}"
         NAME="${2}"
         ;;
     ,*)
         ;;
 esac
 
+is_available() {
+  emacsclient $CALL_FLAG -e '()' 2> /dev/null > /dev/null
+  [[ $? = 0 ]] 
+}
+
 # If there is no daemon.. let's try to get it started and then launch the client
-if [ -z "$(pgrep -f "emacs --${FLAG}")" ]; then
+if ! is_available; then
   emacsd.start $NAME
 fi
 
+
 succeeded_in_launching=false
 for try_n in $(seq $max_tries); do
-  if [ ! -z "$(pgrep -f "emacs --${FLAG}")" ]; then
-    (emacsclient "$@" 2> /dev/null) \
-        && succeeded_in_launching=true \
-        && break 
+  if is_available; then
+	echo available!
+        succeeded_in_launching=true 
+	break
+  else
+	  sleep $sleep_length
+	  if [ "$try_n" = "50" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
+	      notify-send -t 1000 "emacs ${FLAG} is starting..." 
+	  fi 
   fi
-
-  sleep $sleep_length
-  if [ "$try_n" = "50" -o "$try_n" = "150" -o "$try_n" = "500" ]; then
-      notify-send -t 1000 "emacs ${FLAG} is starting..." 
-  fi 
 done
 
-if ! $succeeded_in_launching; then
+if $succeeded_in_launching; then
+  emacsclient "$@"
+else
   echo 'Error: emacs ${FLAG} had an issue starting up.' 1>&2
 fi
 #+END_SRC
