@@ -33,6 +33,10 @@ echo "Stopping emacs ${DAEMON_FLAG}..." >> $LOGFILE
  pkill -f "emacs --${DAEMON_FLAG}") >> $LOGFILE 2>&1
 #+END_SRC
 
+#+begin_src bash :tangle emacsd.ps
+ps aux | grep 'emacs --daemon' | grep -v grep
+#+end_src
+
 #+BEGIN_SRC bash :tangle emacsd.restart
 emacsd.stop "$1"
 emacsd.start "$1"
