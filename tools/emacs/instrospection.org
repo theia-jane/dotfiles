@@ -20,7 +20,10 @@
 #+begin_src elisp
 (config! helpful
   (keymap!
-   "C-h k" #'helpful-key))
+   "C-h k" #'helpful-key
+   "C-h f" #'helpful-callable
+   "C-h x" #'helpful-command
+   "C-h o" #'helpful-symbol))
 #+END_SRC
 ** Counsel
 #+begin_src elisp
