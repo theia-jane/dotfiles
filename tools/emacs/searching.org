@@ -79,7 +79,6 @@
 
 * Keymapping
 #+begin_src elisp
-(define-leader! search "H-/")
 (keymap! :search
          (:after consult
                  "/" #'consult-ripgrep

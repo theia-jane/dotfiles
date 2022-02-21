@@ -8,7 +8,6 @@
 #+END_SRC
 * Keybindings
 #+begin_src elisp
-(define-leader! buffer "H-b")
 (keymap! :buffer
         "b" #'switch-to-buffer
         (:after consult "b" #'consult-buffer)
@@ -28,14 +27,12 @@
 #+END_SRC
 ** Inserting 
 #+begin_src elisp
-(define-leader! insert "H-i")
 (keymap! :insert
          "f" #'insert-file)
 #+END_SRC
 ** Inserting characters
 It's useful to have the ability to insert characters that aren't available on a keyboard. One major example is emoji. 
 #+begin_src elisp
-(define-leader! char-insert "H-I")
 (keymap! :char-insert
          "i" #'insert-char
          "e" #'emoji-search

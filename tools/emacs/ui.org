@@ -81,7 +81,6 @@ Turn off the bell
 
 * Keys
 #+begin_src elisp
-(define-leader! ui "H-u")
 (keymap! :ui
          "=" #'text-scale-increase
          "-" #'text-scale-decrease

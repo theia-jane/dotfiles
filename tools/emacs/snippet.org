@@ -7,7 +7,6 @@
          (add-to-list 'yas-snippet-dirs (substitute-env-vars "$dot/tools/emacs/snippets") 'append)
          (yas-global-mode 1))
 
-(define-leader! snippet "H-s")
 (keymap! :snippet
          :desc "New snippet" "n" #'yas-new-snippet 
          :desc "Documentation" "d" #'yassnippet-docs

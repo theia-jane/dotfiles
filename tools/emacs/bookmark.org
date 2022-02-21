@@ -14,7 +14,6 @@
 #+end_src
 * Keymap
 #+begin_src elisp 
-(define-leader! bookmark "H-d") ;; copying bookmark association from firefox
 (keymap! :bookmark
          :desc "Save" "s" #'bookmark-save
          :desc "Load" "l" #'bookmark-load

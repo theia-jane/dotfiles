@@ -5,7 +5,6 @@
 #+begin_src elisp
 (provide 'config-tab)
 
-(define-leader! tab "H-t")
 (keymap! :tab
          "n" #'tab-new
          "d" #'tab-close

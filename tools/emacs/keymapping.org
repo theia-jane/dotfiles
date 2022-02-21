@@ -324,6 +324,25 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 #+end_src
 
+** TODO Leaders
+I wanted these to be in relevant areas of my config.. but that is growing to be a hassle. If I want to reuse the same 'leader' for different purposes (ie =H-s= for 'snippets' and for 'saving') it doesn't make sense to have one depend on the other..
+I ideally probably let redefinition occur and probable change the notion of what a 'leader' is in the context of this mapping setup.
+#+begin_src elisp
+(define-leader! bookmark "H-d") ;; copying bookmark association from firefox
+(define-leader! file "H-f")
+(define-leader! tab "H-t")
+(define-leader! introspection "H-,")
+(define-leader! yank "H-y")
+(define-leader! notes "H-n")
+(define-leader! snippet "H-s")
+(define-leader! search "H-/")
+(define-leader! git "H-g")
+(define-leader! buffer "H-b")
+(define-leader! insert "H-i")
+(define-leader! ui "H-u")
+(define-leader! edit "H-e")
+#+end_src
+
 ** HyperCtrl Map
 Sometimes I want to bulk remap control prefixed keys to be usable by the same hyper prefix keys,
 this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=

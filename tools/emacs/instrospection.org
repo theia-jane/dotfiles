@@ -31,7 +31,6 @@
 
 * Keymap
 #+begin_src elisp
-(define-leader! introspection "H-,")
 (keymap! :introspection
          "s" (cmd (message "Servername: %s" server-name))
          "b" #'battery)

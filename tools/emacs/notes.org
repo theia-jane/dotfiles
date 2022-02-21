@@ -13,7 +13,6 @@
 
 * Keymapping
 #+begin_src elisp
-(define-leader! notes "H-n")
 (defmacro notes-cmd (&rest body)
   `#'(lambda () (interactive)
        (let ((default-directory notes/directory))

@@ -27,7 +27,6 @@ Specifically, two spaces.
 
 * Keys
 #+begin_src elisp
-(define-leader! edit "H-e")
 (keymap! :edit
          "s" #'(lambda () (interactive)
                  (find-file
