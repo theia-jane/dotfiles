@@ -19,11 +19,15 @@
          ,@body)))
 
 (keymap! :notes
-         "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
+         :desc "Notes find" "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
                         (command-execute #'project-find-file))
-         "g" (notes-cmd (find-file "goals.org"))
-         "d" (notes-cmd (command-execute #'dired))
-         "/" (notes-cmd (command-execute #'consult-ripgrep)))
+         :desc "Goals" "g" (notes-cmd (find-file "goals.org"))
+         :desc "New org buffer" "b" (notes-cmd
+                                     (with-current-buffer (generate-new-buffer "*notes*")
+                                       (org-mode)
+                                       (switch-to-buffer (current-buffer))))
+         :desc "Notes dir" "d" (notes-cmd (command-execute #'dired))
+         :desc "Notest search" "/" (notes-cmd (command-execute #'consult-ripgrep)))
 #+end_src
 
 
