@@ -111,7 +111,10 @@ Allow for finding outermost sexps
   (if (beginning-of-sexp-p)
       (end-of-sexp)))
 #+END_SRC
-
+** Meta Variables 
+#+begin_src elisp
+(defvar personal-elisp-packages (substitute-env-vars "$dot/tools/emacs/packages/"))
+#+end_src
 ** Evaluation
 Allow for different functions for eval-ing the sexp before the point.
 #+begin_src elisp
@@ -161,6 +164,10 @@ Add a nice overlay when executing emacs lisp
          (setq elisp-eval-last-sexp-function #'eros-eval-last-sexp)
          (add-hook 'emacs-lisp-mode-hook 'eros-mode))
 #+end_src
+** Eval context
+#+begin_src elisp
+(require 'eval-context)
+#+end_src
 ** Keybinding
 #+begin_src elisp
 ;; Key-bindings
@@ -172,7 +179,19 @@ Add a nice overlay when executing emacs lisp
    "C-S-e" #'(lambda () (interactive) (funcall elisp-eval-last-sexp-function)))
  (:map emacs-lisp-mode-map
    :desc "Eval outermost sexp" "<S-return>" #'eval-outermost-sexp
-   "<C-return>" #'eval-outermost-sexp-and-continue))
+   "<C-return>" #'eval-outermost-sexp-and-continue)
+    :edit
+    :desc "New elisp buffer" "b" (cmd
+         (let ((default-directory personal-elisp-packages))
+           (with-current-buffer (generate-new-buffer "*elisp*")
+             (emacs-lisp-mode)
+             (switch-to-buffer (current-buffer)))))
+    (:prefix "H-e"
+             :desc "Buffer context" "b" #'open-eval-context-buffer-buffer
+             :desc "Debug context" "d" #'open-eval-context-edebug-buffer
+             :desc "Set eval-context" "s" #'open-eval-context-buffer-debug
+             :desc "Bufer repl" "r" #'open-repl-in-eval-context-buffer
+             :desc "Debug repl ""R" #'open-repl-in-eval-context-edebug))
 #+end_src
 ** Hacks 
 Evil doesn't play really well with some elisp navigating function... This corrects for it. Probably should push some of this upstream
