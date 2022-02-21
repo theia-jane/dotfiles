@@ -45,7 +45,6 @@ fi
 
 if [ ! -z "$(which nvim)" ]; then
   EDITOR="${EDITOR:-nvim}"
-  export MANPAGER="nvim -c 'set ft=man' -"
 fi
 
 export EDITOR="${EDITOR:-vim}"
