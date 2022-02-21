@@ -3,5 +3,5 @@
 
 * Man
 #+begin_src bash :tangle eman :shebang #!/bin/bash
-emacsdclient -nw --eval "(let ((Man-notify-method 'pushy)) (man \"$*\"))"
+emacsdclient -s cli -nw -e "(let ((Man-notify-send 'pushy)) (man \"$*\"))"
 #+end_src
