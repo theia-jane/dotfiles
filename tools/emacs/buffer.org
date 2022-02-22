@@ -28,16 +28,11 @@
 ** Inserting 
 #+begin_src elisp
 (keymap! :insert
-         "f" #'insert-file)
-#+END_SRC
-** Inserting characters
-It's useful to have the ability to insert characters that aren't available on a keyboard. One major example is emoji. 
-#+begin_src elisp
-(keymap! :char-insert
-         "i" #'insert-char
+         "f" #'insert-file
+         "c" #'insert-char
          "e" #'emoji-search
          "E" #'emoji-insert)
-#+end_src 
+#+END_SRC
 * Displaying 
 #+begin_src elisp
 (defun buffer--display-in-vertical-split (buffer alist)
