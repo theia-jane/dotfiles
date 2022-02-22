@@ -16,3 +16,16 @@ kill "$window_pid"
 
 exit 0
 #+END_SRC
+
+* Config
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME} :shebang #!/usr/bin/env sh 
+:END:
+#+begin_src bash :tangle .xsession
+d kree.start
+d emacsd.start
+d emacsd.start cli
+d emacsd.start server 
+d emacsd.start everywhere 
+d emacsd.start backup 
+#+end_src
