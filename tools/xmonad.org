@@ -1,128 +1,146 @@
 #+TITLE: xmonad
-#+PROPERTY: header-args :dir ${HOME}/.xmonad :tangle xmonad.hs :comments no
+#+PROPERTY: header-args :dir ${HOME}/.xmonad :tangle xmonad.hs :tangle-relative 'dir :comments yes
 
 After making changes be sure to run src_bash{xmonad --restart} if you're running xmonad or src_bash{xmonad --recompile} if you are not.
 
+
+/NOTE: This needs some work, mostly pulled from my arco install that I've been tweaking. I wanted this saved for now though/
+
 * Imports
 #+BEGIN_SRC haskell
-import XMonad
-import qualified XMonad.StackSet as W
--- import qualified Data.Map        as M
--- import Control.Monad
--- import System.IO
--- import System.IO.Unsafe
+import System.IO
+import System.Exit
+
+import XMonad 
+import XMonad.Hooks.SetWMName
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.FadeInactive
+import XMonad.Config.Desktop
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Actions.SpawnOn
+import XMonad.Util.EZConfig (additionalKeys, additionalMouseBindings)
+import XMonad.Actions.CycleWS
+import XMonad.Hooks.UrgencyHook
+import qualified Codec.Binary.UTF8.String as UTF8
+
 import Data.List
 import Data.Bits ((.|.))
--- import Data.Ratio ((%))
--- import XMonad.ManageHook
--- Actions
-import XMonad.Actions.CycleWS
--- import XMonad.Actions.SpawnOn
--- import XMonad.Actions.OnScreen
--- import XMonad.Actions.SwapWorkspaces
--- import XMonad.Actions.Submap
--- import XMonad.Actions.Search
--- import XMonad.Actions.UpdatePointer
--- import XMonad.Actions.SpawnOn
--- Hooks
-import XMonad.Hooks.ManageHelpers
--- import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.SetWMName
-import XMonad.Hooks.EwmhDesktops
--- import XMonad.Hooks.FadeInactive
--- import XMonad.Hooks.UrgencyHook hiding (Never)
--- import XMonad.Hooks.ICCCMFocus
--- Layouts
--- import XMonad.Layout.PerWorkspace
--- import XMonad.Layout.IM
+
+import XMonad.Layout as L
 import XMonad.Layout.Grid
+import XMonad.Layout.Fullscreen
 import XMonad.Layout.TwoPane
 import XMonad.Layout.NoBorders
--- import XMonad.Layout.Reflect
+
+import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed
--- import qualified XMonad.Layout.Magnifier as Mag
+import XMonad.Layout.Gaps
+import XMonad.Layout.Renamed (renamed, Rename(Replace))
+import XMonad.Layout.ResizableTile
+import XMonad.Layout.Fullscreen (fullscreenFull)
+import XMonad.Layout.Cross(simpleCross)
+import XMonad.Layout.Spiral(spiral)
+import XMonad.Layout.ThreeColumns
 import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle.Instances
+import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Minimize
--- import XMonad.Layout.BoringWindows
--- import qualified XMonad.Layout.ToggleLayouts as Tog
--- Prompts
--- import XMonad.Prompt
--- import XMonad.Prompt.Input
--- import XMonad.Prompt.Workspace
--- import XMonad.Prompt.Shell
--- import XMonad.Prompt.XMonad
--- import XMonad.Prompt.RunOrRaise
--- import XMonad.Prompt.AppendFile
--- Util
--- import XMonad.Util.NamedScratchpad
-import XMonad.Util.Run(spawnPipe)
+
 import XMonad.Util.EZConfig(additionalKeysP,removeKeysP,additionalMouseBindings)
+
+import XMonad.Layout.CenteredMaster(centerMaster)
+
+import Graphics.X11.ExtraTypes.XF86
+import qualified XMonad.StackSet as W
+import qualified Data.Map as M
+import qualified Data.ByteString as B
+import Control.Monad (liftM2)
+import qualified DBus as D
+import qualified DBus.Client as D
+
 #+END_SRC
 * Main
 #+BEGIN_SRC haskell
+-- colours
+normBord = "#7c6f64"
+focdBord = "#d79921"
+fore     = "#ebdbb2"
+back     = "#282828"
+winType  = "#b16286"
+
+--mod4Mask= super key
+--mod1Mask= alt key
+--controlMask= ctrl key
+--shiftMask= shift key
+
+myModMask = mod4Mask
+encodeCChar = map fromIntegral . B.unpack
+myFocusFollowsMouse = True
+myBorderWidth = 0
+-- myWorkspaces    = ["\61612","\61899","\61947","\61635","\61502","\61501","\61705","\61564","\62150","\61872"]
+myWorkspaces    = ["1","2","3","4","5","6","7","8","9","10"]
+--myWorkspaces    = ["I","II","III","IV","V","VI","VII","VIII","IX","X"]
+
+myBaseConfig = desktopConfig
+
+
+main :: IO ()
 main = do
-  spawn "init-post-wm xmonad"
-  xmonad $ ewmh defaultConfig
-    { manageHook = myManageHook <+> manageHook defaultConfig
-    , modMask = mod4Mask -- Rebind Mod to the Windows key
-    , borderWidth = 6
-    , focusedBorderColor = "#<<colors/get(role="accent")>>"
-    , normalBorderColor = "#<<colors/get(role="gray")>>"
-, layoutHook = myLayoutHook
-, startupHook = setWMName "LG3D"
-    }
-    `removeKeysP` ["M-q", "M-S-c", "M-<Tab>", "M-l", "M-h", "M-.", "M-,"]
-    `additionalKeysP` myKeys
-    `additionalMouseBindings` myMouseBindings
+    -- spawn "d kree.start"
+    spawn "init-post-wm xmonad"
+    dbus <- D.connectSession
+    -- Request access to the DBus name
+    D.requestName dbus (D.busName_ "org.xmonad.Log")
+        [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
+
+    xmonad . ewmh $
+  --Keyboard layouts
+            myBaseConfig
+                {startupHook = myStartupHook
+, layoutHook = myLayout 
+, manageHook = manageSpawn <+> myManageHook <+> manageHook myBaseConfig
+, modMask = myModMask
+, borderWidth = myBorderWidth
+, handleEventHook    = handleEventHook myBaseConfig 
+, focusFollowsMouse = myFocusFollowsMouse
+, workspaces = myWorkspaces
+, focusedBorderColor = focdBord
+, normalBorderColor = normBord
+, keys = myKeys
+, mouseBindings = myMouseBindings
+, logHook = myLogHook
+}
 #+END_SRC
-
-* Input bindings
-** Keys
-#+BEGIN_SRC haskell
--- Conventions:
--- - Key-bindings with 'Shift' move things. E.g. windows, workspaces, layouts
-myKeys =
-  -- Window
-  [ ("M-S-m", windows W.swapMaster) -- Swap current window with master
-  , ("M-q", kill) -- Quit the current window
-
-  -- Workspace
-  , ("M-n", myNextWS) -- Next non-empty workspace
-  , ("M-p", myPrevWS) -- Previous non-empty workspace
-  , ("M-S-n", shiftToNext >> nextWS) -- Drag window to next workspace
-  , ("M-S-p", shiftToPrev >> prevWS) -- Drag window to prev workspace
-  , ("M-<Tab>", toggleWS) -- Back-and-forth between workspaces
-
-  -- Layout
-  -- , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
-  , ("M-C-l", sendMessage NextLayout) -- Cycle through the layouts
-  , ("M--", sendMessage Shrink)
-  , ("M-S-=", sendMessage Expand)
-  -- , ("M-=", sendMessage Expand)
-  ]
-#+END_SRC
-** Mouse
-#+BEGIN_SRC haskell
-myMouseBindings =
-  [ ((mod4Mask, button5), (\w -> myNextWS))
-  , ((mod4Mask, button4), (\w -> myPrevWS))
-  , ((mod4Mask .|. shiftMask, button5), (\w -> windows W.focusDown))
-  , ((mod4Mask .|. shiftMask, button4), (\w -> windows W.focusUp))
-  ]
-#+END_SRC
-
-* Windows
-** Manage Hook
-#+BEGIN_SRC haskell
-myManageHook = composeAll
-  [ title =? "emacs-everywhere" --> doPaletteFloat
-  , (isPrefixOf "dropdown_" `fmap` appName) --> doPaletteFloat
-  -- basic float: doFloat
-  ]
-#+END_SRC
-** Floating
+* Log hook
+Use fading to indicate active window
+#+begin_src haskell
+myLogHook :: X ()
+myLogHook = fadeInactiveLogHook fadeAmount
+    where fadeAmount = 0.85
+#+end_src
+* Starup hook
+#+begin_src haskell
+myStartupHook = do
+    spawn "$HOME/.xmonad/scripts/autostart.sh"
+    setWMName "LG3D"
+#+end_src
+* Helper functions
+** Polybar toggle
+#+begin_src haskell
+myToggleBar = do
+    sendMessage ToggleStruts
+    spawn $ "polybar-msg cmd toggle"
+#+end_src
+** Navigating workspaces
+#+begin_src haskell
+myNextWS = moveTo Next $ Not emptyWS
+myPrevWS = moveTo Prev $ Not emptyWS
+#+end_src
+** Palette floating
 #+BEGIN_SRC haskell
 doPaletteFloat = doFloatDep move
   where
@@ -130,18 +148,278 @@ doPaletteFloat = doFloatDep move
       where cx = (1-w)/2
             cy = 0.05
 #+END_SRC
-** Layout
+
+* Input bindings
+** Keys
 #+BEGIN_SRC haskell
-myLayoutHook = smartBorders $
-  Tall 1 (10/100) (60/100)
-    ||| TwoPane (15/100) (55/100)
-    ||| Full
+myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
+  ----------------------------------------------------------------------
+  -- SUPER + FUNCTION KEYS
+
+  [ ((modMask, xK_e), spawn $ "emacsdclient -c" )
+  , ((modMask, xK_c), spawn $ "conky-toggle" )
+  , ((modMask, xK_h), spawn $ "urxvt 'htop task manager' -e htop" )
+  , ((modMask, xK_m), spawn $ "pragha" )
+  , ((modMask, xK_q), kill )
+  -- , ((modMask, xK_r), spawn $ "rofi-theme-selector" )
+  , ((modMask, xK_t), spawn $ "tilix" )
+  , ((modMask, xK_v), spawn $ "pavucontrol" )
+  , ((modMask, xK_b), myToggleBar)
+  -- , ((modMask, xK_x), spawn $ "arcolinux-logout" )
+  , ((modMask, xK_Escape), spawn $ "xkill" )
+  , ((modMask, xK_Return), spawn $ "alacritty" )
+  , ((modMask, xK_F1), spawn $ "firefox" )
+  , ((modMask, xK_F2), spawn $ "emacs" )
+  , ((modMask, xK_F3), spawn $ "inkscape" )
+  , ((modMask, xK_F4), spawn $ "arcolinux-logout" )
+  , ((modMask, xK_F5), spawn $ "meld" )
+  , ((modMask, xK_F6), spawn $ "vlc --video-on-top" )
+  , ((modMask, xK_F7), spawn $ "virtualbox" )
+  , ((modMask, xK_F8), spawn $ "thunar" )
+  , ((modMask, xK_F9), spawn $ "evolution" )
+  , ((modMask, xK_F10), spawn $ "spotify" )
+  , ((modMask, xK_F11), spawn $ "rofi -theme-str 'window {width: 100%;height: 100%;}' -show drun" )
+  , ((modMask, xK_F12), spawn $ "rofi -show drun" )
+  , ((modMask, xK_n), myNextWS)
+  , ((modMask, xK_p), myPrevWS)
+
+  
+  -- FUNCTION KEYS
+  , ((0, xK_F12), spawn $ "xfce4-terminal --drop-down" )
+
+  -- SUPER + SHIFT KEYS
+
+  , ((modMask .|. shiftMask , xK_Return ), spawn $ "thunar")
+  , ((modMask .|. shiftMask , xK_r ), spawn $ "xmonad --recompile && xmonad --restart")
+  , ((modMask .|. shiftMask , xK_q ), kill)
+  -- , ((modMask .|. shiftMask , xK_x ), io (exitWith ExitSuccess))
+
+  -- CONTROL + ALT KEYS
+
+  , ((controlMask .|. mod1Mask , xK_Next ), spawn $ "conky-rotate -n")
+  , ((controlMask .|. mod1Mask , xK_Prior ), spawn $ "conky-rotate -p")
+  , ((controlMask .|. mod1Mask , xK_a ), spawn $ "xfce4-appfinder")
+  , ((controlMask .|. mod1Mask , xK_b ), spawn $ "thunar")
+  , ((controlMask .|. mod1Mask , xK_c ), spawn $ "catfish")
+  , ((controlMask .|. mod1Mask , xK_e ), spawn $ "arcolinux-tweak-tool")
+  , ((controlMask .|. mod1Mask , xK_f ), spawn $ "firefox")
+  , ((controlMask .|. mod1Mask , xK_g ), spawn $ "chromium -no-default-browser-check")
+  , ((controlMask .|. mod1Mask , xK_i ), spawn $ "nitrogen")
+  , ((controlMask .|. mod1Mask , xK_k ), spawn $ "arcolinux-logout")
+  , ((controlMask .|. mod1Mask , xK_l ), spawn $ "arcolinux-logout")
+  , ((controlMask .|. mod1Mask , xK_m ), spawn $ "xfce4-settings-manager")
+  , ((controlMask .|. mod1Mask , xK_o ), spawn $ "$HOME/.xmonad/scripts/picom-toggle.sh")
+  , ((controlMask .|. mod1Mask , xK_p ), spawn $ "pamac-manager")
+  , ((controlMask .|. mod1Mask , xK_r ), spawn $ "rofi-theme-selector")
+  , ((controlMask .|. mod1Mask , xK_s ), spawn $ "spotify")
+  , ((controlMask .|. mod1Mask , xK_t ), spawn $ "alacritty")
+  , ((controlMask .|. mod1Mask , xK_u ), spawn $ "pavucontrol")
+  , ((controlMask .|. mod1Mask , xK_v ), spawn $ "vivaldi-stable")
+  , ((controlMask .|. mod1Mask , xK_w ), spawn $ "arcolinux-welcome-app")
+  , ((controlMask .|. mod1Mask , xK_Return ), spawn $ "alacritty")
+
+  -- ALT + ... KEYS
+
+  , ((mod1Mask, xK_f), spawn $ "variety -f" )
+  , ((mod1Mask, xK_n), spawn $ "variety -n" )
+  , ((mod1Mask, xK_p), spawn $ "variety -p" )
+  , ((mod1Mask, xK_r), spawn $ "xmonad --restart" )
+  , ((mod1Mask, xK_t), spawn $ "variety -t" )
+  , ((mod1Mask, xK_Up), spawn $ "variety --pause" )
+  , ((mod1Mask, xK_Down), spawn $ "variety --resume" )
+  , ((mod1Mask, xK_Left), spawn $ "variety -p" )
+  , ((mod1Mask, xK_Right), spawn $ "variety -n" )
+  , ((mod1Mask, xK_F2), spawn $ "xfce4-appfinder --collapsed" )
+  , ((mod1Mask, xK_F3), spawn $ "xfce4-appfinder" )
+
+  --VARIETY KEYS WITH PYWAL
+
+  -- , ((mod1Mask .|. shiftMask , xK_f ), spawn $ "variety -f && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  , ((mod1Mask .|. shiftMask , xK_n ), spawn $ "variety -n && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  , ((mod1Mask .|. shiftMask , xK_p ), spawn $ "variety -p && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  , ((mod1Mask .|. shiftMask , xK_t ), spawn $ "variety -t && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  , ((mod1Mask .|. shiftMask , xK_u ), spawn $ "wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+
+  , ((modMask, xK_f), sendMessage $ L.JumpToLayout "full")
+  , ((modMask, xK_d), sendMessage $ L.JumpToLayout "duo")
+
+  --CONTROL + SHIFT KEYS
+
+  , ((controlMask .|. shiftMask , xK_Escape ), spawn $ "xfce4-taskmanager")
+
+  --SCREENSHOTS
+
+  , ((0, xK_Print), spawn $ "scrot 'ArcoLinux-%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f $$(xdg-user-dir PICTURES)'")
+  , ((controlMask, xK_Print), spawn $ "xfce4-screenshooter" )
+  , ((controlMask .|. shiftMask , xK_Print ), spawn $ "gnome-screenshot -i")
+
+
+  --MULTIMEDIA KEYS
+
+  -- Mute volume
+  , ((0, xF86XK_AudioMute), spawn $ "amixer -q set Master toggle")
+
+  -- Decrease volume
+  , ((0, xF86XK_AudioLowerVolume), spawn $ "amixer -q set Master 5%-")
+
+
+  -- Increase volume
+  , ((0, xF86XK_AudioRaiseVolume), spawn $ "amixer -q set Master 5%+")
+
+  -- Increase brightness
+  , ((0, xF86XK_MonBrightnessUp),  spawn $ "xbacklight -inc 5")
+
+  -- Decrease brightness
+  , ((0, xF86XK_MonBrightnessDown), spawn $ "xbacklight -dec 5")
+
+-- Alternative to increase brightness
+
+  -- Increase brightness
+  -- , ((0, xF86XK_MonBrightnessUp),  spawn $ "brightnessctl s 5%+")
+
+  -- Decrease brightness
+  -- , ((0, xF86XK_MonBrightnessDown), spawn $ "brightnessctl s 5%-")  
+
+--  , ((0, xF86XK_AudioPlay), spawn $ "mpc toggle")
+--  , ((0, xF86XK_AudioNext), spawn $ "mpc next")
+--  , ((0, xF86XK_AudioPrev), spawn $ "mpc prev")
+--  , ((0, xF86XK_AudioStop), spawn $ "mpc stop")
+
+  , ((0, xF86XK_AudioPlay), spawn $ "playerctl play-pause")
+  , ((0, xF86XK_AudioNext), spawn $ "playerctl next")
+  , ((0, xF86XK_AudioPrev), spawn $ "playerctl previous")
+  , ((0, xF86XK_AudioStop), spawn $ "playerctl stop")
+
+
+  --------------------------------------------------------------------
+  --  XMONAD LAYOUT KEYS
+
+  -- Cycle through the available layout algorithms.
+  , ((modMask, xK_space), sendMessage NextLayout)
+
+  , ((modMask, xK_Tab), myNextWS)
+  , ((modMask .|. shiftMask, xK_Tab), myPrevWS)
+
+  --Focus selected desktop
+  , ((controlMask .|. mod1Mask , xK_Left ), prevWS)
+
+  --Focus selected desktop
+  , ((controlMask .|. mod1Mask , xK_Right ), nextWS)
+
+  --  Reset the layouts on the current workspace to default.
+  , ((modMask .|. shiftMask, xK_space), setLayout $ XMonad.layoutHook conf)
+
+  -- Move focus to the next window.
+  , ((modMask, xK_j), windows W.focusDown)
+
+  -- Move focus to the previous window.
+  , ((modMask, xK_k), windows W.focusUp  )
+
+  , ((modMask, xK_minus), sendMessage Shrink)
+  , ((modMask .|. shiftMask, xK_equal), sendMessage Expand)
+
+  -- Move focus to the master window.
+  , ((modMask .|. shiftMask, xK_m), windows W.focusMaster  )
+
+  -- Swap the focused window with the next window.
+  , ((modMask .|. shiftMask, xK_j), windows W.swapDown  )
+
+  -- Swap the focused window with the next window.
+  , ((controlMask .|. modMask, xK_Down), windows W.swapDown  )
+
+  -- Swap the focused window with the previous window.
+  , ((modMask .|. shiftMask, xK_k), windows W.swapUp    )
+
+  -- Swap the focused window with the previous window.
+  , ((controlMask .|. modMask, xK_Up), windows W.swapUp  )
+
+  -- Shrink the master area.
+  -- , ((controlMask .|. shiftMask , xK_h), sendMessage Shrink)
+
+  -- Expand the master area.
+  -- , ((controlMask .|. shiftMask , xK_l), sendMessage Expand)
+
+  -- Push window back into tiling.
+  
+-- , ((controlMask .|. shiftMask , xK_t), withFocused $ windows . W.sink)
+
+  -- Increment the number of windows in the master area.
+  -- , ((controlMask .|. modMask, xK_Left), sendMessage (IncMasterN 1))
+
+  -- Decrement the number of windows in the master area.
+  -- , ((controlMask .|. modMask, xK_Right), sendMessage (IncMasterN (-1)))
+
+  ]
+  ++
+
+  -- mod-[1..9], Switch to workspace N
+  -- mod-shift-[1..9], Move client to workspace N
+  [((m .|. modMask, k), windows $ f i)
+
+  --Keyboard layouts
+  --qwerty users use this line
+   | (i, k) <- zip (XMonad.workspaces conf) [xK_1,xK_2,xK_3,xK_4,xK_5,xK_6,xK_7,xK_8,xK_9,xK_0]
+
+  --French Azerty users use this line
+  -- | (i, k) <- zip (XMonad.workspaces conf) [xK_ampersand, xK_eacute, xK_quotedbl, xK_apostrophe, xK_parenleft, xK_minus, xK_egrave, xK_underscore, xK_ccedilla , xK_agrave]
+
+  --Belgian Azerty users use this line
+  -- | (i, k) <- zip (XMonad.workspaces conf) [xK_ampersand, xK_eacute, xK_quotedbl, xK_apostrophe, xK_parenleft, xK_section, xK_egrave, xK_exclam, xK_ccedilla, xK_agrave]
+
+      , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)
+      , (\i -> W.greedyView i . W.shift i, shiftMask)]]
+
+
+#+END_SRC
+** Mouse
+#+BEGIN_SRC haskell
+myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
+
+    -- mod-button1, Set the window to floating mode and move by dragging
+    [ ((modMask, 1), (\w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster))
+    , ((modMask .|. shiftMask, 1), (\w -> focus w >> (windows . W.sink) w))
+
+    -- mod-button2, Raise the window to the top of the stack
+    , ((modMask, 2), (\w -> focus w >> windows W.shiftMaster))
+
+    -- mod-button3, Set the window to floating mode and resize by dragging
+    , ((modMask, 3), (\w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster))
+
+
+
+    ] ++ 
+    [ ((mod4Mask, button5), (\w -> myNextWS))
+    , ((mod4Mask, button4), (\w -> myPrevWS))
+    , ((mod4Mask .|. shiftMask, button5), (\w -> windows W.focusDown))
+    , ((mod4Mask .|. shiftMask, button4), (\w -> windows W.focusUp))
+    ]
 #+END_SRC
 
-* Navigating
-** Workspaces
+* Window Manage Hook
 #+BEGIN_SRC haskell
-myNextWS = moveTo Next NonEmptyWS
-myPrevWS = moveTo Prev NonEmptyWS
+myManageHook = composeAll . concat $
+    [ [isDialog --> doCenterFloat]
+    , [className =? c --> doCenterFloat | c <- myCFloats]
+    , [title =? t --> doFloat | t <- myTFloats]
+    , [resource =? r --> doFloat | r <- myRFloats]
+    , [resource =? i --> doIgnore | i <- myIgnores]
+    , [ title =? "emacs-everywhere" --> doPaletteFloat ]
+    , [ (isPrefixOf "dropdown_" `fmap` appName) --> doPaletteFloat ]
+    ]
+    where
+    myCFloats = ["Arandr", "Arcolinux-calamares-tool.py", "Arcolinux-tweak-tool.py", "Arcolinux-welcome-app.py", "Galculator", "feh", "mpv", "Xfce4-terminal"]
+    myTFloats = ["Downloads", "Save As..."]
+    myRFloats = []
+    myIgnores = ["desktop_window"]
 #+END_SRC
+* Layouts
+#+BEGIN_SRC haskell
+myLayout = mkToggle (FULL ?? NOBORDERS ?? EOT) $
+  avoidStruts $
+    renamed [Replace "duo"] (TwoPane (15/100) (55/100))
+    ||| Tall 1 (10/100) (60/100)
+    ||| renamed [Replace "full"] Full
+    ||| spiral (6/7)
+#+END_SRC
+
 
