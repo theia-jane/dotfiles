@@ -116,7 +116,7 @@ tray-background = ${colors.background}
 [module/my-wm-num]
 type = custom/script
 exec = wm-focused-window-number
-interval = 0.001 
+interval = 3 
 label = %output%
 format-padding = 0
 
