@@ -5,6 +5,7 @@
 :header-args: :tangle-relative 'dir :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
 
+** Kill per window id
 #+BEGIN_SRC bash :tangle x-kill-by-win-id
 if [ -z "$1" ]; then
    echo "Must specify a window id."
@@ -16,6 +17,34 @@ kill "$window_pid"
 
 exit 0
 #+END_SRC
+
+
+** Get the current desktop / workspace id 
+#+begin_src bash :tangle wm-desktop-id
+wmctrl -d | awk '$2 == "*" {print $1}'
+#+END_SRC
+
+** List windows on the current desktop
+#+begin_src bash :tangle wm-ls-windows
+wmctrl -l | awk '$2 == "'$(wm-desktop-id)'"' | nl -w1
+#+END_SRC
+
+** Get the current window that is focused on
+#+begin_src bash :tangle wm-focused-window
+id="$(xprop -root _NET_ACTIVE_WINDOW | awk '{print $(NF)}')"
+wm-ls-windows | awk '$2 == "'$(printf "0x%08x" $id)'"'
+#+END_SRC
+
+** List indicate which window
+Show current active window out of toal on workspace. Numbered per workspace (1,2,3,..) 
+#+begin_src bash :tangle wm-focused-window-number
+WINDOW="$(wm-focused-window)"  
+printf "[%d/%d]" \
+  "$(echo "$WINDOW" | awk '{print $1}')"  \
+  "$(wm-ls-windows | wc -l)" 
+  # "$(echo "$WINDOW" | sed -r 's/^([[:space:]]+[^[:space:]]+){1,4}//')" 
+#+end_src
+
 
 * Config
 :PROPERTIES:
