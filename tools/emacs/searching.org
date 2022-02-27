@@ -53,6 +53,11 @@
                 ('archwiki "https://wiki.archlinux.org/index.php?search=%s")
                 ('melpa "https://melpa.org/#/?q=%s"))))
     (firefox (format url query))))
+
+(defun search-clipboard-online (&optional type)
+  (interactive)
+  (require 'simpleclip)
+  (search-online (simpleclip-get-contents) type))
 #+end_src
 
 * RG Consult

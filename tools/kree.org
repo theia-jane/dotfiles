@@ -42,15 +42,15 @@ global:
   Super+Enter: tmux-scratch
   Super+Apostrophe: emacsdclient -s everywhere -e '(emacs-everywhere)'
   Super+Slash:
-    a: emacsdclient -e "(search-online (clipboard-yank-to-string) 'archwiki)" 
-    g: emacsdclient -e "(search-online (clipboard-yank-to-string) 'github)" 
-    Shift+g: emacsdclient -e "(search-online (clipboard-yank-to-string) 'google)" 
-    w: emacsdclient -e "(search-online (clipboard-yank-to-string) 'wikipedia)" 
-    m: emacsdclient -e "(search-online (clipboard-yank-to-string) 'melpa)" 
-    d: emacsdclient -e "(search-online (clipboard-yank-to-string) 'dictionary)" 
-    y: emacsdclient -e "(search-online (clipboard-yank-to-string) 'youtube)" 
-    t: emacsdclient -e "(search-online (clipboard-yank-to-string) 'translate)" 
-    Slash: emacsdclient -e "(search-online (clipboard-yank-to-string))" 
+    a: emacsdclient -e "(search-clipboard-online 'archwiki)" 
+    g: emacsdclient -e "(search-clipboard-online 'github)" 
+    Shift+g: emacsdclient -e "(search-clipboard-online 'google)" 
+    w: emacsdclient -e "(search-clipboard-online 'wikipedia)" 
+    m: emacsdclient -e "(search-clipboard-online 'melpa)" 
+    d: emacsdclient -e "(search-clipboard-online 'dictionary)" 
+    y: emacsdclient -e "(search-clipboard-online 'youtube)" 
+    t: emacsdclient -e "(search-clipboard-online 'translate)" 
+    Slash: emacsdclient -e "(search-clipboard-online)" 
   Super+Semicolon:
     Enter: tilix
     k:
