@@ -11,7 +11,8 @@
 (keymap!
  (:after magit
          :git
-         "g" #'magit-status)
+         "g" #'magit-status
+         "c" #'magit-clone)
  (:after git-gutter-fringe
          :nv "]c" #'git-gutter:next-hunk
          :nv "[c" #'git-gutter:previous-hunk
