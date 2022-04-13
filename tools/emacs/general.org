@@ -55,6 +55,7 @@ for now it's not so complex.
           config-org-remark
           config-selection-completion
           config-introspection
+          config-macos
           config-editting
           config-pdf
           config-remote

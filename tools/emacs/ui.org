@@ -28,7 +28,7 @@ Turn off the bell
 #+begin_src elisp
 (set-face-attribute 'default nil 
                     :font "Source Code Pro"
-                    :height 100)
+                    :height 140)
 #+end_src
 
 * Non-program buffers

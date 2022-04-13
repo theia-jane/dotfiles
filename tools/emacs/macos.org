@@ -1,0 +1,11 @@
+#+TITLE: Macos
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args:elisp :tangle config-macos.el
+
+#+begin_src elisp
+(provide 'config-macos)
+(setq ns-command-modifier 'control
+      ns-control-modifier 'super
+      ns-alternate-modifier 'meta
+      ns-right-control-modifier 'hyper)  
+#+end_src
