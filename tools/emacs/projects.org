@@ -78,6 +78,13 @@
 
 
 
+* Helper functions
+#+begin_src elisp
+(defun project-file-name ()
+  (let ((root (project-root (project-current))))
+    (f-relative (buffer-file-name) root)))
+#+end_src
+
 * Remotes
 #+begin_src elisp
 (after! browse-at-remote
