@@ -12,11 +12,17 @@
  (:after magit
          :git
          "g" #'magit-status
-         "c" #'magit-clone)
+         "c" #'magit-clone
+         "p" #'magit-push
+         "a" #'magit-commit-amend
+         "C" #'magit-commit-create)
+
  (:after git-gutter-fringe
          :nv "]c" #'git-gutter:next-hunk
          :nv "[c" #'git-gutter:previous-hunk
-         :git "-" #'git-gutter:revert-hunk))
+         :git "-" #'git-gutter:revert-hunk
+         "=" #'git-gutter:stage-hunk
+         ))
 
 (config! evil
   (add-hook 'git-commit-setup-hook #'evil-insert-state))
