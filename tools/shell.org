@@ -215,6 +215,16 @@ shopt -s histappend                      # append to history, don't overwrite it
 
 # Save and reload the history after each command finishes
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+function p() {
+    $(cd "$p/$1" && {
+        dir="$(fd -HI '\.git$' -t d | sed -r 's%(.*)/[.]git/%\1%' | fzf --reverse --height 10%)" 
+        printf 'builtin cd -- %q' "$(pwd)/$dir"
+    })
+}
+complete -W "$(cd $p && \
+for dir in $(fd . -d 1 -t d); do
+    [ -z "$(cd $dir && fd '\.git$' -t d -d 1)" ] && echo "$dir" | sed 's%/%%'
+done)" p
 #+END_SRC
 
 ** zsh
