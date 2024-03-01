@@ -227,6 +227,15 @@ for dir in $(fd . -d 1 -t d); do
 done)" p
 #+END_SRC
 
+#+begin_src bash :tangle .bash_profile
+source_list="${HOME}/.profile
+${HOME}/.bashrc"
+
+for file in $source_list; do
+    [[ -f $file ]] && source $file
+done
+#+end_src
+
 ** zsh
 :PROPERTIES:
 :header-args+: .zshrc
