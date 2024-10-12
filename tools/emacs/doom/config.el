@@ -74,3 +74,10 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(use-package! obsidian
+  :config
+  (obsidian-specify-path "~/Documents/Notes")
+  (global-obsidian-mode t)
+  :custom
+  (obsidian-daily-notes-directory "Dailies"))
