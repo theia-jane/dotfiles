@@ -1,0 +1,8 @@
+#+title: Appimage
+[[https://docs.appimage.org/][Docs]]
+
+* Setup
+1. Make directory =~/Applications=
+2. Download tools =appimagetool-*.AppImage= and =appimaged-*.AppImage= from [[https://github.com/probonopd/go-appimage/releases][project]]
+3. Move them to the folder and make them executable
+4. Manually run =appimaged= once (this setsup integration w/ systemd)
