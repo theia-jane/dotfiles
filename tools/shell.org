@@ -11,8 +11,8 @@ export OS="$(uname | tr "[A-Z]" "[a-z]")"
 export notes="${HOME}/notes"
 export docs="${HOME}/Documents"
 export org="${HOME}/org"
-export p="${HOME}/Projects"
-export dot="$p/dotfiles"
+export p="${HOME}/Repositories"
+export dot="$p/theia-jane/dotfiles"
 export cfg="${HOME}/.config"
 export lcl="${HOME}/.local"
 export cfg_sh="${cfg}/sh"
@@ -31,6 +31,7 @@ export NONUSERPATH="$(echo -n \
 /bin
 /usr/sbin
 /sbin
+/snap/bin
 ${HOME}/miniconda3/bin
 ${cfg}/emacs/bin
 ${HOME}/.cargo/bin
@@ -105,8 +106,9 @@ export PATH="$M2:$PATH"
 #+end_src
 ** Github
 #+begin_src bash
-GITHUB_TOKEN="$(pass-detail github-env)"
-[ ! -z "${GITHUB_TOKEN}" ] && export GITHUB_TOKEN
+set_gh_token() {
+  export GITHUB_TOKEN="$(op item get GithubCLI --reveal --format json | jq -r '.fields[] | select(.id == "password") | .value')"
+}
 #+end_src
 * Scripts
 :PROPERTIES:
