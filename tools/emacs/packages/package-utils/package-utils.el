@@ -3,12 +3,23 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; Code:
+(defun update-repo-load-path (&optional config-dir)
+  (interactive)
+  (message "root %s" config-dir)
+  (let ((root (or config-dir (substitute-env-vars "$dot"))))
+    (unless (string= "" root)
+	(dolist (d (cons root
+		     (seq-filter #'file-directory-p (directory-files-recursively root "" t))))
+	  (add-to-list 'load-path (file-truename d))))))
+
+(update-repo-load-path
+  (file-name-concat (file-name-directory load-file-name) ".."))
 
 (require 'variable-utils)
 (require 'bootstrap-straight) 
 (require 'process-helpers) 
 (require 'info)
-(require 'async (file-name-concat (file-name-directory load-file-name) "../async/async.el"))
+(require 'async)
 
 (defconst global-packages--running-env-var "EMACS_GLOBAL_PACKAGES_RUNNING")
 (defconst global-packages--running-p (equal (getenv global-packages--running-env-var) "TRUE"))
@@ -58,18 +69,6 @@
         (lambda (recipe)
           `(straight-use-package ',recipe))
         recipes)))
-
-(defun update-repo-load-path (&optional config-dir)
-  (interactive)
-  (add-all-to-list 'load-path
-                   (seq-filter
-                    #'file-directory-p
-                    (directory-files-recursively
-                     (concat 
-                      (or config-dir (substitute-env-vars "$dot"))
-                      "/tools/emacs/packages")
-                     ""
-                     t))))
 
 
 
