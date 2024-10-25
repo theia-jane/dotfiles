@@ -1,0 +1,11 @@
+#+TITLE: Doom
+#+PROPERTY: header-args :tangle-relative 'dir
+
+* Environment
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.config/env
+:END:
+
+#+begin_src bash :tangle doomemacs
+export PATH="${PATH}:${HOME}/.local/emacs/configs/doomemacs/bin"
+#+end_src
