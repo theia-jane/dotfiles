@@ -1,0 +1,37 @@
+#+TITLE: Keyboard
+#+PROPERTY: header-args :tangle-relative 'dir
+
+
+* Finding out key info
+If you need to find out key info use =xev=, it will tell you which the keycode for the key you are pressing.
+* Remap keys
+I've tried to use xmodmap for this for a long time. Unfortunately it's not worked that well. Instead of that using =XKBOPTIONS= (see =man 7 xkeyboard-config=) for options. Specifically, I add the options I want to have them globally enabled in =/etc/default/keyboard=.
+
+** Debug Notes
+- To test out changes in the short term use =setxkbmap -option <option>=
+- To see what options are set use =setxkbmap -query=
+
+** Caps -> Hyper
+To remaps caps to hyper for extra modifier. Use option:
+=caps:hyper_mod=
+
+By itself this will do nothing, but add the following to =/usr/share/X11/xkb/symbols/capslock=. This makes it a global change. Otherwise we need to use xmodmap to change which modifier hyper is
+
+#+begin_src text
+// This makes <CAPS> into a hyper, standalone modifier key
+hidden partial modifier_keys
+xkb_symbols "hyper_mod" {
+    key <CAPS> { [ Hyper_L ], type[group1] = "ONE_LEVEL" };
+    modifier_map Mod3 { <CAPS> };
+};
+#+end_src
+
+
+** RAlt -> Compose
+Set the right alt key to be the compose key allowing =<compose> " u= to generate =ü=. Use option:
+
+=compose:ralt=
+
+
+* Keyboard Configuator
+For my system76 keyboard it's nice to use the keyboard configurator, which will require some setup on a non-Pop_OS! system. For linux see [[file:appimage.org][AppImage notes]]. [[https://github.com/pop-os/keyboard-configurator/releases][Releases]] can be found here.

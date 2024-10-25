@@ -6,7 +6,9 @@
       user-mail-address "mail@theia-jane.dev")
 
 (setq doom-leader-key "H-SPC"
-      doom-leader-alt-key "H-SPC")
+      doom-leader-alt-key "H-SPC"
+      doom-localleader-key "H-m"
+      doom-localleader-alt-key "H-m")
 
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
@@ -81,3 +83,20 @@
   (global-obsidian-mode t)
   :custom
   (obsidian-daily-notes-directory "Dailies"))
+
+
+(after! which-key
+
+(defun ~remap-leader-prefix-keys-a (&rest _)
+
+  (require 'timeout)
+  (duplicate-prefix-key
+     "H-SPC b" "H-b"
+     "H-SPC f" "H-f"
+     "H-SPC g" "H-g"
+     "H-SPC p" "H-p"
+     "H-SPC s" "H-/"))
+
+(timeout-debounce! '~remap-leader-prefix-keys-a 0.3)
+(advice-add 'general-define-key :after '~remap-leader-prefix-keys-a)
+(~remap-leader-prefix-keys-a))

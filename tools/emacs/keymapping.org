@@ -1,346 +1,76 @@
 #+TITLE: Keymapping
 
-
-* Keymap package
+* Keymap config
 :PROPERTIES:
-:header-args:elisp: :tangle keymapx.el :dir ${HOME}/.local/emacs/site-lisp
+:header-args:elisp: :tangle config-keys.el :dir ${HOME}/.local/emacs/site-lisp
 :END:
 
-This is mostly stolen from doom, but with my own modifications.
-
-A centralized keybinds system, integrated with =which-key= to preview
-available keybindings. All built into one powerful macro: =keymap!= . If evil is never loaded, then evil bindings set with =keymap!=  are ignored (i.e. omitted entirely for performance reasons).
 #+BEGIN_SRC elisp
-(provide 'keymapx)
-(require 'general)
+(provide 'config-keys)
+(require 's)
 #+END_SRC
 
-** Define a leader key
-What is a leader key? It's a notion from vim that has carried over to emacs
-from, as far as I can tell, =spacemacs= and it's found a home in =doom-emacs= as
-well. A leader key is essentially a key based menu that has strong linguistic
-bend to it Something like =<leader> b b= will open up a b[uffer] selection menu.
-
-The notion is not something that was unique to vim. In all honesty I think emacs
-embraced this idea from it's inception with such keys as =C-c=, =C-x= and =C-h= to name
-a few. This is my definer for creating a new 'leader' key, aside from enabling the
-tree / menu based bindings under the defined key it also sets up the new key for use
-with the syntactic sugar of my =keymap!=  macro.
-
-Much of this was once part of =doom-emacs= (as there are many notes of in here!).
+** Helper methods
+*** Which key
 #+begin_src elisp
-;;;###autoload
-(defmacro define-leader! (name key &rest _args)
-  "Define a leader key with NAME and KEY.
+(defun +which-key-match-repl-p (key repl)
+  "Test if KEY is contained in the key-regexp in REPL, which should
+be from `which-key-replacement-alist'.
 
-The name is used in generating functions, variables and keywords.
-Usage with `(keymap! :leader-name ...)' enables binding to a defined leader
-key where `leader-name' is the name.
+Referenced `which-key--match-replacement' for the logic"
+  (when (and (not (symbolp (car repl)))
+             (stringp (caar repl)))
+    (let ((key-regexp (caar repl)))
+      (s-contains-p key key-regexp))))
 
-A generalization of the doom's `core-keybinds' package. Not all features
-are represented. Such as a local leader and the ability to redefine the
-leader later."
-  (let* ((name (symbol-name name))
-         (key-symbol (intern (concat name "-leader-key")))
-         (map-symbol (intern (concat name "-leader-map")))
-         (command-symbol (intern (concat name "/leader")))
-         (keyword-symbol (intern (format ":%s" name)))
-         (define-fn-symbol (intern (format "define-%s-leader-key!" name))))
-    `(progn
-       (defvar ,key-symbol ,key)
-       (defvar ,map-symbol (make-sparse-keymap)
-         ,(format "An overriding keymap for my <%s> keys." name))
+(defun +which-key-make-copy-repl (from-key to-key repl)
+  (let ((key-regexp (caar repl)))
+    (cons
+        (cons (s-replace from-key to-key key-regexp) nil)
+        (cdr-safe repl))))
 
-       (define-prefix-command ',command-symbol ',map-symbol)
-       (define-key ,map-symbol [override-state] 'all)
-
-       ;; Bind the leader key
-       (after! evil
-         (let ((map general-override-mode-map))
-           (evil-define-key* '(normal visual motion emacs insert) map (kbd ,key-symbol) ',command-symbol)
-           (general-override-mode +1)))
-
-       (defmacro ,define-fn-symbol (&rest keys)
-         (let (prefix forms wkforms)
-           (while keys
-             (let ((key (pop keys))
-                   (def (pop keys)))
-               (if (keywordp key)
-                   (when (memq key '(:prefix :infix))
-                     (setq prefix def))
-                 (when prefix
-                   (setq key `(general--concat t ,prefix ,key)))
-                 (let* ((udef (cdr-safe (unquote def)))
-                        (bdef (if (general--extended-def-p udef)
-                                  (general--extract-def (general--normalize-extended-def udef))
-                                def)))
-                   (unless (eq bdef :ignore)
-                     (push `(define-key ,',map-symbol (general--kbd ,key)
-                              ,bdef)
-                           forms))
-                   (when-let (desc (cadr (memq :which-key udef)))
-                     (prependq!
-                      wkforms `((which-key-add-key-based-replacements
-                                  (general--concat t ,',key-symbol ,key)
-                                  ,desc))))))))
-           (macroexp-progn
-            (append (and wkforms `((config! which-key ,@(nreverse wkforms))))
-                    (nreverse forms)))))
-
-       (unless (plist-get keymapx-extra-mapping-fns ,keyword-symbol)
-         (setq keymapx-extra-mapping-fns (append keymapx-extra-mapping-fns
-                                                  '(,keyword-symbol
-                                                        ,define-fn-symbol))))
-       (config! which-key
-         (which-key-add-key-based-replacements ,key-symbol ,(format "<%s>" name))))))
-#+END_SRC
-*** TODO add support for localleader types
-*** TODO add support for normal-mode leader vs.
-** Keymap macro
-This is the workhorse of binding keys. This is a port of doom's =map!=  macro.
-I called mine =keymap!=  to differentiate between the two /and/ I like the name
-better.
-#+begin_src elisp
-(defmacro keymap! (&rest rest)
-  "A convenience macro for defining keybinds, powered by `general'.
-
-If evil isn't loaded, evil-specific bindings are ignored.
-
-Properties
-  :mode [MODE(s)] [...]           inner keybinds are applied to major MODE(s)
-  :map [KEYMAP(s)] [...]          inner keybinds are applied to KEYMAP(S)
-  :prefix [PREFIX] [...]          set keybind prefix for following keys. PREFIX
-                                  can be a cons cell: (PREFIX . DESCRIPTION)
-  :prefix-map [PREFIX] [...]      same as :prefix, but defines a prefix keymap
-                                  where the following keys will be bound. DO NOT
-                                  USE THIS IN YOUR PRIVATE CONFIG.
-  :after [FEATURE] [...]          apply keybinds when [FEATURE] loads
-  :textobj KEY INNER-FN OUTER-FN  define a text object keybind pair
-  :when [CONDITION] [...]
-  :unless [CONDITION] [...]
-
-  Any of the above properties may be nested, so that they only apply to a
-  certain group of keybinds.
-
-States
-  :n  normal
-  :v  visual
-  :i  insert
-  :e  emacs
-  :o  operator
-  :m  motion
-  :r  replace
-  :g  global  (binds the key without evil `current-global-map')
-
-  These can be combined in any order, e.g. :nvi will apply to normal, visual and
-  insert mode. The state resets after the following key=>def pair. If states are
-  omitted the keybind will be global (no emacs state; this is different from
-  evil's Emacs state and will work in the absence of `evil-mode').
-
-  These must be placed right before the key string.
-
-  Do
-    (keymap! :leader :desc \"Description\" :n \"C-c\" #'dosomething)
-  Don't
-    (keymap! :n :leader :desc \"Description\" \"C-c\" #'dosomething)
-    (keymap! :leader :n :desc \"Description\" \"C-c\" #'dosomething)"
-  (keymapx-process rest))
-#+end_src
-** Internal methods
-Again, mostly copy paste from =doom-emacs=, however, =keymapx-process= does diverge.
-#+begin_src elisp
-(defvar keymapx-evil-state-alist
-  '((?n . normal)
-    (?v . visual)
-    (?i . insert)
-    (?e . emacs)
-    (?o . operator)
-    (?m . motion)
-    (?r . replace)
-    (?g . global))
-  "A list of cons cells that map a letter to a evil state symbol.")
-
-(defun keymapx-keyword-to-states (keyword)
-  "Convert a KEYWORD into a list of evil state symbols.
-
-For example, :nvi will map to (list 'normal 'visual 'insert). See
-`keymapx-evil-state-alist' to customize this."
-  (cl-loop for l across (keyword-name keyword)
-           if (assq l keymapx-evil-state-alist) collect (cdr it)
-           else do (error "not a valid state: %s" l)))
-
-
-;; specials
-(defvar keymapx-forms nil)
-(defvar keymapx-fn nil)
-(defvar keymapx-batch-forms nil)
-(defvar keymapx-state '(:dummy t))
-(defvar keymapx-parent-state nil)
-(defvar keymapx-evil-p nil)
-(config! evil (setq keymapx-evil-p t))
-
-(defvar keymapx-extra-mapping-fns nil)
-(defun keymapx-extra-mapping-key-p (key)
-  (plist-get keymapx-extra-mapping-fns key))
-
-(defun keymapx-process (rest)
-  (let ((keymapx-fn keymapx-fn)
-        keymapx-state
-        keymapx-forms
-        desc)
-    (while rest
-      (let ((key (pop rest)))
-        (cond ((listp key)
-               (keymapx-nested nil key))
-              ((keywordp key)
-               (pcase key
-                 ((pred keymapx-extra-mapping-key-p)
-                  (keymapx-commit)
-                  (setq keymapx-fn (plist-get keymapx-extra-mapping-fns key)))
-                 (:after
-                  (keymapx-nested (list 'config! (pop rest)) rest)
-                  (setq rest nil))
-                 (:desc
-                  (setq desc (pop rest)))
-                 (:map
-                  (keymapx-set :keymaps `(quote ,(enlist (pop rest)))))
-                 (:mode
-                  (push (cl-loop for m in (enlist (pop rest))
-                                 collect (intern (concat (symbol-name m) "-map")))
-                        rest)
-                  (push :map rest))
-                 ((or :when :unless)
-                  (keymapx-nested (list (intern (keyword-name key)) (pop rest)) rest)
-                  (setq rest nil))
-                 (:prefix-map
-                  (cl-destructuring-bind (prefix . desc)
-                      (enlist (pop rest))
-                    (let ((keymap (intern (format "leader-%s-map" desc))))
-                      (setq rest
-                            (append (list :desc desc prefix keymap
-                                          :prefix prefix)
-                                    rest))
-                      (push `(defvar ,keymap (make-sparse-keymap))
-                            keymapx-forms))))
-                 (:prefix
-                  (cl-destructuring-bind (prefix . desc)
-                      (enlist (pop rest))
-                    (keymapx-set (if keymapx-fn :infix :prefix)
-                                   prefix)
-                    (when (stringp desc)
-                      (setq rest (append (list :desc desc "" nil) rest)))))
-                 (:textobj
-                  (let* ((key (pop rest))
-                         (inner (pop rest))
-                         (outer (pop rest)))
-                    (push `(keymap! (:map evil-inner-text-objects-map ,key ,inner)
-                                 (:map evil-outer-text-objects-map ,key ,outer))
-                          keymapx-forms)))
-                 (_
-                  (condition-case _
-                      (keymapx-def (pop rest) (pop rest)
-                                     (keymapx-keyword-to-states key)
-                                     desc)
-                    (error
-                     (error "Not a valid `keymap!' property: %s" key)))
-                  (setq desc nil))))
-
-              ((keymapx-def key (pop rest) nil desc)
-               (setq desc nil)))))
-
-    (keymapx-commit)
-    (macroexp-progn (nreverse (delq nil keymapx-forms)))))
-
-(defun keymapx-append-keys (prop)
-  (let ((a (plist-get keymapx-parent-state prop))
-        (b (plist-get keymapx-state prop)))
-    (if (and a b)
-        `(general--concat t ,a ,b)
-      (or a b))))
-
-(defun keymapx-nested (wrapper rest)
-  (keymapx-commit)
-  (let ((keymapx-parent-state (keymapx-state)))
-    (push (if wrapper
-              (append wrapper (list (keymapx-process rest)))
-            (keymapx-process rest))
-          keymapx-forms)))
-
-(defun keymapx-set (prop &optional value)
-  (unless (equal (plist-get keymapx-state prop) value)
-    (keymapx-commit))
-  (setq keymapx-state (plist-put keymapx-state prop value)))
-
-(defun keymapx-def (key def &optional states desc)
-  (when (or (memq 'global states)
-            (null states))
-    (setq states (cons 'nil (delq 'global states))))
-  (when desc
-    (let (unquoted)
-      (cond ((and (listp def)
-                  (keywordp (car-safe (setq unquoted (unquote def)))))
-             (setq def (list 'quote (plist-put unquoted :which-key desc))))
-            ((setq def (cons 'list
-                             (if (and (equal key "")
-                                      (null def))
-                                 `(:ignore t :which-key ,desc)
-                               (plist-put (general--normalize-extended-def def)
-                                          :which-key desc))))))))
-  (dolist (state states)
-    (push (list key def)
-          (alist-get state keymapx-batch-forms)))
-  t)
-
-(defun keymapx-commit ()
-  (when keymapx-batch-forms
-    (cl-loop with attrs = (keymapx-state)
-             for (state . defs) in keymapx-batch-forms
-             if (or keymapx-evil-p (not state))
-             collect `(,(or keymapx-fn 'general-define-key)
-                       ,@(if state `(:states ',state)) ,@attrs
-                       ,@(mapcan #'identity (nreverse defs)))
-             into forms
-             finally do (push (macroexp-progn forms) keymapx-forms))
-    (setq keymapx-batch-forms nil)))
-
-(defun keymapx-state ()
-  (let ((plist
-         (append (list :prefix (keymapx-append-keys :prefix)
-                       :infix  (keymapx-append-keys :infix)
-                       :keymaps
-                       (append (plist-get keymapx-parent-state :keymaps)
-                               (plist-get keymapx-state :keymaps)))
-                 keymapx-state
-                 nil))
-        newplist)
-    (while plist
-      (let ((key (pop plist))
-            (val (pop plist)))
-        (when (and val (not (plist-member newplist key)))
-          (push val newplist)
-          (push key newplist))))
-    newplist))
-
-
+(defun +which-key-duplicate-metadata (from to)
+  (dolist (repl which-key-replacement-alist)
+    (when (+which-key-match-repl-p from repl)
+      (let ((copy-repl (+which-key-make-copy-repl from to repl)))
+        (assoc-delete-all (car copy-repl) which-key-replacement-alist)
+        (push copy-repl which-key-replacement-alist)))))
 #+end_src
 
-** TODO Leaders
-I wanted these to be in relevant areas of my config.. but that is growing to be a hassle. If I want to reuse the same 'leader' for different purposes (ie =H-s= for 'snippets' and for 'saving') it doesn't make sense to have one depend on the other..
-I ideally probably let redefinition occur and probable change the notion of what a 'leader' is in the context of this mapping setup.
+*** Prefix keys
 #+begin_src elisp
-(define-leader! bookmark "H-d") ;; copying bookmark association from firefox
-(define-leader! file "H-f")
-(define-leader! tab "H-t")
-(define-leader! introspection "H-,")
-(define-leader! yank "H-y")
-(define-leader! notes "H-n")
-(define-leader! snippet "H-s")
-(define-leader! search "H-/")
-(define-leader! git "H-g")
-(define-leader! buffer "H-b")
-(define-leader! insert "H-i")
-(define-leader! ui "H-u")
-(define-leader! edit "H-e")
+(defun prefix-key-symbol (prefix)
+  (intern (format "prefix-%s-key" (symbol-name prefix))))
+
+(defun prefix-key-map-symbol (prefix)
+  (intern (format "prefix-%s-map" (symbol-name prefix))))
+
+(defun setup-new-prefix-key (prefix key)
+  (let ((key-sym (prefix-key-symbol prefix))
+        (map-sym (prefix-key-map-symbol prefix)))
+    (eval
+     `(progn
+        (defvar ,key-sym ,key)
+        (defvar ,map-sym (make-sparse-keymap))
+        (define-prefix-command ',prefix ',map-sym)
+        (keymap-set override-global-map ,key-sym ,map-sym)))))
+
+
+(defun map-prefix-keys (prefix &rest key-bindings)
+  (let ((key-sym (prefix-key-symbol prefix))
+        (map-sym (prefix-key-map-symbol prefix)))
+    (while (length> key-bindings 1)
+      (let ((key (pop key-bindings))
+            (binding (pop key-bindings)))
+        (keymap-set (symbol-value map-sym) key binding)))))
+
+(defun duplicate-prefix-key (&rest duplicate-mapping)
+  (while (length> duplicate-mapping 1)
+    (let* ((from (pop duplicate-mapping))
+          (to (pop duplicate-mapping))
+          (mapped-to (key-binding (kbd from) t)))
+        (define-key override-global-map (kbd to) mapped-to)
+      (+which-key-duplicate-metadata from to))))
 #+end_src
 
 ** HyperCtrl Map
@@ -350,7 +80,7 @@ this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=
 (defun hyper-ctrl--make-map ()
   (let ((keymap (make-sparse-keymap)))
     (set-keymap-parent keymap hyper--original)
-    (cl-loop for i from 33 to 126 
+    (cl-loop for i from 33 to 126
              do
             (let ((c (char-to-string i)))
               (define-key keymap (kbd (concat "H-" c)) (kbd (concat "C-" c)))
@@ -373,7 +103,7 @@ this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=
 (defun hyper-ctrl/on ()
   (interactive)
   (setq key-translation-map hyper-ctrl-translation-map)
-  (when (or (called-interactively-p) hyper--debug) 
+  (when (or (called-interactively-p) hyper--debug)
     (message "[HyperCtrl] map is on.")))
 
 (defun hyper-ctrl--off-h ()
@@ -390,23 +120,25 @@ this package enables that, so =C-c C-v C-t= can be used by =H-c H-v H-t=
   (hyper-ctrl/on)
   (add-hook 'post-command-hook #'hyper-ctrl--off-h))
 
-(defun hyper-ctrl-on-prefix (trigger-prefix target-prefix) 
-  (keymap! :g trigger-prefix `(lambda ()
-                      (interactive)
-                      (setq this-command nil)
-                      (when (eq evil-state 'insert)
-                        (let ((evil-no-display t))
-                          (evil-execute-in-normal-state)))
-                      (hyper-ctrl-on-until-next-command)
-                      (setq unread-command-events (listify-key-sequence (kbd ,target-prefix))))))
+(defun hyper-ctrl-on-prefix (trigger-prefix target-prefix)
+  (define-key (current-global-map)
+              (kbd trigger-prefix)
+              `(lambda ()
+                 (interactive)
+                 (setq this-command nil)
+                 (when (eq evil-state 'insert)
+                   (let ((evil-no-display t))
+                     (evil-execute-in-normal-state)))
+                 (hyper-ctrl-on-until-next-command)
+                 (setq unread-command-events (listify-key-sequence (kbd ,target-prefix))))))
 
-(defun hyper-ctrl-on-prefix-key (key) 
+(defun hyper-ctrl-on-prefix-key (key)
   (hyper-ctrl-on-prefix
-   (concat "H-" key) 
+   (concat "H-" key)
    (concat "C-" key)))
 #+end_src
 
-** General purpose
+*** General purpose
 Probably should move this up and out
 #+begin_src elisp
 ;; Make hyper keys that always act like another key
@@ -420,16 +152,16 @@ Probably should move this up and out
       (kbd "H-g")
       (kbd "C-g"))))
 
-;; Bind H-g to C-g in special cases 
+;; Bind H-g to C-g in special cases
 (hyper-to-control-g '(minibuffer-local-map))
 
 ;; Make hyper work as control for C-c, C-x and C-h (and all subsequent keys)
 (dolist (key '("c" "x" "h" "w"))
     (hyper-ctrl-on-prefix-key key))
 #+end_src
-** Transient 
+*** Transient
 Setup hyper-control mapping while using transient prefixes
-#+begin_src elisp 
+#+begin_src elisp
 (defun hyper-ctrl-transient-on ()
   (hyper-ctrl/on)
   (add-hook 'transient-exit-hook #'hyper-ctrl-transient-off))
@@ -439,8 +171,6 @@ Setup hyper-control mapping while using transient prefixes
         (hyper-ctrl/off)
         (remove-hook 'transient-exit-hook #'hyper-ctrl-transient-off)))
 
-(advice-add #'transient--init-transient :before #'hyper-ctrl-transient-on) 
+(advice-add #'transient--setup-transient :before #'hyper-ctrl-transient-on)
+(advice-remove #'transient--setup-transient #'hyper-ctrl-transient-on)
 #+end_src
-
-
-

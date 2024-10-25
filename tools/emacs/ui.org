@@ -81,8 +81,9 @@ Turn off the bell
 
 * Keys
 #+begin_src elisp
-(keymap! :ui
-         "=" #'text-scale-increase
-         "-" #'text-scale-decrease
-         "0" (cmd (text-scale-set 0)))
+(setup-new-prefix-key 'ui "H-u")
+(map-prefix-keys 'ui
+ "+" #'text-scale-increase
+ "-" #'text-scale-decrease
+ "0" (cmd (text-scale-set 0)))
 #+end_src
