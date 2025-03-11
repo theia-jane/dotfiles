@@ -180,18 +180,19 @@ Add a nice overlay when executing emacs lisp
  (:map emacs-lisp-mode-map
    :desc "Eval outermost sexp" "<S-return>" #'eval-outermost-sexp
    "<C-return>" #'eval-outermost-sexp-and-continue)
-    :edit
-    :desc "New elisp buffer" "b" (cmd
-         (let ((default-directory personal-elisp-packages))
-           (with-current-buffer (generate-new-buffer "*elisp*")
-             (emacs-lisp-mode)
-             (switch-to-buffer (current-buffer)))))
-    (:prefix "H-e"
-             :desc "Buffer context" "b" #'open-eval-context-buffer-buffer
-             :desc "Debug context" "d" #'open-eval-context-edebug-buffer
-             :desc "Set eval-context" "s" #'open-eval-context-buffer-debug
-             :desc "Bufer repl" "r" #'open-repl-in-eval-context-buffer
-             :desc "Debug repl ""R" #'open-repl-in-eval-context-edebug))
+   :leader
+    (:prefix-map ("e" . "edit/elisp")
+     :desc "New elisp buffer" "b" (cmd
+                                   (let ((default-directory personal-elisp-packages))
+                                     (with-current-buffer (generate-new-buffer "*elisp*")
+                                       (emacs-lisp-mode)
+                                       (switch-to-buffer (current-buffer)))))
+     (:prefix "H-e"
+      :desc "Buffer context" "b" #'open-eval-context-buffer-buffer
+      :desc "Debug context" "d" #'open-eval-context-edebug-buffer
+      :desc "Set eval-context" "s" #'open-eval-context-buffer-debug
+      :desc "Bufer repl" "r" #'open-repl-in-eval-context-buffer
+      :desc "Debug repl ""R" #'open-repl-in-eval-context-edebug)))
 #+end_src
 ** Hacks 
 Evil doesn't play really well with some elisp navigating function... This corrects for it. Probably should push some of this upstream

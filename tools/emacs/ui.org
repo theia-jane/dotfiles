@@ -41,7 +41,7 @@ Turn off the bell
         line-spacing 14
         fill-column 80)
   (pcase major-mode
-    (org-mode (org-latex-preview-buffer)))
+    (org-mode (when (featurep 'config-org) (org-latex-preview-buffer))))
   (if (> (line-number-at-pos (point-max)) 1500)
       (pcase major-mode
         ;; Is there an earlier point I can set this up at? Seems like it isn't as effective as #+STARTUP: overview
@@ -81,8 +81,8 @@ Turn off the bell
 
 * Keys
 #+begin_src elisp
-(setup-new-prefix-key 'ui "H-u")
-(map-prefix-keys 'ui
+'(setup-new-prefix-key 'ui "H-u")
+'(map-prefix-keys 'ui
  "+" #'text-scale-increase
  "-" #'text-scale-decrease
  "0" (cmd (text-scale-set 0)))

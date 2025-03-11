@@ -625,9 +625,9 @@ Extended tangle is important as it allows more concise tangling
         (setq orglink-activate-in-modes '(prog-mode))
         (global-orglink-mode))
 
-(after! config-snippet
-        (keymap! :snippet
-                 "l" #'org-store-link))
+;; (after! config-snippet
+;;         (keymap! :snippet
+;;                  "l" #'org-store-link))
 
 (provide 'config-org-links)
 #+END_SRC

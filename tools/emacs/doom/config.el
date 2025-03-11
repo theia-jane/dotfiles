@@ -79,13 +79,13 @@
 
 (use-package! obsidian
   :config
-  (obsidian-specify-path "~/Documents/Notes")
   (global-obsidian-mode t)
   :custom
-  (obsidian-daily-notes-directory "Dailies"))
+  (obsidian-daily-notes-directory "Dailies")
+  (obsidian-directory "~/Documents/Notes"))
 
 
-(after! which-key
+(after! (doom which-key)
   (defun ~remap-leader-prefix-keys-a (&rest _)
 
     (require 'timeout)
@@ -99,3 +99,18 @@
   (timeout-debounce! '~remap-leader-prefix-keys-a 0.3)
   (advice-add 'general-define-key :after '~remap-leader-prefix-keys-a)
   (~remap-leader-prefix-keys-a))
+
+
+(defalias 'keymap! 'map!)
+
+(require 'package-utils)
+(require 'personal-lib)
+(require 'config-evil)
+(require 'config-elisp)
+(require 'config-ui-themes)
+(require 'config-org)
+(require 'config-org-ui)
+(require 'config-org-babel)
+(require 'config-org-latex)
+(require 'config-org-export)
+(require 'config-org-links)
