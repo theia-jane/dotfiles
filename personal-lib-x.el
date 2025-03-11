@@ -36,6 +36,39 @@ Taken from doom-emacs."
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
 
+(defun resolve-hook-forms (hooks)
+  "Converts a list of modes into a list of hook symbols.
+
+If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
+list is returned as-is."
+  (declare (pure t) (side-effect-free t))
+  (let ((hook-list (enlist (unquote hooks))))
+    (if (eq (car-safe hooks) 'quote)
+        hook-list
+      (cl-loop for hook in hook-list
+               if (eq (car-safe hook) 'quote)
+               collect (cadr hook)
+               else collect (intern (format "%s-hook" (symbol-name hook)))))))
+
+(defun setq-hook-fns (hooks rest &optional singles)
+  (unless (or singles (= 0 (% (length rest) 2)))
+    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
+  (cl-loop with vars = (let ((args rest)
+                             vars)
+                         (while args
+                           (push (if singles
+                                     (list (pop args))
+                                   (cons (pop args) (pop args)))
+                                 vars))
+                         (nreverse vars))
+           for hook in (resolve-hook-forms hooks)
+           for mode = (string-remove-suffix "-hook" (symbol-name hook))
+           append
+           (cl-loop for (var . val) in vars
+                    collect
+                    (list var val hook
+                          (intern (format "--setq-%s-for-%s-h"
+                                          var mode))))))
 
 (defmacro setq-hook! (hooks &rest var-vals)
   "Sets buffer-local variables on HOOKS.

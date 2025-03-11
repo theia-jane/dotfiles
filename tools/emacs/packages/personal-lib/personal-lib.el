@@ -11,6 +11,7 @@
 ;;; Code:
 (require 'commands-lib)
 (require 'use-package)
+(require 'variable-utils)
 
 (defmacro after! (package-or-list &rest body)
   "Do BODY after PACKAGE-OR-LIST have loaded.
@@ -41,55 +42,6 @@ Just leverages `use-package'."
   'before!
   "Initialize a package (settings to be set before it's loaded)")
 
-(defun resolve-hook-forms (hooks)
-  "Converts a list of modes into a list of hook symbols.
-
-If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
-list is returned as-is."
-  (declare (pure t) (side-effect-free t))
-  (let ((hook-list (enlist (unquote hooks))))
-    (if (eq (car-safe hooks) 'quote)
-        hook-list
-      (cl-loop for hook in hook-list
-               if (eq (car-safe hook) 'quote)
-               collect (cadr hook)
-               else collect (intern (format "%s-hook" (symbol-name hook)))))))
-
-(defun setq-hook-fns (hooks rest &optional singles)
-  (unless (or singles (= 0 (% (length rest) 2)))
-    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
-  (cl-loop with vars = (let ((args rest)
-                             vars)
-                         (while args
-                           (push (if singles
-                                     (list (pop args))
-                                   (cons (pop args) (pop args)))
-                                 vars))
-                         (nreverse vars))
-           for hook in (resolve-hook-forms hooks)
-           for mode = (string-remove-suffix "-hook" (symbol-name hook))
-           append
-           (cl-loop for (var . val) in vars
-                    collect
-                    (list var val hook
-                          (intern (format "--setq-%s-for-%s-h"
-                                          var mode))))))
-
-
-(defmacro add-hook-trigger! (hook-var &rest targets)
-  "TODO"
-  `(let ((fn (intern (format "%s-h" ,hook-var))))
-     (fset fn (lambda (&rest _) (run-hooks ,hook-var) (set ,hook-var nil)))
-     (put ,hook-var 'permanent-local t)
-     (dolist (on (list ,@targets))
-       (if (functionp on)
-           (advice-add on :before fn)
-         (add-hook on fn)))))
-
-
-(defmacro with-directory (directory &rest body)
-  `(let ((default-directory ,directory))
-    ,@body))
 
 (defmacro with-contents (contents &rest body)
   `(with-temp-buffer
