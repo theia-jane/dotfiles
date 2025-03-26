@@ -227,6 +227,9 @@ complete -W "$(cd $p && \
 for dir in $(fd . -d 1 -t d); do
     [ -z "$(cd $dir && fd '\.git$' -t d -d 1)" ] && echo "$dir" | sed 's%/%%'
 done)" p
+
+BASH_COMP="/usr/share/bash-completion/bash_completion"
+[ -e "${BASH_COMP}" ] && source $BASH_COMP
 #+END_SRC
 
 #+begin_src bash :tangle .bash_profile
