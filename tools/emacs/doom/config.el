@@ -40,10 +40,6 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -101,6 +97,82 @@
   (~remap-leader-prefix-keys-a))
 
 
+(defvar notes-dir "~/Desktop/Notes")
+(setq org-directory notes-dir)
+(defvar periodic-notes-subdir "Periodic")
+
+(defun periodic-increment-by (type n &optional time)
+  (let* ((time (or time (current-time)))
+         (decoded (decode-time time))
+         (decoded_month (nth 4 decoded))
+         (decoded_year (nth 5 decoded)))
+    (pcase type
+      ('day (time-add time (seconds-to-time (* n 24 60 60))))
+      ('month (progn
+               (calendar-increment-month decoded_month decoded_year n)
+               (setf (nth 4 decoded) decoded_month
+                     (nth 5 decoded) decoded_year)
+               (encode-time decoded)))
+      ('year (progn
+              (setf (nth 5 decoded) (+ n decoded_year))
+              (encode-time decoded))))))
+
+(defun periodic-notes-file-path (type &optional time)
+  (let* ((format-path
+         (pcase type
+           ('year "%Y/year.org")
+           ('month "%Y/%m/month.org")
+           ('day "%Y/%m/%d.org")))
+         (time
+          (pcase time
+            ('next (periodic-increment-by type 1))
+            ('prev (periodic-increment-by type -1))
+            (_ time))))
+    (f-join
+     notes-dir
+     periodic-notes-subdir
+        (format-time-string format-path time))))
+
+(defun periodic-goto (type &optional time)
+  (let ((filepath (periodic-notes-file-path type time)))
+    (unless (file-exists-p filepath)
+      (let ((dir (file-name-directory filepath)))
+        (unless (file-exists-p dir)
+          (make-directory dir t))))
+        (find-file filepath)))
+
+(defun periodic-goto-daily (&optional time)
+  (interactive)
+  (periodic-goto 'day time))
+
+(defun periodic-goto-monthly (&optional time)
+  (interactive)
+  (periodic-goto 'month time))
+
+(defun periodic-goto-yearly (&optional time)
+  (interactive)
+  (periodic-goto 'year time))
+
+
+(after! projectile
+  (add-to-list 'projectile-project-root-files ".project"))
+
+(map! :leader
+      :prefix "n"
+      (:prefix-map ("p" . "periodic")
+       :desc "Daily note"    "d" #'periodic-goto-daily
+       :desc "Monthly note"  "m" #'periodic-goto-monthly
+       :desc "Yearly note"   "y" #'periodic-goto-yearly
+       (:prefix-map ("p" . "previous")
+        :desc "Yesterday's note"   "d" (cmd! (periodic-goto-daily 'prev))
+        :desc "Last month's note"  "m" (cmd! (periodic-goto-monthly 'prev))
+        :desc "Last year's note"   "y" (cmd! (periodic-goto-yearly 'prev)))
+       (:prefix-map ("n" . "next")
+        :desc "Tomorrow's note"    "d" (cmd! (periodic-goto-daily 'next))
+        :desc "Next month's note"  "m" (cmd! (periodic-goto-monthly 'next))
+        :desc "Next year's note"   "y" (cmd! (periodic-goto-yearly 'next)))
+       )
+  )
 (defalias 'keymap! 'map!)
 
 (require 'package-utils)
