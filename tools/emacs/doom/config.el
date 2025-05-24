@@ -176,6 +176,12 @@
         :desc "Next year's note"   "y" (cmd! (periodic-goto-yearly 'next)))
        )
   )
+
+(map! :leader :prefix "s" :desc "Search project" "/" #'+default/search-project)
+
+
+
+
 (defalias 'keymap! 'map!)
 
 (require 'package-utils)
