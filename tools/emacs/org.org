@@ -7,8 +7,7 @@
 (require 'f)
 
 (config! org
-  (setq org-directory "~/notes/"
-        org-link-elisp-confirm-function nil
+  (setq org-link-elisp-confirm-function nil
         org-agenda-files `(,(f-join org-directory "projects"))
         org-todo-keywords '((sequence "TODO" "STARTED" "|" "DONE" "CANCELED"))
         org-refile-targets '((nil :maxlevel . 7)
