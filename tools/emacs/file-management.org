@@ -7,7 +7,7 @@
 #+end_src
 * file leader
 #+begin_src elisp
-(keymap! :file
+'(keymap! :file
          "f" #'find-file
          "p" #'project-find-file
          "R" #'recover-this-file
