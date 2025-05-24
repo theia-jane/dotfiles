@@ -81,19 +81,22 @@
   (obsidian-directory "~/Documents/Notes"))
 
 
-(after! (doom which-key)
+(after! (doom)
+  (require 'which-key)
   (defun ~remap-leader-prefix-keys-a (&rest _)
 
     (require 'timeout)
     (duplicate-prefix-key
      "H-SPC b" "H-b"
      "H-SPC f" "H-f"
+     "H-SPC n" "H-n"
      "H-SPC g" "H-g"
      "H-SPC p" "H-p"
      "H-SPC s" "H-/"))
 
   (timeout-debounce! '~remap-leader-prefix-keys-a 0.3)
   (advice-add 'general-define-key :after '~remap-leader-prefix-keys-a)
+  (advice-add 'map! :after '~remap-leader-prefix-keys-a)
   (~remap-leader-prefix-keys-a))
 
 
