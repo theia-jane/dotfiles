@@ -195,3 +195,4 @@
 (require 'config-org-latex)
 (require 'config-org-export)
 (require 'config-org-links)
+(require 'config-file-management)
