@@ -3,9 +3,11 @@
 
 
 * Finding out key info
-If you need to find out key info use =xev=, it will tell you which the keycode for the key you are pressing.
+If you need to find out key info use =wev=, it will tell you which the keycode for the key you are pressing. For help debugging issues with wayland and xkb install =libxkbcommon-tools= to get =xkbcli= and use =xkbcli interactive-wayland=
 * Remap keys
 I've tried to use xmodmap for this for a long time. Unfortunately it's not worked that well. Instead of that using =XKBOPTIONS= (see =man 7 xkeyboard-config=) for options. Specifically, I add the options I want to have them globally enabled in =/etc/default/keyboard=.
+
+According to [[https://xkbcommon.org/doc/current/user-configuration.html][this]] documentation it should be possible to make the necessary changes within the user's directory, but I've not succeeding in getting that to take.
 
 ** Debug Notes
 - To test out changes in the short term use =setxkbmap -option <option>=
@@ -13,19 +15,21 @@ I've tried to use xmodmap for this for a long time. Unfortunately it's not worke
 
 ** Caps -> Hyper
 To remaps caps to hyper for extra modifier. Use option:
-=caps:hyper_mod=
+=caps:hyper=
 
-By itself this will do nothing, but add the following to =/usr/share/X11/xkb/symbols/capslock=. This makes it a global change. Otherwise we need to use xmodmap to change which modifier hyper is
+This will infact make hyper behave as an additional super. We have (potentially) a couple of files to modify to get this to work.
+
+First we modify =/usr/share/X11/xkb/symbols/capslock=,  find the ="hyper"= block to set =CAPS= to =Mod3=.
 
 #+begin_src text
-// This makes <CAPS> into a hyper, standalone modifier key
 hidden partial modifier_keys
-xkb_symbols "hyper_mod" {
+xkb_symbols "hyper" {
     key <CAPS> { [ Hyper_L ], type[group1] = "ONE_LEVEL" };
     modifier_map Mod3 { <CAPS> };
 };
 #+end_src
 
+Second we modify =/usr/share/X11/xkb/symbols/pc=,  find the instances of =<HYPR>= and make sure =<HYPR>= has not be added to =Mod4=, if it has change it =Mod3=.
 
 ** RAlt -> Compose
 Set the right alt key to be the compose key allowing =<compose> " u= to generate =ü=. Use option:
