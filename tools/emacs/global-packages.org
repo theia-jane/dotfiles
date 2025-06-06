@@ -9,25 +9,27 @@ Simply requiring this will make all of my globally installed packages available 
 (update-repo-load-path)
 
 ;; Packages to keey installed in one spot
+;; See https://github.com/doomemacs/doomemacs/blame/8406c1ff22b95bd0f816de4a0223fa3ce3c82568/lisp/packages.el#L38
+;; For examples of recipes for org and setup
 (global-packages!
- evil evil-collection which-key general
- helpful try magit
- eros yasnippet
- corfu 
- org org-contrib
- orderless marginalia 
- consult embark embark-consult
- use-package f s async dash
- dash-functional
- simpleclip
- setup
- auto-minor-mode)
+evil evil-collection which-key general
+helpful try magit
+eros yasnippet
+corfu
+;; org org-contrib ; Disable broken in most recent pull
+orderless marginalia
+consult embark embark-consult
+use-package f s async dash
+dash-functional
+simpleclip
+;; setup ; Disable broken in most recent pull
+auto-minor-mode)
 
 ;; Always loaded
 (require!
- setup
- use-package
- auto-minor-mode)
+;; setup ; Disable broken in most recent pull
+use-package
+auto-minor-mode)
 
 (provide 'global-packages)
 #+end_src
