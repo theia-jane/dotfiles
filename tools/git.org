@@ -79,3 +79,20 @@ if [ -n "${PUSH_OUTPUT}" ]; then
    git push --set-upstream origin "$(git branch --show-current)"
 fi
 #+END_SRC
+
+#+begin_src bash :tangle pclone
+ORG_REPO=$(echo "$1" | tr ":" "/" | sed -r 's/[.]git//' | awk -F/ '{print $(NF - 1), $(NF)}')
+ORG="$(echo "$ORG_REPO" | awk '{print $1}')"
+REPO="$(echo "$ORG_REPO" | awk '{print $2}')"
+
+cd $p
+
+if [ ! -e "$ORG" -a ! -d "$ORG" ]; then
+    mkdir "$ORG"
+fi
+
+cd "$ORG"
+if [ ! -e "$REPO" -a ! -d "$REPO" ]; then
+  git clone $1
+fi
+#+end_src
