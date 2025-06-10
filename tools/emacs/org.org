@@ -108,8 +108,9 @@
                :n "M-i" #'org-edit-special
                :ni "M-o" #'org-cleave
                "RET" nil
-               :n [return] #'org-enter-dwim
-               :n "RET" #'org-enter-dwim)
+              ; :n [return] #'org-enter-dwim
+              ; :n "RET" #'org-enter-dwim
+               )
 
          (:after evil-org :map evil-org-mode-map
                  :ni "<C-S-return>" #'org/eval-src-block-then-next
