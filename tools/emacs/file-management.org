@@ -48,14 +48,22 @@ With this tramp will put all autosaves in a single directory. This supercedes `a
 * dired
 #+begin_src elisp
 (config! dired
-  (setq dired-dwim-target t)
+  (setq dired-dwim-target t
+        dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
+
+(config! dirvish
+  (setq dirvish-hide-details t
+   dirvish-attributes
+        (append
+         '(vc-state subtree-state nerd-icons collapse)
+         '(git-msg file-time file-size))))
 
 (keymap! :map dired-mode-map
          :n "+" #'dired-create-directory
          :n "g+" #'dired-create-empty-file
          (:after dired-rsync
-                 :n "gs" #'dired-rsync))
+          :n "gs" #'dired-rsync))
 (defun +dired/create-dwim (arg)
   (interactive "P")
   (command-execute
