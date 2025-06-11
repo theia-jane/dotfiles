@@ -92,7 +92,9 @@
      "H-SPC n" "H-n"
      "H-SPC g" "H-g"
      "H-SPC p" "H-p"
-     "H-SPC s" "H-/"))
+     "H-SPC s" "H-/"
+     "H-SPC o" "H-o"
+     ))
 
   (timeout-debounce! '~remap-leader-prefix-keys-a 0.3)
   (advice-add 'general-define-key :after '~remap-leader-prefix-keys-a)
@@ -180,8 +182,6 @@
 (map! :map global-mode-map "H-s" #'yas-next-field-or-maybe-expand)
 
 (map! :leader :prefix "s" :desc "Search project" "/" #'+default/search-project)
-
-
 
 
 (defalias 'keymap! 'map!)
