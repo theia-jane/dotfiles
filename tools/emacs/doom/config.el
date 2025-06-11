@@ -102,7 +102,7 @@
   (~remap-leader-prefix-keys-a))
 
 
-(defvar notes-dir "~/Desktop/Notes")
+(defvar notes-dir "~/Desktop/Notes/")
 (setq org-directory notes-dir)
 (defvar periodic-notes-subdir "Periodic")
 
