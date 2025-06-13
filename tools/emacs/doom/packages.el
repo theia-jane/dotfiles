@@ -7,7 +7,6 @@
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
-(package! obsidian)
 (package! timeout)
 
 ;; To install a package directly from a remote git repo, you must specify a

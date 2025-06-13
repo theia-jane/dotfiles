@@ -73,14 +73,6 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(use-package! obsidian
-  :config
-  (global-obsidian-mode t)
-  :custom
-  (obsidian-daily-notes-directory "Dailies")
-  (obsidian-directory "~/Documents/Notes"))
-
-
 (setq remap-leader-keys-list
   '(
      "H-SPC b" "H-b"
