@@ -81,12 +81,8 @@
   (obsidian-directory "~/Documents/Notes"))
 
 
-(after! (doom)
-  (require 'which-key)
-  (defun ~remap-leader-prefix-keys-a (&rest _)
-
-    (require 'timeout)
-    (duplicate-prefix-key
+(setq remap-leader-keys-list
+  '(
      "H-SPC b" "H-b"
      "H-SPC f" "H-f"
      "H-SPC n" "H-n"
@@ -94,12 +90,21 @@
      "H-SPC p" "H-p"
      "H-SPC s" "H-/"
      "H-SPC o" "H-o"
-     ))
+     "H-SPC TAB" "H-<tab>" ; Emacs has different maps / keys for TAB and <tab> The map is stored on TAB, but the key press shows up as <tab>
+     )
+  )
+(defun ~remap-leader-prefix-keys (&rest _)
+  (interactive)
+  (require 'timeout)
+  (apply #'duplicate-prefix-key remap-leader-keys-list))
+(timeout-debounce! '~remap-leader-prefix-keys 0.3)
+(~remap-leader-prefix-keys)
 
-  (timeout-debounce! '~remap-leader-prefix-keys-a 0.3)
-  (advice-add 'general-define-key :after '~remap-leader-prefix-keys-a)
-  (advice-add 'map! :after '~remap-leader-prefix-keys-a)
-  (~remap-leader-prefix-keys-a))
+(after! (doom)
+  (require 'which-key)
+  (advice-add 'general-define-key :after '~remap-leader-prefix-keys)
+  (advice-add 'map! :after '~remap-leader-prefix-keys)
+  (~remap-leader-prefix-keys))
 
 
 (defvar notes-dir "~/Desktop/Notes/")
