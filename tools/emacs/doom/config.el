@@ -176,7 +176,7 @@
        )
   )
 
-(map! :map global-mode-map "H-s" #'yas-next-field-or-maybe-expand)
+(map! :map override-global-map "H-s" #'yas-next-field-or-maybe-expand)
 
 (map! :leader :prefix "s" :desc "Search project" "/" #'+default/search-project)
 
