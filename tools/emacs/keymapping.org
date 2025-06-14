@@ -70,6 +70,7 @@ Referenced `which-key--match-replacement' for the logic"
           (to (pop duplicate-mapping))
           (mapped-to (key-binding (kbd from) t)))
         (define-key override-global-map (kbd to) mapped-to)
+        (set (intern (format "%s-map" to)) mapped-to)
       (+which-key-duplicate-metadata from to))))
 #+end_src
 
