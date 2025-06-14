@@ -6,96 +6,22 @@
 (provide 'config-projects)
 #+end_src
 
-* Magit
+* Let me be lazy
+=H-/ /= is quicker than =H-/ p=
 #+begin_src elisp
-(keymap!
- (:after magit
-         :git
-         "g" #'magit-status
-         "c" #'magit-clone)
- (:after git-gutter-fringe
-         :nv "]c" #'git-gutter:next-hunk
-         :nv "[c" #'git-gutter:previous-hunk
-         :git "-" #'git-gutter:revert-hunk))
-
-(config! evil
-  (add-hook 'git-commit-setup-hook #'evil-insert-state))
+(map! :map H-/-map "/" #'+default/search-project)
 #+end_src
 
-* Git Gutter
+* VC Hunks
+
 #+begin_src elisp
-(after! git-gutter
-        (global-git-gutter-mode +1))
+(map! :nv "]c" #'diff-hl-next-hunk
+    :nv "[c" #'diff-hl-previous-hunk
+    :leader :prefix "g"
+    "-" #'diff-hl-revert-hunk)
 #+end_src
-* VC
+* Add =.project= as root type
 #+begin_src elisp
-(setq vc-follow-symlinks t)
+(after! projectile
+  (add-to-list 'projectile-project-root-files ".project"))
 #+end_src
-
-* Project roots 
-#+begin_src elisp
-(require 'dash)
-(defvar project-root-file-markers '(".git" ".vscode" ".idea" ".project"))
-(defun project-root-dir-by-file-markers (&optional file)
-  (locate-dominating-file
-   (or file default-directory)
-   (lambda (dir)
-     (catch 'found
-       (dolist (name project-root-file-markers)
-         (when (and (file-exists-p (expand-file-name name dir)))
-           (throw 'found t)))))))
-
-
-(defvar project-root-global-list `(,(expand-file-name "~/notes/")))
-(defun project-root-dir-by-global-list (&optional file)
-  (let ((file (or file default-directory)))
-    (catch 'match
-      (dolist (project-root project-root-global-list)
-        (when (file-in-directory-p file project-root)
-          (throw 'match project-root))))))
-
-(defun make-project-transient (dir)
-  (when dir 
-    (cons 'transient dir)))
-
-;; Add to project find function hook
-(dolist (fn '(project-root-dir-by-global-list
-              project-root-dir-by-file-markers))
-  
-  ;; Need to convert dir to project-find usable thing
-  (add-hook 'project-find-functions
-            (-compose #'make-project-transient fn)))
-
-;; Let consult consume the same functions!
-(after! consult
-        (setq consult-project-root-function
-              (lambda ()
-                (let ((h (list #'project-root-dir-by-global-list
-                               #'project-root-dir-by-file-markers)))
-                  (run-hook-with-args-until-success 'h)))))
-#+end_src
-
-
-
-
-* Remotes
-#+begin_src elisp
-(after! browse-at-remote
-        (defun browse--remote-homepage ()
-          (or (let ((url (browse-at-remote--remote-ref)))
-                (cdr (browse-at-remote--get-url-from-remote (car url))))
-              (user-error "Can't find homepage for current project")))
-
-        (defun browse-at-remote-homepage ()
-          "Open homepage for current project in browser."
-          (interactive)
-          (browse-url (browse--remote-homepage)))
-
-        (defun browse-at-remote-kill-homepage ()
-          "Copy homepage URL of current project to clipboard."
-          (interactive)
-          (let ((url (browse--remote-homepage)))
-            (kill-new url)
-            (message "Copied to clipboard: %S" url))))
-#+end_src
-

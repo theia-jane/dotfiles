@@ -156,8 +156,6 @@
   (periodic-goto 'year time))
 
 
-(after! projectile
-  (add-to-list 'projectile-project-root-files ".project"))
 
 (map! :leader
       :prefix "n"
@@ -178,20 +176,19 @@
 
 (map! :map override-global-map "H-s" #'yas-next-field-or-maybe-expand)
 
-(map! :leader :prefix "s" :desc "Search project" "/" #'+default/search-project)
-
 
 (defalias 'keymap! 'map!)
 
-(require 'package-utils)
-(require 'personal-lib)
-(require 'config-evil)
-(require 'config-elisp)
-(require 'config-ui-themes)
-(require 'config-org)
-(require 'config-org-ui)
-(require 'config-org-babel)
-(require 'config-org-latex)
-(require 'config-org-export)
-(require 'config-org-links)
-(require 'config-file-management)
+(require! package-utils
+          personal-lib
+          config-evil
+          config-elisp
+          config-projects
+          config-ui-themes
+          config-org
+          config-org-ui
+          config-org-babel
+          config-org-latex
+          config-org-export
+          config-org-links
+          config-file-management)
