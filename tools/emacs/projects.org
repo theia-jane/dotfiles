@@ -20,6 +20,13 @@
     :leader :prefix "g"
     "-" #'diff-hl-revert-hunk)
 #+end_src
+* project locations
+#+begin_src elisp
+(after! projectile
+  (setq projectile-project-search-path
+        `((,(getenv "p") . 2))))
+#+end_src
+
 * Add =.project= as root type
 #+begin_src elisp
 (after! projectile
