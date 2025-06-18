@@ -30,6 +30,27 @@ Turn off the bell
                     :font "Source Code Pro"
                     :height 100)
 #+end_src
+* Frame
+#+begin_src elisp
+(defun selected-display ()
+  (-find
+   (lambda (display)
+     (-any-p
+      (-partial #'equal (selected-frame))
+      (alist-get 'frames display)))
+   (display-monitor-attributes-list)))
+
+(defun calculate-default-frame-sizes ()
+  (let* ((workarea (alist-get 'workarea (selected-display)))
+         (width (nth 2 workarea))
+         (height (nth 3 workarea)))
+        (list (/ width (frame-char-width) 2) (* 2 (/ height (frame-char-height) 3)))))
+
+(defun set-my-frame-size (frame)
+  (apply #'set-frame-size frame (calculate-default-frame-sizes)))
+
+(add-hook 'after-make-frame-functions 'set-my-frame-size)
+#+end_src
 
 * Non-program buffers
 #+begin_src elisp
