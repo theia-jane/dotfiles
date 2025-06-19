@@ -8,27 +8,96 @@
 
 * Config
 #+begin_src elisp
-(defvar notes/directory (substitute-env-in-file-name "$HOME/notes/"))
+(defvar notes-dir "~/Desktop/Notes/")
+(setq org-directory notes-dir)
+#+end_src
+
+* Periodic notes
+#+begin_src elisp
+(defvar periodic-notes-subdir "Periodic")
+
+(defun periodic-increment-by (type n &optional time)
+  (let* ((time (or time (current-time)))
+         (decoded (decode-time time))
+         (decoded_month (nth 4 decoded))
+         (decoded_year (nth 5 decoded)))
+    (pcase type
+      ('day (time-add time (seconds-to-time (* n 24 60 60))))
+      ('month (progn
+               (calendar-increment-month decoded_month decoded_year n)
+               (setf (nth 4 decoded) decoded_month
+                     (nth 5 decoded) decoded_year)
+               (encode-time decoded)))
+      ('year (progn
+              (setf (nth 5 decoded) (+ n decoded_year))
+              (encode-time decoded))))))
+
+(defun periodic-notes-file-path (type &optional time)
+  (let* ((format-path
+         (pcase type
+           ('year "%Y/year.org")
+           ('month "%Y/%m/month.org")
+           ('day "%Y/%m/%d.org")))
+         (time
+          (pcase time
+            ('next (periodic-increment-by type 1))
+            ('prev (periodic-increment-by type -1))
+            (_ time))))
+    (f-join
+     notes-dir
+     periodic-notes-subdir
+        (format-time-string format-path time))))
+
+(defun periodic-goto (type &optional time)
+  (let ((filepath (periodic-notes-file-path type time)))
+    (unless (file-exists-p filepath)
+      (let ((dir (file-name-directory filepath)))
+        (unless (file-exists-p dir)
+          (make-directory dir t))))
+        (find-file filepath)))
+
+(defun periodic-goto-daily (&optional time)
+  (interactive)
+  (periodic-goto 'day time))
+
+(defun periodic-goto-monthly (&optional time)
+  (interactive)
+  (periodic-goto 'month time))
+
+(defun periodic-goto-yearly (&optional time)
+  (interactive)
+  (periodic-goto 'year time))
+#+end_src
+* Interactive command
+#+begin_src elisp
+(defmacro notes-cmd (&rest body)
+  `#'(lambda () (interactive)
+       (let ((default-directory notes-dir))
+         ,@body)))
 #+end_src
 
 * Keymapping
 #+begin_src elisp
-(defmacro notes-cmd (&rest body)
-  `#'(lambda () (interactive)
-       (let ((default-directory notes/directory))
-         ,@body)))
+(map! :leader
+      :prefix "n"
+      :desc "New org buffer" "b" (notes-cmd
+                                  (with-current-buffer (generate-new-buffer "*notes*")
+                                    (org-mode)
+                                    (switch-to-buffer (current-buffer))))
+      :desc "Notes search" "/" (notes-cmd (+default/search-cwd))
+      :desc "Notes dir" "d" (notes-cmd (command-execute #'dired))
 
-(keymap! :notes
-         :desc "Notes find" "f" (notes-cmd (setq this-command #'project-find-file) ;; help embark out
-                        (command-execute #'project-find-file))
-         :desc "Goals" "g" (notes-cmd (find-file "goals.org"))
-         :desc "New org buffer" "b" (notes-cmd
-                                     (with-current-buffer (generate-new-buffer "*notes*")
-                                       (org-mode)
-                                       (switch-to-buffer (current-buffer))))
-         :desc "Notes dir" "d" (notes-cmd (command-execute #'dired))
-         :desc "Notest search" "/" (notes-cmd (command-execute #'consult-ripgrep)))
+      (:prefix-map ("p" . "periodic")
+       :desc "Daily note"    "d" #'periodic-goto-daily
+       :desc "Monthly note"  "m" #'periodic-goto-monthly
+       :desc "Yearly note"   "y" #'periodic-goto-yearly
+       (:prefix-map ("p" . "previous")
+        :desc "Yesterday's note"   "d" (cmd! (periodic-goto-daily 'prev))
+        :desc "Last month's note"  "m" (cmd! (periodic-goto-monthly 'prev))
+        :desc "Last year's note"   "y" (cmd! (periodic-goto-yearly 'prev)))
+       (:prefix-map ("n" . "next")
+        :desc "Tomorrow's note"    "d" (cmd! (periodic-goto-daily 'next))
+        :desc "Next month's note"  "m" (cmd! (periodic-goto-monthly 'next))
+        :desc "Next year's note"   "y" (cmd! (periodic-goto-yearly 'next)))
+       ))
 #+end_src
-
-
-
