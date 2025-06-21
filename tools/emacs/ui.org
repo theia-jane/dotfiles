@@ -32,25 +32,58 @@ Turn off the bell
 #+end_src
 * Frame
 #+begin_src elisp
+(require 'dash)
 (defun selected-display ()
-  (-find
-   (lambda (display)
-     (-any-p
-      (-partial #'equal (selected-frame))
-      (alist-get 'frames display)))
-   (display-monitor-attributes-list)))
+  (frame-monitor-attributes))
 
-(defun calculate-default-frame-sizes ()
-  (let* ((workarea (alist-get 'workarea (selected-display)))
-         (width (nth 2 workarea))
-         (height (nth 3 workarea)))
-        (list (/ width (frame-char-width) 2) (* 2 (/ height (frame-char-height) 3)))))
+(defun calculate-default-frame-geometry ()
+  (cl-destructuring-bind
+      (x y width height) (alist-get 'workarea (selected-display))
+    (let ((frame-width (/ width  2))
+          (frame-height (* 2 (/ height 3))))
+      (list (+ (/ (- width frame-width) 2) x)
+            (+ (/ (- height frame-height) 2) y)
+            (/ frame-width (frame-char-width))
+            (/ frame-height (frame-char-height))))))
 
-(defun set-my-frame-size (frame)
-  (apply #'set-frame-size frame (calculate-default-frame-sizes)))
+(defun set-frame-default-geometry (&optional frame)
+  (message "Trying to set frame")
+  (let ((frame (or frame (selected-frame))))
+    (message "Selected %s" frame)
+    (when (display-graphic-p frame)
+      (message "Setting for %s" frame)
+      (cl-destructuring-bind (x y w h)
+          (calculate-default-frame-geometry)
+        (set-frame-size frame w h)
+        (set-frame-position frame x y)))))
 
-(add-hook 'after-make-frame-functions 'set-my-frame-size)
+(defun ui-frame-init-variables (&optional frame &rest _)
+  (when (display-graphic-p (or frame (selected-frame)))
+    (cl-destructuring-bind (x y width height) (calculate-default-frame-geometry)
+      (push `(width . ,width) default-frame-alist)
+      (push `(height . ,height) default-frame-alist)
+      (push `(top . ,y) default-frame-alist)
+      (push `(left . ,x) default-frame-alist)
+
+      (push `(width . ,width) default-frame-alist)
+      (push `(height . ,height) default-frame-alist)
+      (push `(top . ,y) default-frame-alist)
+      (push `(left . ,x) default-frame-alist)
+
+      (push `(width . ,width) initial-frame-alist)
+      (push `(height . ,height) initial-frame-alist)
+      (push `(top . ,y) initial-frame-alist)
+      (push `(left . ,x) initial-frame-alist))
+    (set-frame-default-geometry frame)
+    (remove-hook 'server-after-make-frame-hook #'ui-frame-init-variables)
+    (add-hook 'after-make-frame-functions #'set-frame-default-geometry)
+    (add-hook 'server-after-make-frame-hook #'set-frame-default-geometry)))
+
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'ui-frame-init-variables)
+  (ui-frame-init-variables))
 #+end_src
+
 
 * Non-program buffers
 #+begin_src elisp
