@@ -7,7 +7,11 @@
 :END:
 #+BEGIN_SRC bash :tangle c :shebang #!/usr/bin/env -S param-or-pipe-eval --prefix-command ifne
 if [ "$OS" = "linux" ]; then
-  tee >(xsel -i -b $@)
+    if [[ "$DISPLAY" == wayland* ]]; then
+        tee >(wl-copy)
+    else
+        tee >(xsel -i -b $@)
+    fi
 elif [ "$OS" = "darwin" ]; then
 	pbpaste
 fi
@@ -23,7 +27,11 @@ v | $@ | c
 
 #+BEGIN_SRC bash :tangle v
 if [ "$OS" = "linux" ]; then
-    xsel -o -b $@
+    if [[ "$DISPLAY" == wayland* ]]; then
+        wl-paste
+    else
+        xsel -o -b $@
+    fi
 elif [ "$OS" = "darwin" ]; then
     pbcopy
 fi
