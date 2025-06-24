@@ -113,6 +113,6 @@
           config-org-babel
           config-org-latex
           config-org-export
-          config-org-links
+          orglink config-org-links
           config-file-management
           config-notes)
