@@ -133,3 +133,62 @@
         :desc "Next year's note"   "y" (cmd! (periodic-goto-yearly 'next)))
        ))
 #+end_src
+* Invalidate cache
+My notes cache is often out of date, I'm uncertain why it doesn't auto update -- it seems like it should, but when I go to find a file new notes don't just show up.
+
+** Clear cache on start up
+#+NAME: projectile-notes-clear-cache
+#+begin_src elisp
+(after! projectile
+  (let ((default-directory notes-dir))
+    (projectile-invalidate-cache nil)))
+#+end_src
+
+** Script file
+Script that can be called from anywhere to clear notes cache
+#+begin_src bash :tangle projectile-notes-clear-cache :dir ${HOME}/bin :shebang #!/bin/bash
+emacsclient -e "$(cat <<ELISP
+<<projectile-notes-clear-cache>>
+ELISP
+)"
+#+end_src
+** Watch for changes
+:properties:
+:header-args:conf: yes :dir ${HOME}/.config/systemd/user
+:end:
+Maybe there is an emacs/projectile specific way to do this, but I don't know it and want to play around with systemd.
+To use you must run =systemctl --user enable notes.path=
+*** =notes.path=
+:PROPERTIES:
+:header-args:conf+: :tangle notes.path
+:END:
+First we create a path unit to watch my notes.
+
+We have to wait for the emacs daemon to be up to start doing any work.
+#+BEGIN_SRC conf
+[Unit]
+Description=Watch notes directory for changes
+Wants=emacs.service
+#+END_SRC
+
+=PathModified= is slightly more noisy compared to =PathChanged=, but it picks up on more as well. Note that this does /not/ watch the entire tree, just the subdirectory for changes. Luckily for me the sync logs get updated anytime there are changes to the files, so this works.
+#+BEGIN_SRC conf
+[Path]
+PathModified=%h/Desktop/Notes/
+Unit=notes.service
+
+[Install]
+WantedBy=default.target
+#+END_SRC
+
+*** =notes.service=
+This adds a service for =notes.path= to trigger, we set the limit settings to make sure only one gets fired off each second.
+#+BEGIN_SRC conf :tangle notes.service
+[Unit]
+Description=Invalidate notes projectile cache
+StartLimitIntervalSec=1
+StartLimitBurst=1
+
+[Service]
+ExecStart=%h/bin/projectile-notes-clear-cache
+#+END_SRC
