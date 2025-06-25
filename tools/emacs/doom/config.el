@@ -115,4 +115,5 @@
           config-org-export
           orglink config-org-links
           config-file-management
-          config-notes)
+          config-notes
+          config-snippets)

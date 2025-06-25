@@ -7,7 +7,7 @@
          (add-to-list 'yas-snippet-dirs (substitute-env-vars "$dot/tools/emacs/snippets") 'append)
          (yas-global-mode 1))
 
-(keymap! :snippet
+'(keymap! :snippet
          :desc "New snippet" "n" #'yas-new-snippet 
          :desc "Documentation" "d" #'yassnippet-docs
          ;; :desc "Edit snippet" "e" #'+snippets/edit
@@ -32,4 +32,3 @@
 #+begin_src elisp
 (provide 'config-snippet)
 #+end_src
-
