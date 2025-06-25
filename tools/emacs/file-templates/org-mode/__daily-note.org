@@ -1,0 +1,4 @@
+#+title: `(format-time-string "%A %B %d")`
+
+* Tasks [/]
+- [ ] $0

@@ -14,7 +14,7 @@
 
 * Periodic notes
 #+begin_src elisp
-(defvar periodic-notes-subdir "Periodic")
+(defvar periodic-notes-subdir "periodic")
 
 (defun periodic-increment-by (type n &optional time)
   (let* ((time (or time (current-time)))
@@ -32,6 +32,11 @@
               (setf (nth 5 decoded) (+ n decoded_year))
               (encode-time decoded))))))
 
+(defun periodic-notes-dir ()
+    (f-join
+     notes-dir
+     periodic-notes-subdir))
+
 (defun periodic-notes-file-path (type &optional time)
   (let* ((format-path
          (pcase type
@@ -43,10 +48,8 @@
             ('next (periodic-increment-by type 1))
             ('prev (periodic-increment-by type -1))
             (_ time))))
-    (f-join
-     notes-dir
-     periodic-notes-subdir
-        (format-time-string format-path time))))
+    (f-join (periodic-notes-dir)
+            (format-time-string format-path time))))
 
 (defun periodic-goto (type &optional time)
   (let ((filepath (periodic-notes-file-path type time)))
@@ -67,7 +70,36 @@
 (defun periodic-goto-yearly (&optional time)
   (interactive)
   (periodic-goto 'year time))
+
+(defun periodic-note-p (&optional file)
+   (f-descendant-of-p (or file default-directory) (periodic-notes-dir)))
+
+(defun periodic-note-type (&optional file)
+  (when (periodic-note-p file)
+    (pcase (f-relative buffer-file-name (periodic-notes-dir))
+      ((rx  (= 4 digit) "/year.org") 'year)
+      ((rx  (= 4 digit) "/" (= 2 digit) "/month.org") 'month)
+      ((rx  (= 4 digit) "/" (= 2 digit) "/" (= 2 digit) ".org") 'day)
+      (_ nil))))
+
+(defun periodic-note-type-p (type &optional file)
+  (eq (periodic-note-type file) type))
+
+(defun periodic-note-yearly-p (&optional file)
+  (periodic-note-type-p 'year file))
+
+(defun periodic-note-monthly-p (&optional file)
+  (periodic-note-type-p 'month file))
+
+(defun periodic-note-daily-p (&optional file)
+  (periodic-note-type-p 'day file))
+
+(set-file-template! 'org-mode :when 'periodic-note-daily-p :trigger "__daily-note.org")
+(set-file-template! 'org-mode :when 'periodic-note-monthly-p :trigger "__monthly-note.org")
+(set-file-template! 'org-mode :when 'periodic-note-yearly-p :trigger "__yearly-note.org")
 #+end_src
+
+
 * Interactive command
 #+begin_src elisp
 (defmacro notes-cmd (&rest body)

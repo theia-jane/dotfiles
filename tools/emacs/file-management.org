@@ -53,11 +53,14 @@ With this tramp will put all autosaves in a single directory. This supercedes `a
 
 * File templates
 #+begin_src elisp
+(defvar +my/file-templates-dir (substitute-env-vars "$dot/tools/emacs/file-templates/"))
 (after! yasnippet
-  (let ((+my/file-templates-dir (substitute-env-vars "$dot/tools/emacs/file-templates/")))
-    (add-to-list 'yas-snippet-dirs '+my/file-templates-dir 'append #'eq)
-    (yas-reload-all)))
+  (add-to-list 'yas-snippet-dirs '+my/file-templates-dir 'append #'eq)
+  (yas-reload-all))
+
+;; def-project-mode!
 #+end_src
+
 * Encrypted
 #+begin_src elisp
 (after! epa

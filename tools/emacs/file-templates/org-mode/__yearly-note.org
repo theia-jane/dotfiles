@@ -1,0 +1,8 @@
+#+title: `(format-time-string "%Y")`
+
+* Goals
+- $0
+
+* Tasks [0/1]
+
+* Quarters
