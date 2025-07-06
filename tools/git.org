@@ -20,10 +20,10 @@ It's nice to have some shortcuts, so here are mine.
 git needs to know who I am, so people can blame me for my past mistakes.
 #+BEGIN_SRC conf
 [user]
-    name = <<personal-details/contact(field="Full Name")>>
-    email = <<personal-details/contact(field="Email")>>
+    name = <<lib/get(table=personal-details/contact(), field="Full Name")>>
+    email = <<lib/get(table=personal-details/contact(), field="Email")>>
 [github]
-    user = <<personal-details/contact(field="Github Username")>>
+    user = <<lib/get(table=personal-details/contact(), field="Github Username")>>
 [credential]
     helper = gnome-keyring
 #+END_SRC

@@ -5,16 +5,9 @@
 | Email           | theia.j.ware@gmail.com |
 | Github Username | theia-jane             |
 
-#+NAME: contact
-#+BEGIN_SRC elisp :var field='nil :noweb yes
-(let ((contact-info (quote <<contact-info()>>)))
-  (if field
-      (if-let ((matched-record (cl-find-if
-                                (lambda (record)
-                                  (equal field (car record)))
-                                contact-info)))
-          (cadr matched-record)
-        "")
-    contact-info))
-#+END_SRC
+/Note:/ This is a hack to get the table visible outside of this file. =org-babel-resolve-ref= pulls from library of babel, but library of babel does not ingest tables. One way to ingest this into the lob would be to add advice around =org-babel-lob-ingest= that maps all =#+name= properties and creates org source blocks that are resolvable (as I'm doing below)
 
+#+NAME: contact
+#+begin_src elisp
+'<<contact-info()>>
+#+end_src
