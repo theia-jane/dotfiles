@@ -11,6 +11,7 @@
       doom-localleader-alt-key "H-m")
 
 
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -116,4 +117,4 @@
           orglink config-org-links
           config-file-management
           config-notes
-          config-snippets)
+          config-snippet)
