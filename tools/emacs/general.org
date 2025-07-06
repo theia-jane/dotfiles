@@ -17,6 +17,9 @@ These packages are installed by ~(require 'global-packages)~ found at ~~/.local/
 :END:
 #+BEGIN_SRC elisp
 (provide 'site-start)
+
+(when (string-equal system-type "android")
+  (require 'config-android))
 (require 'global-packages)
 (require 'global-settings)
 (require 'personal-lib)

@@ -16,3 +16,16 @@ Convenience methods for working with org-mode source blocks
                 append (list (nth i keywords) (nth i row))))
      rows)))
 #+END_SRC
+
+#+NAME: get
+#+BEGIN_SRC elisp :var table='() field='nil :colnames no
+(when table
+  (if field
+      (if-let ((matched-record (cl-find-if
+                                (lambda (record)
+                                  (equal field (car record)))
+                               table)))
+          (cadr matched-record)
+        "")
+    table))
+#+END_SRC

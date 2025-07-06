@@ -1,5 +1,17 @@
 #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;; [[file:../config-cli.org::*Update][Update:1]]
+(when (and (not (featurep 'config-android))
+           (string-equal system-type "android"))
+  (defvar android-termux-home "/data/data/com.termux/files/home")
+  (setenv "HOME" android-termux-home)
+  
+  (defvar android-termux-bin "/data/data/com.termux/files/usr/bin")
+  (setenv "PATH" (format "%s:%s" termux-bin (getenv "PATH")))
+  (push termux-bin exec-path)
+  
+  (defvar android-termux-shell (concat android-termux-bin "/bash"))
+  (setenv "SHELL" android-termux-shell)
+  (setq shell-file-name android-termux-shell))
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 
 (require 'notifications)

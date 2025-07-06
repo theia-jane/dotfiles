@@ -2,9 +2,16 @@
 #+PROPERTY: header-args:elisp :shebang #!/usr/bin/env -S emacs -Q --script # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 This project will exclusively utilize emacs org-mode's capability to tangle files, which creates files based on the source code blocks within an =.org=. This is ultimately what enables [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]].
-
+* Bootstrap
+#+NAME: bootstrap
+#+begin_src elisp
+(when (and (not (featurep 'config-android))
+           (string-equal system-type "android"))
+  <<tools/emacs/android/termux-integration>>)
+#+end_src
 * Main command
 #+begin_src elisp :tangle bin/config
+<<bootstrap>>
 (defconst subcommands
   '(install
     tangle
@@ -60,6 +67,7 @@ This project will exclusively utilize emacs org-mode's capability to tangle file
 
 We need to pull in the org babel library for tangling and an extension to tangling, which enables flexibility in relative tangling.
 #+BEGIN_SRC elisp
+<<bootstrap>>
 (require 'subr-x)
 (require 'rx)
 
@@ -184,6 +192,7 @@ Finally, actually tangle the files that in the =literate/= & =tools/=
 #+END_SRC
 * Update
 #+BEGIN_SRC elisp :tangle bin/config-update
+<<bootstrap>>
 (defvar config-root (replace-regexp-in-string "bin/[^/]+$" "" load-file-name))
 
 (require 'notifications)

@@ -1,0 +1,47 @@
+#+title: Android
+#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+#+PROPERTY: header-args+ :tangle config-android.el
+
+#+NAME: paths
+| termux-bin  | /data/data/com.termux/files/usr/bin |
+| termux-home | /data/data/com.termux/files/home    |
+
+
+* Config
+This package is made to be included very early in emacs' life cycle (site-start.el is the target)
+#+begin_src elisp
+(provide 'config-android)
+#+end_src
+
+** Termux Integration
+#+NAME: termux-integration
+#+begin_src elisp
+(defvar android-termux-home "<<lib/get(table=paths() , field="termux-home"")>>")
+(setenv "HOME" android-termux-home)
+
+(defvar android-termux-bin "<<lib/get(table=paths() , field="termux-bin"")>>")
+(setenv "PATH" (format "%s:%s" termux-bin (getenv "PATH")))
+(push termux-bin exec-path)
+
+(defvar android-termux-shell (concat android-termux-bin "/bash"))
+(setenv "SHELL" android-termux-shell)
+(setq shell-file-name android-termux-shell)
+#+end_src
+
+** Keyboard
+#+NAME: keyboard-settings
+#+begin_src
+(setq touch-screen-display-keyboard t)
+#+end_src
+
+* Manual setup
+** Termux
+In termux after both apps are installed create a symlink from the emacs app data
+dir to =~/.local/emacs= in termux. This enables the autoloading of the android config through =site-start.el= ([[file:general.org::*Site start][see]])
+as the =site-lisp= directory in the emacs app data dir will now be the directory tangle to =~/.local/emacs/site-lisp=
+
+For example in termux run:
+#+begin_src bash
+mkdir ~/.local
+ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
+#+end_src
