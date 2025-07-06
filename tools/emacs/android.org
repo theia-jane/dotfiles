@@ -20,8 +20,8 @@ This package is made to be included very early in emacs' life cycle (site-start.
 (setenv "HOME" android-termux-home)
 
 (defvar android-termux-bin "<<lib/get(table=paths() , field="termux-bin"")>>")
-(setenv "PATH" (format "%s:%s" termux-bin (getenv "PATH")))
-(push termux-bin exec-path)
+(setenv "PATH" (format "%s:%s" android-termux-bin (getenv "PATH")))
+(push android-termux-bin exec-path)
 
 (defvar android-termux-shell (concat android-termux-bin "/bash"))
 (setenv "SHELL" android-termux-shell)
