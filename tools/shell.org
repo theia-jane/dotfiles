@@ -21,108 +21,24 @@ export DOOMDIR="${cfg_emacs}/doom"
 export PERSONAL_EMACS_PACKAGES="$(find "$cfg_emacs/packages" -maxdepth 1 -type d  -exec realpath {} \; | tr '\n' ':')"
 export EMACSLOADPATH="${lcl}/emacs/site-lisp:${PERSONAL_EMACS_PACKAGES}"
 
-export CLICOLOR=1
-export GTAGSLABEL="pygments"
-
-export NONUSERPATH="$(echo -n \
-"${dot}/bin
-/usr/local/bin
-/usr/bin
-/bin
-/usr/sbin
-/sbin
-/snap/bin
-${HOME}/miniconda3/bin
-${cfg}/emacs/bin
-${HOME}/.cargo/bin
-/usr/bin/vendor_perl" \
-    | tr '\n' ':')"
-
-export PATH="${HOME}/bin:${HOME}/.local/bin:${NONUSERPATH}"
+PATH="${HOME}/bin:${HOME}/.local/bin:${dot}/bin:${PATH}"
+export PATH="$(clean-path "$PATH")"
 
 if [ ! -z "$(which emacsdclient)" ]; then
   EDITOR="emacsdclient -c"
-fi
-
-if [ ! -z "$(which nvim)" ]; then
+elif [ ! -z "$(which nvim)" ]; then
   EDITOR="${EDITOR:-nvim}"
 fi
-
 export EDITOR="${EDITOR:-vim}"
-#+END_SRC
 
-** Tools
-*** go
-#+BEGIN_SRC bash
-export GOBIN="${HOME}/go/bin"
-export PATH="${PATH}:${GOBIN}"
-#+END_SRC
-*** perl
-#+BEGIN_SRC bash
-if [ -d "${HOME}/perl5" ]; then
-  export PATH="${HOME}/perl5/bin${PATH:+:${PATH}}"
-  export PERL5LIB="${HOME}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-  export PERL_LOCAL_LIB_ROOT="${HOME}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
-  export PERL_MB_OPT="--install_base \"${HOME}/perl5\""
-  export PERL_MM_OPT="INSTALL_BASE=${HOME}/perl5"
-fi
-#+END_SRC
-*** latex
-#+BEGIN_SRC bash
 export TEXMFHOME="${cfg}/texmf"
 #+END_SRC
-*** rust
-#+BEGIN_SRC bash
-if [ ! -z "$(which rustc)" ]; then
-  # rustup component add rust-src
-  export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
-fi
-#+END_SRC
 
-*** ocaml
-#+BEGIN_SRC bash
-test -r /home/tware/.opam/opam-init/init.sh && . /home/tware/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-#+END_SRC
-*** ruby
-#+BEGIN_SRC bash
-if [ -d "${HOME}/.rbenv" ]; then
-  export PATH="${HOME}/.rbenv/bin:${PATH}"
-  eval "$(rbenv init -)"
-fi
-
-[ -d "${HOME}/.rbenv/plugins/ruby-build" ] && export PATH="${HOME}/.rbenv/plugins/ruby-builder/bin:${PATH}"
-
-if [ -d "${HOME}/.gem/ruby" ]; then
-    export PATH="${PATH}$(printf ':%s' ${HOME}/.gem/ruby/*/bin)"
-fi
-#+END_SRC
-*** java
-#+begin_src bash
-export M2_HOME="/opt/maven"
-export M2="${M2_HOME}/bin"
-export MAVEN_OPTS="-Xms256m -Xmx512m"
-export PATH="$M2:$PATH"
-# export PATH="$JAVA_HOME/bin:$PATH"
-#+end_src
-** Github
-#+begin_src bash
-set_gh_token() {
-  export GITHUB_TOKEN="$(op item get GithubCLI --reveal --format json | jq -r '.fields[] | select(.id == "password") | .value')"
-}
-#+end_src
 * Scripts
 :PROPERTIES:
 :header-args+: :dir ${HOME}/bin :shebang #!/usr/bin/env bash
 :END:
-** Non-user path
-Basic script that lets you use the nonuser path, which basically excludes local
-scripts and binaries this is useful for scripts that override existing binaries.
-#+begin_src bash :tangle useNonUserPath
-export PATH="$NONUSERPATH"
-$@
-#+end_src
-
-** With environment 
+** With environment
 #+begin_src bash :tangle with-env 
 if [ ! -e "$1" ]; then
     DIR="${HOME}/.local/environment"
@@ -159,6 +75,30 @@ for e in $@; do
     with-env "$e"
 done
 #+end_src
+** Clean path
+Script to clean up a path variable. Basically to avoid the path variable from getting messy. Not usually an issue, but occassionally it gets noisy and I like to keep it clean
+#+begin_src bash :tangle clean-path
+usage() {
+    cat <<EOF
+Usage: clean-path [path]
+
+Where [path] is the string value of a path
+EOF
+}
+
+[ -z "$1" ] && usage >&2 && exit 1
+
+python <<PY
+path = "$1"
+clean_path = []
+
+for p in path.split(":"):
+    if p not in clean_path:
+       clean_path.append(p)
+
+print(":".join(clean_path))
+PY
+#+end_src
 * Profile
 :PROPERTIES:
 :header-args+: :tangle .profile
@@ -174,38 +114,6 @@ if [ -d "${ENV_DIR}" ]; then
 fi
 
 SHELL_NAME="$(echo $SHELL | tr '/' ' ' | awk '{print $(NF)}')"
-#+END_SRC
-** Tools
-*** fzf
-#+BEGIN_SRC bash
-if [ -e "${HOME}/.fzf.${SHELL_NAME}" ]; then
-    source ${HOME}/.fzf.${SHELL_NAME}
-
-    if [ ! -z "$(which ag)" ]; then
-        export FZF_DEFAULT_COMMAND='(ag --hidden --ignore node_modules --ignore .git --ignore .idea --ignore .DS_Store -f -g "") 2> /dev/null'
-    fi
-    export FZF_DEFAULT_OPTS='--bind="ctrl-alt-a:select-all+accept,alt-a:select-all,alt-u:deselect-all,alt-u:deselect-all+accept,alt-enter:print-query"'
-fi
-#+END_SRC
-*** node
-#+BEGIN_SRC bash
-export NVM_DIR="${HOME}/.nvm"
-[ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
-#+END_SRC
-*** vterm
-#+BEGIN_SRC bash
-function vterm_printf(){
-    if [ -n "$TMUX" ]; then
-        # Tell tmux to pass the escape sequences through
-        # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
-        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\eP\e]%s\007\e\\" "$1"
-    else
-        printf "\e]%s\e\\" "$1"
-    fi
-}
 #+END_SRC
 * Shells
 ** bash
