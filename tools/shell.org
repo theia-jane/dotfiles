@@ -75,6 +75,36 @@ for e in $@; do
     with-env "$e"
 done
 #+end_src
+** eject environment
+Spit out the changes that happen when loading an environment file
+#+begin_src bash :tangle eject-env
+usage() {
+    cat <<EOF
+Usage: eject-env [file]
+
+Where [file] is the the path the the environment file you would like to load and
+eject.
+EOF
+}
+
+[ -z "$1" ] && usage >&2 && exit 1
+[ ! -f "$1" ] && echo "Must be a file: $1" >&2  && exit 1
+
+BEFORE="$(printenv)"
+source "$1"
+AFTER="$(printenv)"
+
+python <<PY
+before = """$BEFORE""".split("\n")
+after = """$AFTER""".split("\n")
+diff = [
+     env_set for
+     env_set in after
+     if env_set not in before
+]
+print("\n".join(diff))
+PY
+#+end_src
 ** Clean path
 Script to clean up a path variable. Basically to avoid the path variable from getting messy. Not usually an issue, but occassionally it gets noisy and I like to keep it clean
 #+begin_src bash :tangle clean-path

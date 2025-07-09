@@ -7,6 +7,23 @@
 | termux-home | /data/data/com.termux/files/home    |
 
 
+* Termux dependencies
+- git
+- rg
+- fd
+- python
+* Manual setup
+** Termux
+In termux after both apps are installed create a symlink from the emacs app data
+dir to =~/.local/emacs= in termux. This enables the autoloading of the android config through =site-start.el= ([[file:general.org::*Site start][see]])
+as the =site-lisp= directory in the emacs app data dir will now be the directory tangle to =~/.local/emacs/site-lisp=
+
+For example in termux run:
+#+begin_src bash
+pkg install rg fd git
+mkdir ~/.local
+ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
+#+end_src
 * Config
 This package is made to be included very early in emacs' life cycle (site-start.el is the target)
 #+begin_src elisp
@@ -33,15 +50,17 @@ This package is made to be included very early in emacs' life cycle (site-start.
 #+begin_src
 (setq touch-screen-display-keyboard t)
 #+end_src
-
-* Manual setup
-** Termux
-In termux after both apps are installed create a symlink from the emacs app data
-dir to =~/.local/emacs= in termux. This enables the autoloading of the android config through =site-start.el= ([[file:general.org::*Site start][see]])
-as the =site-lisp= directory in the emacs app data dir will now be the directory tangle to =~/.local/emacs/site-lisp=
-
-For example in termux run:
-#+begin_src bash
-mkdir ~/.local
-ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
+** Env vars
+Since my normal environment variables aren't set by the OS through my usual means (bash) I'm going to go ahead and grab them and set them. We do this by using a script I created that checks for differences
+#+begin_src elisp
+(let* ((env-lines (split-string (shell-command-to-string "bash ~/bin/eject-env ~/.environment") nil t))
+       (env-alist (mapcar
+                   (lambda (x)
+                     (when-let ((pos (string-match "=" x)))
+                       (cons
+                        (substring x 0 pos)
+                        (substring x (1+ pos)))))
+                  env-lines)))
+  (dolist (env-set env-alist)
+    (setenv (car env-set) (cdr env-set))))
 #+end_src
