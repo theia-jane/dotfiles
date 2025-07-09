@@ -723,6 +723,7 @@ Some functions that let me edit org-mode files better
 #+begin_src elisp :tangle org-edit.el
 (require 'org-element)
 (require 'ob-core)
+(require 's)
 (provide 'org-edit)
 
 (defun org-cleave ()
@@ -730,27 +731,31 @@ Some functions that let me edit org-mode files better
   (interactive)
   (let* ((el (org-element-at-point))
          (el-type (car el))
-         (post-affiliated (plist-get (nth 1 el) :post-affiliated)))
+         (src-header-pos (org-element-post-affiliated (org-element-at-point))))
     (when (eq el-type 'src-block)
-      (let ((src-begin-line (save-excursion
-                              (goto-char post-affiliated)
+      (let* ((src-begin-line (save-excursion
+                              (goto-char src-header-pos)
+                              (buffer-substring (point) (line-end-position))))
+              (src-end-line (save-excursion
+                              (goto-char (1- (org-element-end el)))
+                              (forward-line (- (org-element-post-blank el)))
                               (buffer-substring (point) (line-end-position)))))
         (end-of-line)
-        (insert (format "\n#+END_SRC\n\n%s\n" src-begin-line))))))
+        (insert (format "\n%s\n\n%s" src-end-line src-begin-line))))))
 
 (defun org-src-content-bounds (el)
   (list
    (save-mark-and-excursion
-     (goto-char (org-element-property :post-affiliated el))
+     (goto-char (org-element-post-affiliated el))
      (line-end-position))
    (save-mark-and-excursion
-     (goto-char (1- (org-element-property :end el)))
-     (forward-line (- (org-element-property :post-blank el)))
+     (goto-char (1- (org-element-end el)))
+     (forward-line (- (org-element-post-blank el)))
      (line-beginning-position))))
 
 (defun org-block-header (el)
   (save-mark-and-excursion
-    (goto-char (org-element-property :post-affiliated el))
+    (goto-char (org-element-post-affiliated el))
     (buffer-substring (point) (line-end-position))))
 
 (defun org-ensure-noweb ()
@@ -782,7 +787,7 @@ Some functions that let me edit org-mode files better
               (save-excursion
                 (end-of-line)
                 (org-ensure-noweb)
-                (insert "<<" name ">>")))
+                (insert "")))
 
             (goto-char (cadr (org-src-content-bounds (org-element-at-point))))
             (insert
@@ -791,13 +796,13 @@ Some functions that let me edit org-mode files better
                 "\n")
               "\n"
               (when has-name
-                (concat "#+NAME: " name "\n"))
+                (concat "#+name: " name "\n"))
               src-header
               "\n"
               region-contents)
              )
             (save-excursion
-              (insert "\n\n#+END_SRC\n"))
+              (insert "\n\n#+end_src\n"))
 
             ))))))
 
@@ -823,21 +828,20 @@ Some functions that let me edit org-mode files better
                         (equal (org-element-property :key el) "NAME")))
 
                (save-excursion
-                 (goto-char (org-element-property :begin el))
+                 (goto-char (org-element-begin el))
 
                  (unless existing-name
                    (beginning-of-line)
                    (save-excursion
-                     (insert "#+NAME:\n")))
+                     (insert "#+name:\n")))
 
                  (if (or (null name) (equal name ""))
                      (delete-region (point) (1+ (line-end-position)))
                    (save-match-data
-                     (re-search-forward (rx "#+NAME:"))
+                     (re-search-forward (rx "#+name:"))
                      (delete-region (match-end 0) (line-end-position)))
                    (end-of-line)
                    (insert (concat " " name))))))))
-
 #+end_src
 ** Org navigate
 Collection of things that help me navigate org..
