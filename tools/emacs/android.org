@@ -106,3 +106,13 @@ Since my normal environment variables aren't set by the OS through my usual mean
   (dolist (env-set env-alist)
     (setenv (car env-set) (cdr env-set))))
 #+end_src
+** Load path
+Normally my global packages are pulled in via =EMACSLOADPATH=. We'll have to that manually, but we have environment variable set now , so we just have to grab it.
+#+begin_src elisp
+(when-let* ((load-path-env (getenv "EMACSLOADPATH"))
+            (path-additions (seq-filter
+                             (lambda (x) (not (string-empty-p x)))
+                             (split-string load-path-env ":"))))
+  (dolist (p path-additions)
+    (add-to-list 'load-path p)))
+#+end_src
