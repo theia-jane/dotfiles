@@ -95,14 +95,14 @@ This package is made to be included very early in emacs' life cycle (site-start.
 ** Env vars
 Since my normal environment variables aren't set by the OS through my usual means (bash) I'm going to go ahead and grab them and set them. We do this by using a [[file:~/Repositories/theia-jane/dotfiles/tools/shell.org::*eject environment][script I created]] that checks for differences
 #+begin_src elisp
-(let* ((env-lines (split-string (shell-command-to-string "bash ~/bin/eject-env ~/.environment") nil t))
+(let* ((env-lines (split-string (shell-command-to-string "bash ~/bin/eject-env ~/.environment") "\n" t))
        (env-alist (mapcar
                    (lambda (x)
                      (when-let ((pos (string-match "=" x)))
                        (cons
                         (substring x 0 pos)
                         (substring x (1+ pos)))))
-                  env-lines)))
+                   env-lines)))
   (dolist (env-set env-alist)
     (setenv (car env-set) (cdr env-set))))
 #+end_src
