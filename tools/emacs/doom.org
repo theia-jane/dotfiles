@@ -5,7 +5,15 @@
 :PROPERTIES:
 :header-args+: :dir ${HOME}/.config/env
 :END:
-
 #+begin_src bash :tangle doomemacs
 export PATH="${PATH}:${HOME}/.local/emacs/configs/doomemacs/bin"
+#+end_src
+
+* Doom wrapper
+:PROPERTIES:
+:header-args+: :dir ${HOME}/.config/env
+:END:
+Running it like this is useful in environments where the shebang might not work propertly
+#+begin_src bash :tangle doom
+bash ~/.local/emacs/configs/doomemacs/bin/doom $@
 #+end_src
