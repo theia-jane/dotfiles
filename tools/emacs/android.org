@@ -7,12 +7,32 @@
 | termux-home | /data/data/com.termux/files/home    |
 
 
-* Termux dependencies
-- git
-- rg
-- fd
-- python
 * Manual setup
+Most of these steps are in termux. Unless otherwise specified.
+** Dependencies
+#+begin_src bash
+pkg install \
+    rg \
+    fzf \
+    fd \
+    git \
+    python \
+    neovim \
+    emacs
+#+end_src
+** dotfiles
+Clone and tangle my config
+#+begin_src bash
+mkdir -p ~/Repositories/theia-jane
+cd ~/Repositories/theia-jane
+git clone https://github.com/theia-jane/dotfiles dotfiles
+cd dotfiles
+git submodule update --init
+./bin/config-tangle
+#+end_src
+
+After the dotfiles have been synced reopen a new terminal (or load =~/.environment=)
+
 ** Termux
 In termux after both apps are installed create a symlink from the emacs app data
 dir to =~/.local/emacs= in termux. This enables the autoloading of the android config through =site-start.el= ([[file:general.org::*Site start][see]])
@@ -20,10 +40,32 @@ as the =site-lisp= directory in the emacs app data dir will now be the directory
 
 For example in termux run:
 #+begin_src bash
-pkg install rg fd git
-mkdir ~/.local
+rm -rf ~/.local/emacs
 ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
 #+end_src
+
+Since we just wiped out our config we'll want to re-tangle our config
+#+begin_src bash
+config-tangle
+#+end_src
+
+Once everything has been moved we should finish up by fixing all the shebang's of the scripts we import so they can work in emacs too.
+#+begin_src bash
+termux-fix-shebang ~/bin/* $dot/bin/*
+#+end_src
+
+** doom
+#+begin_src bash
+rm -rf ~/.emacs.d
+git clone --depth=1 https://github.com/doomemacs/doomemacs ~/.local/emacs/configs/doomemacs
+ln -s ~/.local/emacs/configs/doomemacs ~/.emacs.d
+#+end_src
+
+Then doom sync as usual.
+#+begin_src bash
+doom sync
+#+end_src
+
 * Config
 This package is made to be included very early in emacs' life cycle (site-start.el is the target)
 #+begin_src elisp
@@ -51,7 +93,7 @@ This package is made to be included very early in emacs' life cycle (site-start.
 (setq touch-screen-display-keyboard t)
 #+end_src
 ** Env vars
-Since my normal environment variables aren't set by the OS through my usual means (bash) I'm going to go ahead and grab them and set them. We do this by using a script I created that checks for differences
+Since my normal environment variables aren't set by the OS through my usual means (bash) I'm going to go ahead and grab them and set them. We do this by using a [[file:~/Repositories/theia-jane/dotfiles/tools/shell.org::*eject environment][script I created]] that checks for differences
 #+begin_src elisp
 (let* ((env-lines (split-string (shell-command-to-string "bash ~/bin/eject-env ~/.environment") nil t))
        (env-alist (mapcar
