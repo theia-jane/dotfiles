@@ -43,6 +43,7 @@ For example in termux run:
 #+begin_src bash
 rm -rf ~/.local/emacs
 ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
+emacs -Q --batch --eval "(require 'install-global-packages)"
 #+end_src
 
 Since we just wiped out our config we'll want to re-tangle our config
