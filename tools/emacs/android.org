@@ -27,7 +27,6 @@ mkdir -p ~/Repositories/theia-jane
 cd ~/Repositories/theia-jane
 git clone https://github.com/theia-jane/dotfiles dotfiles
 cd dotfiles
-git submodule update --init
 ./bin/config-tangle
 #+end_src
 
