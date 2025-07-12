@@ -12,7 +12,7 @@ Most of these steps are in termux. Unless otherwise specified.
 ** Dependencies
 #+begin_src bash
 pkg install \
-    rg \
+    ripgrep \
     fzf \
     fd \
     git \
