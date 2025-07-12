@@ -40,7 +40,8 @@ rm -rf global-packages/ global-packages-generated.el
       file-contents)
   (make-directory global-packages-dir t)
   <<install-packages>>
-  (setq file-contents <<generated-file-contents>>)
+  (setq file-contents
+        <<generated-file-contents>>)
 
   (with-temp-buffer
     (insert (pp-to-string file-contents))
@@ -54,7 +55,7 @@ Bootstrap straight using the script included in this repo and install the packag
 #+begin_src elisp
 (bootstrap-straight)
 (setq var-alist
-      (eject-differences '(load-path Info-directory-list)
+      (eject-differences (load-path Info-directory-list)
                          (mapcar #'straight-use-package
                                  global-packages-recipes)))
 #+end_src
@@ -78,12 +79,12 @@ Install is not meant to be run each time emacs is open. This mearly is meant to 
      (load autoload-file nil 'nomessage))
 
    ;; Setup info
-   (after! info
-     (setq Info-directory-list
-           (append ',(alist-get 'Info-directory-list var-alist)
-                   Info-directory-listload-path))))
+   (require 'info)
+   (setq Info-directory-list
+         (append ',(alist-get 'Info-directory-list var-alist)
+                 Info-directory-list)))
 #+end_src
-* Install libary file
+* Install library file
 :PROPERTIES:
 :header-args: :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
 :END:
