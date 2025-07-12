@@ -29,6 +29,7 @@ cd ~/Repositories/theia-jane
 git clone https://github.com/theia-jane/dotfiles dotfiles
 cd dotfiles
 ./bin/config-tangle
+termux-fix-shebang ~/bin/* $dot/bin/*
 #+end_src
 
 After the dotfiles have been synced reopen a new terminal (or load =~/.environment=)
