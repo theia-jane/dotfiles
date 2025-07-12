@@ -31,7 +31,7 @@
                 (lambda (pair)
                   (let ((a (car pair))
                         (b (cadr pair)))
-                    `(list ',b (seq-difference ,b ,a))))
+                    `(cons ',b (seq-difference ,b ,a))))
                 subject-pairs)))))
 
 (defmacro eject-differences (subject &rest body)
@@ -60,7 +60,7 @@
 (defun enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list.
 
-Note: excludes keymaps as 'lists'"
+Note: excludes keymaps as `lists'"
   (declare (pure t) (side-effect-free t))
   (if (and (listp exp)
            (not (keymapp exp)))
