@@ -9,8 +9,9 @@
 I don't like the clutter of the menu, toolbar and scroll bar.
 #+BEGIN_SRC elisp
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(when (display-graphic-p)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
 #+END_SRC
 
 I'd like to disable the startup screen and echo message 'site' wide... Generally not 'right', but I'm the only one using my system, so I'll break the rules by overwritting the functions.
