@@ -1,35 +1,102 @@
 #+TITLE: Global Packages
-#+PROPERTY: header-args :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp 
 
-Simply requiring this will make all of my globally installed packages available to me in any instance of emacs -- useful.
-#+begin_src elisp :tangle global-packages.el
+* Package list
+These are the packages that will be installed.
+#+NAME: straight-recipes
+#+begin_src elisp
+(defvar global-packages-recipes
+  '(evil evil-collection which-key general
+    helpful try magit
+    eros yasnippet
+    corfu
+    ;; org org-contrib
+    orderless marginalia
+    consult embark embark-consult
+    use-package f s async dash
+    dash-functional
+    simpleclip
+    ;; setup
+    auto-minor-mode))
+#+end_src
+* Usage
+In order to install the packages globally you need load the ='install-global-packages= package, which is created by this repo on =config-tangle=. To install run
+#+begin_src bash
+emacs -Q --batch --eval "(require 'install-global-packages)"
+#+end_src
+
+To clean up what this package creates you'll need to delete the following in =~/.local/emacs/site-lisp/=
+#+begin_src bash
+rm -rf global-packages/ global-packages-generated.el
+#+end_src
+* Install packages and load it up
+#+NAME: install-and-generate-load-file
+#+begin_src elisp
+(defvar global-packages-dir
+  (expand-file-name "~/.local/emacs/site-lisp/global-packages/"))
+
+(let ((user-emacs-directory global-packages-dir)
+      (default-directory global-packages-dir)
+      var-alist
+      file-contents)
+  (make-directory global-packages-dir t)
+  <<install-packages>>
+  (setq file-contents <<generated-file-contents>>)
+
+  (with-temp-buffer
+    (insert (pp-to-string file-contents))
+    (insert "\n(provide 'global-packages-generated)")
+    (write-region (point-min) (point-max) "~/.local/emacs/site-lisp/global-packages-generated.el")))
+
+#+end_src
+** Install packages via straight
+Bootstrap straight using the script included in this repo and install the packages we want globally available. Worth noting we are saving off the differences of variables so we can load those in later.
+#+NAME: install-packages
+#+begin_src elisp
+(bootstrap-straight)
+(setq var-alist
+      (eject-differences '(load-path Info-directory-list)
+                         (mapcar #'straight-use-package
+                                 global-packages-recipes)))
+#+end_src
+** Generated load file
+
+Install is not meant to be run each time emacs is open. This mearly is meant to install the packages and make them globally availibe. This is what will be loaded at run time -- saved in [[file:~/.local/emacs/site-lisp/global-packages-generated.el::(progn][=global-packages-generated.el=]]. It sets up =load-path=, loads in autoloads and sets up info. The file this generates will be loaded by [[file:general.org::*Site start][=site-start.el=]].
+
+#+NAME: generated-file-contents
+#+begin_src elisp
+`(progn
+   ;; Setup loadpath
+   (setq load-path
+         (append ',(alist-get 'load-path var-alist)
+                 load-path))
+
+   ;; Setup autoloads
+   (dolist (autoload-file ',(split-string
+                             (shell-command-to-string "fd -a -- '-autoloads.el$' ./straight/build")
+                             "\n"
+                             t))
+     (load autoload-file nil 'nomessage))
+
+   ;; Setup info
+   (after! info
+     (setq Info-directory-list
+           (append ',(alist-get 'Info-directory-list var-alist)
+                   Info-directory-listload-path))))
+#+end_src
+* Install libary file
+:PROPERTIES:
+:header-args: :tangle-relative 'dir :dir ${HOME}/.local/emacs/site-lisp
+:END:
+
+At the end of the day all of this is packaged up into this file:
+#+begin_src elisp :tangle install-global-packages.el
 (require 'package-utils)
+(require 'variable-utils)
+(require 'bootstrap-straight)
+(require 'info)
 
-;; Make sure load path has all current dirs
-(update-repo-load-path)
+<<straight-recipes>>
+<<install-and-generate-load-file>>
 
-;; Packages to keey installed in one spot
-;; See https://github.com/doomemacs/doomemacs/blame/8406c1ff22b95bd0f816de4a0223fa3ce3c82568/lisp/packages.el#L38
-;; For examples of recipes for org and setup
-(global-packages!
-evil evil-collection which-key general
-helpful try magit
-eros yasnippet
-corfu
-;; org org-contrib ; Disable broken in most recent pull
-orderless marginalia
-consult embark embark-consult
-use-package f s async dash
-dash-functional
-simpleclip
-;; setup ; Disable broken in most recent pull
-auto-minor-mode)
-
-;; Always loaded
-(require!
-;; setup ; Disable broken in most recent pull
-use-package
-auto-minor-mode)
-
-(provide 'global-packages)
+(provide 'install-global-packages)
 #+end_src

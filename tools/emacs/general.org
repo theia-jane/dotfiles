@@ -9,7 +9,7 @@ For me located at ~~/.local/emacs/site-lisp~, which is enabled via ~EMACSLOADPAT
 ** Repo packages
 For me located at ~$dot/tools/emacs/packages~, which is enabled via ~EMACSLOADPATH~
 ** User local "global" packages
-These packages are installed by ~(require 'global-packages)~ found at ~~/.local/emacs/site-lisp/global-packages.el~ via =straight.el=.
+Installed globally via straight and made available by ='global-packages-generated=. ([[file:global-packages.org][see here for more]])
 
 * Site start
 :PROPERTIES:
@@ -20,11 +20,21 @@ These packages are installed by ~(require 'global-packages)~ found at ~~/.local/
 
 (when (string-equal system-type "android")
   (require 'config-android))
-(require 'global-packages)
-(require 'global-settings)
-(require 'personal-lib)
-(require 'config-keys)
-(require 'config-ui)
+
+(require 'package-utils)
+
+;; Make sure load path has all current dirs
+(update-repo-load-path)
+
+;; Load global packages (requires <command> to be run)
+(require 'global-packages-generated nil t)
+(if (featurep 'global-packages-generated)
+    (require!
+     global-settings
+     personal-lib
+     config-keys
+     config-ui)
+  (message "Failed to load global packages."))
 #+END_SRC
 * Config index
 :PROPERTIES:
