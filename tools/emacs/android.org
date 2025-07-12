@@ -18,7 +18,8 @@ pkg install \
     git \
     python \
     neovim \
-    emacs
+    emacs \
+    which
 #+end_src
 ** dotfiles
 Clone and tangle my config
