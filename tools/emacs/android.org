@@ -19,7 +19,8 @@ pkg install \
     python \
     neovim \
     emacs \
-    which
+    which \
+    wget
 #+end_src
 ** dotfiles
 Clone and tangle my config
@@ -43,12 +44,17 @@ For example in termux run:
 #+begin_src bash
 rm -rf ~/.local/emacs
 ln -s /data/data/org.gnu.emacs/files ~/.local/emacs
-emacs -Q --batch --eval "(require 'install-global-packages)"
 #+end_src
 
 Since we just wiped out our config we'll want to re-tangle our config
 #+begin_src bash
+rm -rf $dot/build
 config-tangle
+#+end_src
+
+Make sure we install the global packages
+#+begin_src bash
+emacs -Q --batch --eval "(require 'install-global-packages)"
 #+end_src
 
 Once everything has been moved we should finish up by fixing all the shebang's of the scripts we import so they can work in emacs too.
@@ -57,6 +63,7 @@ termux-fix-shebang ~/bin/* $dot/bin/*
 #+end_src
 
 ** doom
+Set up doom in the termux directory
 #+begin_src bash
 rm -rf ~/.emacs.d
 git clone --depth=1 https://github.com/doomemacs/doomemacs ~/.local/emacs/configs/doomemacs
@@ -66,6 +73,23 @@ ln -s ~/.local/emacs/configs/doomemacs ~/.emacs.d
 Then doom sync as usual.
 #+begin_src bash
 doom sync
+#+end_src
+
+Additionally, make sure the directories are setup in the emacs app directory
+#+begin_src bash
+cd `realpath ~/.local/emacs`
+rm -rf .emacs.d
+ln -s $(pwd)/configs/doomemacs $(pwd)/.emacs.d
+ln -s $DOOMDIR $(pwd)/.doom.d
+#+end_src
+** Fonts
+#+begin_src bash
+cd ~/.local/emacs
+mkdir fonts
+wget https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/TTF-source-code-pro-2.042R-u_1.062R-i.zip
+unzip TTF*.zip
+cp TTF/* ./
+rm -rf TTF*.zip TTF/
 #+end_src
 
 * Config
