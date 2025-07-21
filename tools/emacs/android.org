@@ -90,8 +90,7 @@ This package is made to be included very early in emacs' life cycle (site-start.
 #+end_src
 
 ** Keyboard
-#+NAME: keyboard-settings
-#+begin_src
+#+begin_src elisp
 (setq touch-screen-display-keyboard t)
 #+end_src
 ** Env vars
