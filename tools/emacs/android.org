@@ -115,7 +115,8 @@ This package is made to be included very early in emacs' life cycle (site-start.
 
 ** Keyboard
 #+begin_src elisp
-(setq touch-screen-display-keyboard t)
+(setq touch-screen-display-keyboard t
+      overriding-text-conversion-style nil)
 #+end_src
 ** Env vars
 Since my normal environment variables aren't set by the OS through my usual means (bash) I'm going to go ahead and grab them and set them. We do this by using a [[file:~/Repositories/theia-jane/dotfiles/tools/shell.org::*eject environment][script I created]] that checks for differences
