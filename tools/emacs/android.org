@@ -114,7 +114,8 @@ This package is made to be included very early in emacs' life cycle (site-start.
 
 (defvar android-termux-shell (concat android-termux-bin "/bash"))
 (setenv "SHELL" android-termux-shell)
-(setq shell-file-name android-termux-shell)
+(setq shell-file-name android-termux-shell
+      tramp-encoding-shell android-termux-shell)
 #+end_src
 
 ** Keyboard
