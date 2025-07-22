@@ -22,13 +22,20 @@ I don't like the clutter of the menu, toolbar and scroll bar.
   (menu-bar-set-tool-bar-position 'bottom)
   (setq secondary-tool-bar-map
         `(keymap
-          (control menu-item "C-"
-                   event-apply-control-modifier
-                   :help "Add Control modifier to the following event"
-                   :image (image :type png
-                                 :file ,(expand-file-name "~/.local/emacs/images/control.png")
-                                 :scale default)
-                   :enable (modifier-bar-available-p 'control))
+          (super menu-item "S-"
+                 event-apply-super-modifier
+                 :help "Add Super modifier to the following event"
+                 :image (image :type png
+                               :file ,(expand-file-name "~/.local/emacs/images/super.png")
+                               :scale default)
+                 :enable (modifier-bar-available-p 'super))
+          (shift menu-item "^-"
+                 event-apply-shift-modifier
+                 :help "Add Shift modifier to the following event"
+                 :image (image :type png
+                               :file ,(expand-file-name "~/.local/emacs/images/shift.png")
+                               :scale default)
+                 :enable (modifier-bar-available-p 'shift))
           (meta menu-item "M-"
                 event-apply-meta-modifier
                 :help "Add Meta modifier to the following event"
@@ -36,20 +43,20 @@ I don't like the clutter of the menu, toolbar and scroll bar.
                               :file ,(expand-file-name "~/.local/emacs/images/meta.png")
                               :scale default)
                 :enable (modifier-bar-available-p 'meta))
+          (control menu-item "C-"
+                   event-apply-control-modifier
+                   :help "Add Control modifier to the following event"
+                   :image (image :type png
+                                 :file ,(expand-file-name "~/.local/emacs/images/control.png")
+                                 :scale default)
+                   :enable (modifier-bar-available-p 'control))
           (hyper menu-item "H-"
                  event-apply-hyper-modifier
                  :help "Add Hyper modifier to the following event"
                  :image (image :type png
                                :file ,(expand-file-name "~/.local/emacs/images/hyper.png")
                                :scale default)
-                 :enable (modifier-bar-available-p 'hyper))
-          (hyper menu-item "S-"
-                 event-apply-super-modifier
-                 :help "Add Super modifier to the following event"
-                 :image (image :type png
-                               :file ,(expand-file-name "~/.local/emacs/images/super.png")
-                               :scale default)
-                 :enable (modifier-bar-available-p 'super)))))
+                 :enable (modifier-bar-available-p 'hyper)))))
 #+end_src
 * Disable
 I'd like to disable the startup screen and echo message 'site' wide... Generally not 'right', but I'm the only one using my system, so I'll break the rules by overwritting the functions.
