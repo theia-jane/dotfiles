@@ -91,6 +91,10 @@ unzip TTF*.zip
 cp TTF/* ./
 rm -rf TTF*.zip TTF/
 #+end_src
+** Images
+#+begin_src bash
+ln -s $dot/images ~/.local/emacs/images
+#+end_src
 
 * Config
 This package is made to be included very early in emacs' life cycle (site-start.el is the target)
